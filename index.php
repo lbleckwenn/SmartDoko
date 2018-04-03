@@ -21,6 +21,8 @@ require_once ('include/config.inc.php');
 require_once ('include/functions.inc.php');
 require_once ('include/login.inc.php');
 require_once ('include/Smarty.class.php');
+$mitNachnamen = getConfig('mitNachnamen');;
+$success = $error = false;
 
 $smarty = new Smarty ();
 $smarty->caching = false;
@@ -36,6 +38,7 @@ $pages = array (
 		'overview',
 		'settings',
 		'player',
+		'round'
 );
 if (! in_array ( $page, $pages )) {
 	$page = 'splashscreen';
@@ -48,4 +51,7 @@ if ($page != 'splashscreen') {
 }
 $smarty->assign ( 'login', is_checked_in () );
 $smarty->assign ( 'page', $page );
+$smarty->assign ( 'success', $success );
+$smarty->assign ( 'error', $error );
+
 $smarty->display ( 'index.tpl' );

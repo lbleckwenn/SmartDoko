@@ -66,7 +66,7 @@ if (isset ( $_GET ['editPlayer'] )) {
 		$error .= 'Bitte eine gültige E-Mail-Adresse eingeben<br>';
 	}
 	if (! $error) {
-		$statement = $pdo->prepare ( "SELECT * FROM players WHERE player_id = ?" );
+		$statement = $pdo->prepare ( "SELECT * FROM players WHERE id = ?" );
 		$result = $statement->execute ( array (
 				$player_id
 		) );
@@ -77,7 +77,7 @@ if (isset ( $_GET ['editPlayer'] )) {
 				$player_id
 		) );
 		if ($statement->rowCount () > 0) {
-			$statement = $pdo->prepare ( "UPDATE players SET vorname = :vorname_neu, nachname = :nachname_neu, email = :email_neu WHERE player_id = :player_id" );
+			$statement = $pdo->prepare ( "UPDATE players SET vorname = :vorname_neu, nachname = :nachname_neu, email = :email_neu WHERE id = :player_id" );
 			$result = $statement->execute ( array (
 					'player_id' => $player_id,
 					'vorname_neu' => $vorname,
@@ -99,7 +99,7 @@ if (isset ( $_GET ['editPlayer'] )) {
 
 if (isset ( $_GET ['deletePlayer'] )) {
 	$player_id = trim ( $_POST ['player_id'] );
-	$statement = $pdo->prepare ( "SELECT * FROM players WHERE player_id = ?" );
+	$statement = $pdo->prepare ( "SELECT * FROM players WHERE id = ?" );
 	$result = $statement->execute ( array (
 			$player_id
 	) );
@@ -111,7 +111,7 @@ if (isset ( $_GET ['deletePlayer'] )) {
 				$player_id
 		) );
 		if ($statement->rowCount () > 0) {
-			$statement = $pdo->prepare ( "DELETE FROM players WHERE player_id = ?" );
+			$statement = $pdo->prepare ( "DELETE FROM players WHERE id = ?" );
 			$result = $statement->execute ( array (
 					$player_id
 			) );
@@ -124,7 +124,7 @@ if (isset ( $_GET ['deletePlayer'] )) {
 	}
 }
 
-$statement = $pdo->prepare ( sprintf ( "SELECT players.* FROM user_player, players WHERE user_player.user_id = %d AND user_player.player_id = players.player_id", $user ['id'] ) );
+$statement = $pdo->prepare ( sprintf ( "SELECT players.* FROM user_player, players WHERE user_player.user_id = %d AND user_player.player_id = players.id", $user ['id'] ) );
 $result = $statement->execute ();
 $players = $statement->fetchall ( PDO::FETCH_ASSOC );
 $smarty->assign ( 'players', $players );

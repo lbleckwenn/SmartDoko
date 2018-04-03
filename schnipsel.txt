@@ -1,0 +1,52 @@
+			<form action="index.php?page=newRound&announcement=1" class="" method="post">
+				<div class="modal-body">
+					<div class="tab-content" id="tabContent">
+						<div class="tab-pane fade show active" id="ansage" role="tabpanel" aria-labelledby="ansage-tab">
+							<div class="form-group row">
+								<label for="player" class="col-sm-3 col-form-label">Spieler:</label>
+								<div class="col-sm-9">
+									<select class="form-control" id="player" name="spieler" required>
+										<option value="">bitte auswählen</option>{html_options options=$players}
+									</select>
+								</div>
+							</div>
+							<div class="form-group row">
+								<label for="announcement" class="col-sm-3 col-form-label">Ansage:</label>
+								<div class="col-sm-9">
+									<select class="form-control" id="announcement" name="ansage" required>
+										<option value="">bitte auswählen</option>
+										<option value="re">Re</option>
+										<option value="kontra">Kontra</option>
+									</select>
+								</div>
+							</div>
+						</div>
+						<div class="tab-pane fade" id="absage" role="tabpanel" aria-labelledby="absage-tab">
+							<div class="form-group row">
+								<label for="player" class="col-sm-3 col-form-label">Spieler:</label>
+								<div class="col-sm-9">
+									<select class="form-control" id="player" name="spieler" required>
+										<option value="">bitte auswählen</option>{html_options options=$players}
+									</select>
+								</div>
+							</div>
+							<div class="form-group row">
+								<label for="announcement" class="col-sm-3 col-form-label">Absage:</label>
+								<div class="col-sm-9">
+									<select class="form-control" id="announcement" name="absage" required>
+										<option value="">bitte auswählen</option>
+										<option value="90">keine 90</option>
+										<option value="60">keine 60</option>
+										<option value="30">keine 30</option>
+										<option value="schwwarz">schwarz</option>
+									</select>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Abbrechen</button>
+					<button type="submit" class="btn btn-primary">Spieler speichern</button>
+				</div>
+			</form>

@@ -1,8 +1,8 @@
 <div class="container">
 	<h2>Übersicht</h2>
-	{if isset($error)}
+	{if $error}
 	<div class="alert alert-danger" role="alert">
-		<h4 class="alert-heading">Es ist ein Fehler aufgetreten!</h4>
+		<h4 class="alert-heading">Fehler!</h4>
 		<p>{$error}</p>
 	</div>
 	{else}

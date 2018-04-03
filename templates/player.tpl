@@ -28,18 +28,18 @@
 			</tr>
 			{foreach $players as $player}
 			<tr>
-				<td>{$player.player_id}</td>
+				<td>{$player.id}</td>
 				<td>{$player.vorname}</td>
 				<td>{$player.nachname}</td>
 				<td class="text-center">0</td>
 				<td class="text-center">{if $player.user_id}ja{/if}</td>
 				<td class="text-nowrap">{if $user.id == $player.user_id} <a class="btn btn-primary btn-sm" href="index.php?page=settings" role="button">Einstellungen</a>
 					{else}
-					<button type="button" class="btn btn-warning btn-sm" {if $player.user_id}disabled{/if} data-toggle="modal" data-id="{$player.player_id}"
+					<button type="button" class="btn btn-warning btn-sm" {if $player.user_id}disabled{/if} data-toggle="modal" data-id="{$player.id}"
 						data-vorname="{$player.vorname}" data-nachname="{$player.nachname}" data-email="{$player.email}" data-target="#editPlayer">Bearbeiten</button>
-					<button type="button" class="btn btn-danger btn-sm" {if 1==0}disabled{/if} data-toggle="modal" data-id="{$player.player_id}"
+					<button type="button" class="btn btn-danger btn-sm" {if 1==0}disabled{/if} data-toggle="modal" data-id="{$player.id}"
 						data-vorname="{$player.vorname}" data-nachname="{$player.nachname}" data-target="#deletePlayer">Löschen</button>
-					<button type="button" class="btn btn-info btn-sm" {if $player.user_id}disabled{/if} data-toggle="modal" data-id="{$player.player_id}"
+					<button type="button" class="btn btn-info btn-sm" {if $player.user_id}disabled{/if} data-toggle="modal" data-id="{$player.id}"
 						data-vorname="{$player.vorname}" data-nachname="{$player.nachname}" data-target="#invitePlayer">Einladen</button> {/if}
 				</td>
 			</tr>

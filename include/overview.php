@@ -17,11 +17,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 $user = check_user ();
 if (! $user) {
-	$smarty->assign ( 'error', 'Bitte zuerst <a href="login.php">einloggen</a>' );
-	exit ();
+	$error = 'Bitte zuerst <a href="login.php">einloggen</a>';
+	return;
 }
 
 $statement = $pdo->prepare ( "SELECT * FROM users ORDER BY id" );
