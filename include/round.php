@@ -766,8 +766,45 @@ if ($statement->rowCount () == 0) {
 		}
 	}
 }
+$statement = $pdo->prepare ( "SELECT * FROM players " );
+$result = $statement->execute ();
+$players = array ();
+while ( $row = $statement->fetch () ) {
+	$players [$row ['id']] = $row ['vorname'] . (($mitNachnamen) ? ' ' . $row ['nachname'] : '');
+}
+$smarty->assign ( 'players', $players );
 switch ($step) {
 	case 1 :
+		$statement = $pdo->prepare ( "SELECT * FROM rounds ORDER BY date DESC" );
+		$statement->execute ();
+		$runden = array ();
+		while ( $row = $statement->fetch () ) {
+			$runden [$row ['id']] = array (
+					'date' => $row ['date'],
+					'location' => $row ['location'],
+					'is_running' => $row ['is_running'],
+					'player' => array ()
+			);
+		}
+
+		$statement1 = $pdo->prepare ( "SELECT * FROM round_player WHERE round_id = ?" );
+		$statement2 = $pdo->prepare ( "SELECT sum(punkte) FROM `game_data` WHERE round_id = ? AND player_id = ?" );
+		foreach ( $runden as $runde_id => $runde ) {
+			$statement1->execute ( array (
+					$runde_id
+			) );
+			$players = $statement1->fetchAll ( PDO::FETCH_ASSOC );
+			foreach ( $players as $player ) {
+				$statement2->execute ( array (
+						$runde_id,
+						$player ['player_id']
+				) );
+				$row = $statement2->fetch ();
+				$runden [$runde_id] ['player'] [$player ['player_id']] = $row ['sum(punkte)'];
+				;
+			}
+		}
+		$smarty->assign ( 'runden', $runden );
 		break;
 	case 2 :
 		$statement = $pdo->prepare ( "SELECT players.* FROM user_player, players WHERE user_player.user_id = ? AND user_player.player_id = players.id" );
