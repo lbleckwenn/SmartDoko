@@ -6,7 +6,7 @@
 		<p>{$error}</p>
 	</div>
 	{/if}
-	<form action="index.php?page=login" class="mt-5" method="post">
+	<form action="index.php?page=login" class="mt-5" method="post">{$token}
 		<div class="form-group row">
 			<label for="inputEmail" class="col-sm-2 offset-sm-2 col-form-label">E-Mail:</label>
 			<div class="col-sm-6">
@@ -28,7 +28,7 @@
 				</div>
 			</div>
 		</div>
-		<a href="index.php?page=passwortvergessen" class="btn btn-secondary col-sm-2 offset-sm-6" role="button">Passwort vergessen</a>
-		<button class="btn btn-primary col-sm-2" type="submit">Login</button>
+		<a href="index.php?page=passwortvergessen" class="btn btn-secondary offset-sm-6" role="button">Passwort vergessen</a>
+		<button class="btn btn-primary" type="submit">Anmelden</button>
 	</form>
 </div>

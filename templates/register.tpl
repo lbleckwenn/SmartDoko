@@ -14,7 +14,7 @@
 		<p>{$error}</p>
 	</div>
 	{/if}
-	<form action="?page=register&register=1" class="mt-5" method="post">
+	<form action="?page=register&register=1" class="mt-5" method="post">{$token}
 		<div class="form-group row">
 			<label for="inputVorname" class="col-sm-2 offset-sm-2 col-form-label">Vorname:</label>
 			<div class="col-sm-6">

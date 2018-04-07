@@ -27,7 +27,7 @@
 		<div class="tab-content">
 			<div role="tabpanel" class="tab-pane active" id="data">
 				<br>
-				<form action="index.php?page=settings&save=personal_data" method="post">
+				<form action="index.php?page=settings&save=personal_data" method="post">{$token}
 					<div class="form-group row">
 						<label for="inputVorname" class="col-sm-3 text-right col-form-label">Vorname:</label>
 						<div class="col-sm-6">
@@ -48,7 +48,7 @@
 			<div role="tabpanel" class="tab-pane" id="email">
 				<br>
 				<p>Zum Änderen deiner E-Mail-Adresse gib bitte dein aktuelles Passwort sowie die neue E-Mail-Adresse ein.</p>
-				<form action="index.php?page=settings&save=email" method="post">
+				<form action="index.php?page=settings&save=email" method="post">{$token}
 					<div class="form-group row">
 						<label for="inputPasswort" class="col-sm-3 text-right col-form-label">Dein Passwort:</label>
 						<div class="col-sm-6">
@@ -75,7 +75,7 @@
 			<div role="tabpanel" class="tab-pane" id="passwort">
 				<br>
 				<p>Zum Änderen deines Passworts gib bitte dein aktuelles Passwort sowie das neue Passwort ein.</p>
-				<form action="index.php?page=settings&save=passwort" method="post" class="form-horizontal">
+				<form action="index.php?page=settings&save=passwort" method="post" class="form-horizontal">{$token}
 					<div class="form-group row">
 						<label for="inputPasswort" class="col-sm-3 text-right col-form-label">Altes Passwort:</label>
 						<div class="col-sm-6">

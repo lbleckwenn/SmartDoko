@@ -78,7 +78,7 @@ function zaehlePunkte($reAugen, $ansagen, $absagen, $sonderpunkte, $gewinner, $s
 					'punkte' => 2
 			);
 		}
-
+		
 		// Regel 7.2.2 (c) - Punkte für Absagen der Re-Partei
 		if (isset ( $absagen ['re'] )) {
 			for($augen = 90; $augen > 0; $augen -= 30) {
@@ -90,7 +90,7 @@ function zaehlePunkte($reAugen, $ansagen, $absagen, $sonderpunkte, $gewinner, $s
 				}
 			}
 		}
-
+		
 		// Regel 7.2.2 (d) - Punkte für Absagen der Kontra-Partei
 		if (isset ( $absagen ['kontra'] )) {
 			for($augen = 90; $augen > 0; $augen -= 30) {
@@ -109,7 +109,7 @@ function zaehlePunkte($reAugen, $ansagen, $absagen, $sonderpunkte, $gewinner, $s
 			if ($reAugen >= $augen + 30 && $absagen ['kontra'] <= $augen) {
 				$auswertungsLog ['7.2.2 (e) - Es wurden von der Re-Partei'] [] = array (
 						'text' => sprintf ( '%d Augen gegen "keine %d" erreicht', $augen + 30, $augen ),
-						'punkte' => ($kontraAugen < $reAugen ? 1 : - 1)
+						'punkte' => ($kontraAugen < $reAugen || $gewinner == 're' ? 1 : - 1)
 				);
 			}
 		}

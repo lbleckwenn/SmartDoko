@@ -75,11 +75,18 @@
 			</div>
 		</div>
 		<div class="modal-footer">
-			<form action="index.php?page=round&gameCalculate=1" class="" method="post">
-				{if $gameType != 'solo'} <input type="hidden" name="save" value="1"><input type="hidden" name="reSpieler1" value="{$reSpieler1}"><input
-					type="hidden" name="reSpieler2" value="{$reSpieler2}"> {else} <input type="hidden" name="reSpieler1" value="{$reSpieler1}"><input type="hidden"
-					name="reSpieler2" value="solo"><input type="hidden" name="reAugen" value="{$reAugen}"><input type="hidden" name="kontraAugen"
-					value="{$kontraAugen}"> {/if} <a class="btn btn-secondary" href="index.php?page=round" role="button">Abbrechen</a>
+			<form action="index.php?page=round&gameCalculate=1" class="" method="post">{$token}
+				<input type="hidden" name="save" value="1">
+				<input type="hidden" name="reAugen" value="{$reAugen}">
+				<input type="hidden" name="kontraAugen"	value="{$kontraAugen}">
+				{if $gameType == 'solo'}
+				<input type="hidden" name="reSpieler1" value="{$reSpieler1}">
+				<input type="hidden" name="reSpieler2" value="solo">
+				{else}
+				<input type="hidden" name="reSpieler1" value="{$reSpieler1}">
+				<input type="hidden" name="reSpieler2" value="{$reSpieler2}">
+				{/if}
+				<a class="btn btn-secondary" href="index.php?page=round" role="button">Abbrechen</a>
 				<button type="submit" class="btn btn-primary">Spiel speichern</button>
 			</form>
 		</div>

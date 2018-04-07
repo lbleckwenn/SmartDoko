@@ -63,7 +63,7 @@
 					<span aria-hidden="true">&times;</span>
 				</button>
 			</div>
-			<form action="index.php?page=player&newPlayer=1" class="" method="post">
+			<form action="index.php?page=player&newPlayer=1" class="" method="post">{$token}
 				<div class="modal-body">
 					<div class="form-group row">
 						<label for="inputVorname" class="col-sm-3 col-form-label">Vorname:</label>
@@ -103,7 +103,7 @@
 					<span aria-hidden="true">&times;</span>
 				</button>
 			</div>
-			<form action="index.php?page=player&editPlayer=1" class="" method="post">
+			<form action="index.php?page=player&editPlayer=1" class="" method="post">{$token}
 				<div class="modal-body">
 					<input type="hidden" id="inputEditId" name="player_id">
 					<div class="form-group row">
@@ -144,7 +144,7 @@
 					<span aria-hidden="true">&times;</span>
 				</button>
 			</div>
-			<form action="index.php?page=player&deletePlayer=1" class="" method="post">
+			<form action="index.php?page=player&deletePlayer=1" class="" method="post">{$token}
 				<div class="modal-body">
 					<input type="hidden" id="inputDeleteId" name="player_id">
 					<p>
@@ -170,7 +170,7 @@
 					<span aria-hidden="true">&times;</span>
 				</button>
 			</div>
-			<form action="index.php?page=player&invitePlayer=1" class="" method="post">
+			<form action="index.php?page=player&invitePlayer=1" class="" method="post">{$token}
 				<div class="modal-body">
 					<input type="hidden" id="inputDeleteId" name="player_id">
 					<p>Du kannst deine Mitspieler einladen, ein eigenes Benutzerkonto für SmartDoko zu erstellen. Damit ist es ihnen möglich, die Ergebnisse eurer

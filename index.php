@@ -21,7 +21,9 @@ require_once ('include/config.inc.php');
 require_once ('include/functions.inc.php');
 require_once ('include/login.inc.php');
 require_once ('include/Smarty.class.php');
-$mitNachnamen = getConfig('mitNachnamen');;
+$mitNachnamen = getConfig ( 'mitNachnamen' );
+$f = new formreload ();
+
 $success = $error = false;
 
 $smarty = new Smarty ();
@@ -53,5 +55,5 @@ $smarty->assign ( 'login', is_checked_in () );
 $smarty->assign ( 'page', $page );
 $smarty->assign ( 'success', $success );
 $smarty->assign ( 'error', $error );
-
+$smarty->assign ( 'token', $f->get_formtoken () );
 $smarty->display ( 'index.tpl' );

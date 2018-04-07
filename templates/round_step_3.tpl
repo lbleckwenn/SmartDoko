@@ -5,10 +5,11 @@
 		<button type="button" class="btn btn-primary btn-block" data-toggle="modal" data-target="#announcement">An-/Absagen</button>
 		<button type="button" class="btn btn-primary btn-block" data-toggle="modal" data-target="#extraPoint">Sonderpunkte</button>
 		<button type="button" class="btn btn-success btn-block" data-toggle="modal" data-target="#gameCalculate">Spielabrechnung</button>
+		<button type="button" class="btn btn-danger btn-block" data-toggle="modal" data-target="#endOfRound">Runde beenden</button>
 	</div>
 	<div class="col-sm-12 col-md-9">
 		<div class="row">
-			<div class="col-sm-12 col-md-6">
+			<div class="col-sm-12 col-md-7">
 				<h3 class="mt-3">An- und Absagen</h3>
 				<!-- Auflistung der An- und Absagen sowie Sonderpunkte -->
 				{if $vorbehalt}
@@ -29,7 +30,7 @@
 				</p>
 				{/foreach} {/if}
 			</div>
-			<div class="col-sm-12 col-md-6">
+			<div class="col-sm-12 col-md-5">
 				<h3 class="mt-3">Spieler</h3>
 				<div class="row">
 					{if sizeof($parteien) == 1} {$col="col-12"} {elseif isset($parteien.unklar)} {$col="col-4"} {else} {$col="col-6"} {/if} {foreach $parteien as
@@ -42,34 +43,69 @@
 			</div>
 			<div class="col-sm-12">
 				<h3 class="mt-3">Punktestand</h3>
-				<div class="table-responsive">
-					<table class="table">
-						<thead>
-							<tr>
-								<th>Spiel</th> {foreach $players_round as $player}
-								<th>{$player|truncate:7:""}</th> {/foreach}
-								<th>Punkte</th>
-								<th colspan="2">An-/Absagen</th>
-							</tr>
-						</thead>
-						<tbody>
-							{for $i=$aktuellesSpiel to 1 step -1}
-							<tr>
-								<td>{$i}</td>{foreach $players_round as $player}
-								<td></td>{/foreach}
-								<td></td>
-								<td>{$anAbSagen.re}</td>
-								<td>{$anAbSagen.kontra}</td>
-							</tr>
-							{/for}
-						</tbody>
-					</table>
+				<ul class="nav nav-tabs" id="punkte" role="tablist">
+					<li class="nav-item"><a class="nav-link active" id="plusminus-tab" data-toggle="tab" href="#plusminus" role="tab" aria-controls="plusminus"
+						aria-selected="true">Plus/Minus</a></li>
+					<li class="nav-item"><a class="nav-link" id="summen-tab" data-toggle="tab" href="#summen" role="tab" aria-controls="summen" aria-selected="false">Summen</a></li>
+				</ul>
+				<div class="tab-content" id="myTabContent">
+					<div class="tab-pane fade show active" id="plusminus" role="tabpanel" aria-labelledby="plusminus-tab">
+						<div class="table-responsive">
+							<table class="table table-bordered">
+								<thead>
+									<tr>
+										<th>Spiel</th> {foreach $players_round as $player}
+										<th>{$player|truncate:7:""}</th> {/foreach}
+										<th>Punkte</th>
+										<th colspan="2">An-/Absagen</th>
+									</tr>
+								</thead>
+								<tbody>
+									{for $i=$aktuellesSpiel to 1 step -1}
+									<tr>
+										<th class="text-right">{$i}</th>{foreach $players_round as $player_id => $player} {$h=$i-1}
+										<td class="text-right {if $punkteliste.$i.$player_id.plusminus>$punkteliste.$h.$player_id.plusminus}table-success{/if}">{if !$i@first &&
+											$punkteliste.$i.$player_id.spielte}{$punkteliste.$i.$player_id.plusminus}<!--  ({$punkteliste.$i.$player_id.punkte_spiel}) -->{/if}
+										</td>{/foreach}
+										<td class="text-right">{if !$i@first}{$punkteliste.$i.spiel}{/if}</td>
+										<td>{$punkteliste.$i.re}</td>
+										<td>{$punkteliste.$i.kontra}</td>
+									</tr>
+									{/for}
+								</tbody>
+							</table>
+						</div>
+					</div>
+					<div class="tab-pane fade" id="summen" role="tabpanel" aria-labelledby="summen-tab">
+						<div class="table-responsive">
+							<table class="table table-bordered">
+								<thead>
+									<tr>
+										<th>Spiel</th> {foreach $players_round as $player}
+										<th>{$player|truncate:7:""}</th> {/foreach}
+										<th>Punkte</th>
+										<th colspan="2">An-/Absagen</th>
+									</tr>
+								</thead>
+								<tbody>
+									{for $i=$aktuellesSpiel to 1 step -1}
+									<tr>
+										<th class="text-right">{$i}</th>{foreach $players_round as $player_id => $player}
+										<td class="text-right">{if !$i@first && $punkteliste.$i.$player_id.spielte}{$punkteliste.$i.$player_id.summe}{/if}</td>{/foreach}
+										<td class="text-right">{if !$i@first}{$punkteliste.$i.spiel}{/if}</td>
+										<td>{$punkteliste.$i.re}</td>
+										<td>{$punkteliste.$i.kontra}</td>
+									</tr>
+									{/for}
+								</tbody>
+							</table>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
 	</div>
 </div>
-
 <!-- reservation -->
 <div class="modal fade" id="reservation" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
 	<div class="modal-dialog modal-dialog-centered" role="document">
@@ -81,6 +117,7 @@
 				</button>
 			</div>
 			<form action="index.php?page=round&reservation=1" class="" method="post">
+				{$token}
 				<div class="modal-body">
 					<div class="form-group row">
 						<label for="player" class="col-sm-3 col-form-label">Spieler:</label>
@@ -131,7 +168,6 @@
 		</div>
 	</div>
 </div>
-
 <!-- announcement -->
 <div class="modal fade" id="announcement" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
 	<div class="modal-dialog modal-dialog-centered" role="document">
@@ -151,6 +187,7 @@
 			<div class="tab-content" id="tabContent">
 				<div class="tab-pane fade show active" id="ansage" role="tabpanel" aria-labelledby="ansage-tab">
 					<form action="index.php?page=round&ansage=1" class="" method="post">
+						{$token}
 						<div class="modal-body">
 							<div class="form-group row">
 								<label for="player" class="col-sm-3 col-form-label">Spieler:</label>
@@ -179,6 +216,7 @@
 				</div>
 				<div class="tab-pane fade" id="absage" role="tabpanel" aria-labelledby="absage-tab">
 					<form action="index.php?page=round&absage=1" class="" method="post">
+						{$token}
 						<div class="modal-body">
 							<div class="form-group row">
 								<label for="player" class="col-sm-3 col-form-label">Spieler:</label>
@@ -210,7 +248,6 @@
 									</select>
 								</div>
 							</div>
-
 						</div>
 						<div class="modal-footer">
 							<button type="button" class="btn btn-secondary" data-dismiss="modal">Abbrechen</button>
@@ -222,7 +259,6 @@
 		</div>
 	</div>
 </div>
-
 <!-- extraPoint -->
 <div class="modal fade" id="extraPoint" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
 	<div class="modal-dialog modal-dialog-centered" role="document">
@@ -234,6 +270,7 @@
 				</button>
 			</div>
 			<form action="index.php?page=round&extraPoint=1" class="" method="post">
+				{$token}
 				<div class="modal-body">
 					<div class="form-group row">
 						<label for="player" class="col-sm-3 col-form-label">Spieler:</label>
@@ -285,7 +322,6 @@
 		</div>
 	</div>
 </div>
-
 <!-- gameCalculate -->
 <div class="modal fade" id="gameCalculate" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
 	<div class="modal-dialog modal-dialog-centered" role="document">
@@ -297,6 +333,7 @@
 				</button>
 			</div>
 			<form action="index.php?page=round&gameCalculate=1" class="" method="post">
+				{$token}
 				<div class="modal-body">
 					{if $gameType != 'solo'}
 					<div class="form-group row">
@@ -330,6 +367,64 @@
 				<div class="modal-footer">
 					<button type="button" class="btn btn-secondary" data-dismiss="modal">Abbrechen</button>
 					<button type="submit" class="btn btn-primary">Speichern</button>
+				</div>
+			</form>
+			<script>
+				$( '#reAugen').change(function() {
+					var reAugen = $('#reAugen').val();
+					$('#kontraAugen').val(240-reAugen);
+				});
+				$( '#kontraAugen').change(function() {
+					var kontraAugen = $('#kontraAugen').val();
+					$('#reAugen').val(240-kontraAugen);
+				});
+			</script>
+		</div>
+	</div>
+</div>
+<!-- endOfRound -->
+<div class="modal fade" id="endOfRound" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLongTitle">Runde beenden</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<form action="index.php?page=round&endOfRound=1" class="" method="post">
+				{$token}
+				<div class="modal-body">
+					<p>Soll die Doppelkopfrunde wirklich beendet werden? Das notieren von weiteren Spielergebnissen zu dieser Runde ist dann nicht mehr möglich.</p>
+					<input type="hidden" name="endOfRound" value="1">
+					<div class="table-responsive">
+						<table class="table table-bordered">
+							<thead>
+								<tr>
+									<th>Platz</th>
+									<th>Name</th>
+									<th>Punkte</th>
+									<th>Siege</th>
+									<!-- <th>Summe</th> -->
+								</tr>
+							</thead>
+							<tbody>
+								{foreach $sieger as $player_id => $daten}
+								<tr>
+									<th class="text-right">{$daten@index +1}</th>
+									<td>{$daten.name}</td>
+									<td class="text-right">{$daten.plusminus}</td>
+									<td class="text-right">{$daten.siege}</td>
+									<!-- <td class="text-right">{$daten.summe}</td> -->
+								</tr>
+								{/foreach}
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="submit" class="btn btn-danger">Runde beenden</button>
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Abbrechen</button>
 				</div>
 			</form>
 			<script>

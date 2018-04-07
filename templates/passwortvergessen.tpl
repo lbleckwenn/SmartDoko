@@ -13,7 +13,7 @@
 		<p>{$error}</p>
 	</div>
 	{/if}
-	<form action="index.php?page=passwortvergessen&send=1" class="mt-5" method="post">
+	<form action="index.php?page=passwortvergessen&send=1" class="mt-5" method="post">{$token}
 		Gib hier deine E-Mail-Adresse ein, um ein neues Passwort anzufordern.<br>
 		<br><div
 		<div class="form-group row">
