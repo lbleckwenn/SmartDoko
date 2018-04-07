@@ -20,7 +20,7 @@
 				<label for="inputOrt">Ort der Runde:</label> <input type="text" class="form-control" id="inputOrt" name="ort" required>
 			</div>
 			<div class="form-group">
-				<label for="inputPlayer">Anzahl Spieler:</label> <input type="number" class="form-control" id="inputPlayer" value="4"  maxlength="1" name="ort" required>
+				<label for="inputPlayer">Anzahl Spieler:</label> <input type="number" class="form-control" id="inputPlayer" value="4"  maxlength="1" name="anzahl" required>
 			</div>
 			<button type="submit" class="btn btn-primary float-right">Neue Runde anlegen</button>
 		</form>
