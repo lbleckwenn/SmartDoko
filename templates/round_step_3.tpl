@@ -44,12 +44,12 @@
 			<div class="col-sm-12">
 				<h3 class="mt-3">Punktestand</h3>
 				<ul class="nav nav-tabs" id="punkte" role="tablist">
-					<li class="nav-item"><a class="nav-link active" id="plusminus-tab" data-toggle="tab" href="#plusminus" role="tab" aria-controls="plusminus"
-						aria-selected="true">Plus/Minus</a></li>
-					<li class="nav-item"><a class="nav-link" id="summen-tab" data-toggle="tab" href="#summen" role="tab" aria-controls="summen" aria-selected="false">Summen</a></li>
+					<li class="nav-item"><a class="nav-link" id="plusminus-tab" data-toggle="tab" href="#plusminus" role="tab" aria-controls="plusminus"
+						aria-selected="false">Plus/Minus</a></li>
+					<li class="nav-item"><a class="nav-link active" id="summen-tab" data-toggle="tab" href="#summen" role="tab" aria-controls="summen" aria-selected="true">Summen</a></li>
 				</ul>
 				<div class="tab-content" id="myTabContent">
-					<div class="tab-pane fade show active" id="plusminus" role="tabpanel" aria-labelledby="plusminus-tab">
+					<div class="tab-pane fade" id="plusminus" role="tabpanel" aria-labelledby="plusminus-tab">
 						<div class="table-responsive">
 							<table class="table table-bordered">
 								<thead>
@@ -76,7 +76,7 @@
 							</table>
 						</div>
 					</div>
-					<div class="tab-pane fade" id="summen" role="tabpanel" aria-labelledby="summen-tab">
+					<div class="tab-pane fade show active" id="summen" role="tabpanel" aria-labelledby="summen-tab">
 						<div class="table-responsive">
 							<table class="table table-bordered">
 								<thead>
