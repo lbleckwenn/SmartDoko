@@ -572,7 +572,7 @@ if ($statement->rowCount () == 0) {
 					}
 				}
 				// Gefangene Füchse und Karlchen überprüfen
-				$statement = $pdo->prepare ( "SELECT * FROM player_data WHERE game_id = ? AND fuchs_gefangen > 0 OR karlchen_gefangen > 0" );
+				$statement = $pdo->prepare ( "SELECT * FROM player_data WHERE game_id = ? AND (fuchs_gefangen > 0 OR karlchen_gefangen > 0)" );
 				$statement->execute ( array (
 						$game_id
 				) );
@@ -788,7 +788,7 @@ switch ($step) {
 		}
 
 		$statement1 = $pdo->prepare ( "SELECT * FROM round_player WHERE round_id = ?" );
-		$statement2 = $pdo->prepare ( "SELECT sum(punkte) FROM `game_data` WHERE round_id = ? AND player_id = ?" );
+		$statement2 = $pdo->prepare ( "SELECT sum(punkte) FROM `game_data` WHERE round_id = ? AND player_id = ? AND punkte > 0" );
 		foreach ( $runden as $runde_id => $runde ) {
 			$statement1->execute ( array (
 					$runde_id
