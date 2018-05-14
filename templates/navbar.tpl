@@ -13,6 +13,7 @@
 					<li class="nav-item {if $page=="round"}active{/if}"><a class="nav-link" href="index.php?page=round">Doppelkopfrunde</a></li>
 					<li class="nav-item {if $page=="player"}active{/if}"><a class="nav-link" href="index.php?page=player">Mitspieler</a></li>
 					<li class="nav-item {if $page=="statistics"}active{/if}"><a class="nav-link" href="index.php?page=statistics">Statistiken</a></li>
+					<li class="nav-item {if $page=="user"}active{/if}"><a class="nav-link" href="index.php?page=user">Benutzer</a></li>
 				</ul>
 				<ul class="navbar-nav my-2 my-lg-0">
 					<li class="nav-item dropdown {if $page=="settings"}active{/if}"><a class="nav-link dropdown-toggle" href="index.php?page=config" id="navbarDropdown" role="button" data-toggle="dropdown"

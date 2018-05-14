@@ -40,7 +40,8 @@ $pages = array (
 		'overview',
 		'settings',
 		'player',
-		'round'
+		'round',
+		'user' 
 );
 if (! in_array ( $page, $pages )) {
 	$page = 'splashscreen';
