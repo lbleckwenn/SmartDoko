@@ -37,7 +37,7 @@ $pages = array (
 		'passwortvergessen',
 		'passwortzuruecksetzen',
 		'logout',
-		'overview',
+		'statistics',
 		'settings',
 		'player',
 		'round',
