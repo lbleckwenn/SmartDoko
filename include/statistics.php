@@ -22,17 +22,44 @@ if (! $user) {
 	$error = 'Bitte zuerst <a href="login.php">einloggen</a>';
 	return;
 }
-
-$statement = $pdo->prepare ( "SELECT * FROM players " );
+/*
+ * ********************************************************************************
+ * Spieler laden
+ */
+$statement = $pdo->prepare ( "SELECT * FROM players" );
 $result = $statement->execute ();
 $players = array ();
 while ( $row = $statement->fetch () ) {
 	$players [$row ['id']] = $row ['vorname'] . (($mitNachnamen) ? ' ' . $row ['nachname'] : '');
 }
 $smarty->assign ( 'players', $players );
+
+/*
+ * ********************************************************************************
+ * Durchschnittliche Punkte
+ * SELECT rounds.* FROM rounds, round_player WHERE round_player.player_id = 1 AND rounds.id = round_player.round_id
+ */
+
+if (1) {
+	// Nur Spiele mit eigener Beteiligung
+	$statement = $pdo->prepare ( "SELECT rounds.* FROM rounds, round_player WHERE round_player.player_id = ? AND rounds.id = round_player.round_id" );
+	$result = $statement->execute ( array (
+			getUserPlayerID () 
+	) );
+} else {
+	$statement = $pdo->prepare ( "SELECT * FROM rounds" );
+	$result = $statement->execute ();
+}
+
+/*
+ * ********************************************************************************
+ * Historie über alle Doppelkopfrunden
+ *
+ */
+
 $statement = $pdo->prepare ( "SELECT * FROM rounds WHERE user_id = ? ORDER BY date DESC" );
 $statement->execute ( array (
-		$user ['id']
+		$user ['id'] 
 ) );
 $runden = array ();
 while ( $row = $statement->fetch () ) {
@@ -40,7 +67,7 @@ while ( $row = $statement->fetch () ) {
 			'date' => $row ['date'],
 			'location' => $row ['location'],
 			'is_running' => $row ['is_running'],
-			'player' => array ()
+			'player' => array () 
 	);
 }
 
@@ -48,13 +75,13 @@ $statement1 = $pdo->prepare ( "SELECT * FROM round_player WHERE round_id = ?" );
 $statement2 = $pdo->prepare ( "SELECT sum(punkte) FROM `game_data` WHERE round_id = ? AND player_id = ? AND punkte > 0" );
 foreach ( $runden as $runde_id => $runde ) {
 	$statement1->execute ( array (
-			$runde_id
+			$runde_id 
 	) );
 	$players = $statement1->fetchAll ( PDO::FETCH_ASSOC );
 	foreach ( $players as $player ) {
 		$statement2->execute ( array (
 				$runde_id,
-				$player ['player_id']
+				$player ['player_id'] 
 		) );
 		$row = $statement2->fetch ();
 		$runden [$runde_id] ['player'] [$player ['player_id']] = $row ['sum(punkte)'];
