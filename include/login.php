@@ -29,7 +29,7 @@ if (isset ( $_POST ['email'] ) && isset ( $_POST ['passwort'] )) {
 		
 		$statement = $pdo->prepare ( "SELECT * FROM users WHERE email = :email" );
 		$result = $statement->execute ( array (
-				'email' => $email
+				'email' => $email 
 		) );
 		$user = $statement->fetch ();
 		
@@ -46,13 +46,13 @@ if (isset ( $_POST ['email'] ) && isset ( $_POST ['passwort'] )) {
 				$insert->execute ( array (
 						'user_id' => $user ['id'],
 						'identifier' => $identifier,
-						'securitytoken' => sha1 ( $securitytoken )
+						'securitytoken' => sha1 ( $securitytoken ) 
 				) );
 				setcookie ( "identifier", $identifier, time () + (3600 * 24 * 365) ); // Valid for 1 year
 				setcookie ( "securitytoken", $securitytoken, time () + (3600 * 24 * 365) ); // Valid for 1 year
 			}
 			
-			header ( "location: index.php?page=overview" );
+			header ( "location: index.php?page=statistics" );
 			exit ();
 		} else {
 			$error = "E-Mail oder Passwort war ungültig<br><br>";
