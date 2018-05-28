@@ -757,7 +757,7 @@ if ($statement->rowCount () == 0) {
 					$statement->execute ( array (
 							$round_id 
 					) );
-					header ( "location: index.php?page=overview" );
+					header ( "location: index.php?page=statistics" );
 					exit ();
 				}
 			} else {
