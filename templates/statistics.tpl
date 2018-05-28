@@ -20,7 +20,7 @@
 	</ul>
 	<div class="tab-content" id="myTabContent">
 		<div class="tab-pane fade show active" id="statistic" role="tabpanel" aria-labelledby="home-tab">
-			<h3>Statistiken aus xxx Spielen</h3>
+			<h3>Statistiken aus {$gamesOverall} Spielen</h3>
 			<div class="table-responsive">
 				<table class="table table-bordered table-sm">
 					<thead>
@@ -32,15 +32,64 @@
 						</tr>
 					</thead>
 					<tbody>
-						{foreach $runden as $runde}
+						{foreach $averagePoints as $playerData}
 						<tr>
-							<td>{$runde.location}</td>
-							<td>{$runde.date}</td>
-							<td>{foreach $runde.player as $player_id => $punkte}{$players.$player_id}<span class="float-right">{$punkte}&nbsp;</span><br>{/foreach}
-							</td>
-							<td>{if $runde.is_running}läuft{else}beendet{/if}</td>
+							<td>{$playerData.playerName}</td>
+							<td>{$playerData.games}</td>
+							<td>{$playerData.points}</td>
+							<td>{$playerData.average|number_format:1:",":"."}</td>
 						</tr>
 						{/foreach}
+					</tbody>
+				</table>
+			</div>
+			<h3>Häufigkeit der angesagten Spiele</h3>
+			<div class="table-responsive">
+				<table class="table table-bordered table-sm">
+					<thead>
+						<tr>
+							<th>Spielart</th>
+							<th>Alle Spieler</th> {foreach $players as $player}
+							<th>{$player}</th>{/foreach}
+						</tr>
+					</thead>
+					<tbody></tbody>
+				</table>
+			</div>
+			<h3>Erspielte Extrapunkte</h3>
+			<div class="table-responsive">
+				<table class="table table-bordered table-sm">
+					<thead>
+						<tr>
+							<th width="30%">Extrapunkt</th> {foreach $players as $player}
+							<th width="14%">{$player}</th>{/foreach}
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<th>Fuchs gefangen</th>{foreach $players as $playerId => $player}
+							<td class="text-right">{if isset($extraPoints.$playerId.fuchs_gefangen)}{$extraPoints.$playerId.fuchs_gefangen}{else}-{/if}</td>{/foreach}
+						</tr>
+						<tr>
+							<th>Doppelkopf</th>{foreach $players as $playerId => $player}
+							<td class="text-right">{if isset($extraPoints.$playerId.doppelkopf)}{$extraPoints.$playerId.doppelkopf}{else}-{/if}</td>{/foreach}
+						</tr>
+						<tr>
+							<th>Karlchen</th>{foreach $players as $playerId => $player}
+							<td class="text-right">{if isset($extraPoints.$playerId.karlchen_gewonnen)}{$extraPoints.$playerId.karlchen_gewonnen}{else}-{/if}</td>{/foreach}
+						</tr>
+						<tr>
+							<th>Karlchen gefangen</th>{foreach $players as $playerId => $player}
+							<td class="text-right">{if isset($extraPoints.$playerId.karlchen_gefangen)}{$extraPoints.$playerId.karlchen_gefangen}{else}-{/if}</td>{/foreach}
+						</tr><tr><td></td></tr>
+						<tr>
+							<th>Fuchs verloren</th>{foreach $players as $playerId => $player}
+							<td class="text-right">{if isset($extraPoints.$playerId.fuchs_verloren)}{$extraPoints.$playerId.fuchs_verloren}{else}-{/if}</td>{/foreach}
+						</tr>
+						<tr>
+							<th>Karlchen verloren</th>{foreach $players as $playerId => $player}
+							<td class="text-right">{if isset($extraPoints.$playerId.karlchen_verloren)}{$extraPoints.$playerId.karlchen_verloren}{else}-{/if}</td>{/foreach}
+						</tr>
 					</tbody>
 				</table>
 			</div>
@@ -65,7 +114,7 @@
 						<tr>
 							<td>{$runde.location}</td>
 							<td>{$runde.date}</td>
-							<td>{foreach $runde.player as $player_id => $punkte}{$players.$player_id}<span class="float-right">{$punkte}&nbsp;</span><br>{/foreach}
+							<td>{foreach $runde.player as $playerId => $punkte}{$players.$playerId}<span class="float-right">{$punkte}&nbsp;</span><br>{/foreach}
 							</td>
 							<td>{if $runde.is_running}läuft{else}beendet{/if}</td>
 						</tr>

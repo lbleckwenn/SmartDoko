@@ -22,12 +22,17 @@ if (! $user) {
 	$error = 'Bitte zuerst <a href="login.php">einloggen</a>';
 	return;
 }
+
+$summenPunkteSystem = true;
+
 /*
  * ********************************************************************************
  * Spieler laden
  */
-$statement = $pdo->prepare ( "SELECT * FROM players" );
-$result = $statement->execute ();
+$statement = $pdo->prepare ( "SELECT players.* FROM players, user_player WHERE user_player.player_id = players.id AND user_player.user_id = ?" );
+$result = $statement->execute ( array (
+		$_SESSION ['userid'] 
+) );
 $players = array ();
 while ( $row = $statement->fetch () ) {
 	$players [$row ['id']] = $row ['vorname'] . (($mitNachnamen) ? ' ' . $row ['nachname'] : '');
@@ -39,18 +44,87 @@ $smarty->assign ( 'players', $players );
  * Durchschnittliche Punkte
  * SELECT rounds.* FROM rounds, round_player WHERE round_player.player_id = 1 AND rounds.id = round_player.round_id
  */
-
-if (1) {
+if (0) {
 	// Nur Spiele mit eigener Beteiligung
-	$statement = $pdo->prepare ( "SELECT rounds.* FROM rounds, round_player WHERE round_player.player_id = ? AND rounds.id = round_player.round_id" );
+	$statement = $pdo->prepare ( "" );
 	$result = $statement->execute ( array (
 			getUserPlayerID () 
 	) );
 } else {
-	$statement = $pdo->prepare ( "SELECT * FROM rounds" );
-	$result = $statement->execute ();
+	$statement = $pdo->prepare ( "SELECT game_data.* FROM game_data, players, user_player WHERE user_player.player_id = game_data.player_id AND user_player.user_id = ? AND game_data.player_id = players.id" );
+	$result = $statement->execute ( array (
+			$_SESSION ['userid'] 
+	) );
 }
+$averagePoints = $gamesOverall = array ();
+if ($statement->rowCount () > 0) {
+	while ( $row = $statement->fetch () ) {
+		$gamesOverall [$row ['game_id']] = true;
+		$playerId = $row ['player_id'];
+		$playerName = $players [$playerId];
+		$gamePoints = $row ['punkte'];
+		if ($summenPunkteSystem && $gamePoints < 0) {
+			$gamePoints = 0;
+		}
+		if (isset ( $averagePoints [$playerId] )) {
+			$averagePoints [$playerId] ['games'] ++;
+			$averagePoints [$playerId] ['points'] += $gamePoints;
+			$averagePoints [$playerId] ['average'] = $averagePoints [$playerId] ['points'] / $averagePoints [$playerId] ['games'];
+		} else {
+			$averagePoints [$playerId] = array (
+					'games' => 1,
+					'playerName' => $playerName,
+					'points' => $gamePoints,
+					'average' => $gamePoints 
+			);
+			$sortName [] = $playerName;
+		}
+	}
+	array_multisort ( $sortName, SORT_ASC, $averagePoints );
+}
+$smarty->assign ( 'averagePoints', $averagePoints );
+$smarty->assign ( 'gamesOverall', sizeof ( $gamesOverall ) );
 
+/*
+ * ********************************************************************************
+ * Häufigkeit der angesagten Spiele
+ *
+ */
+
+/*
+ * ********************************************************************************
+ * Erspielte Sonderpunkte
+ *
+ */
+
+$extraPoints = array ();
+$statement = $pdo->prepare ( "SELECT player_data.* FROM player_data, user_player WHERE (fuchs_gefangen OR karlchen_gewonnen OR karlchen_gefangen OR doppelkopf) AND user_player.player_id = player_data.player_id AND user_player.user_id = ?" );
+$result = $statement->execute ( array (
+		$_SESSION ['userid'] 
+) );
+if ($statement->rowCount () > 0) {
+	error_reporting ( E_ALL & ~ E_NOTICE );
+	while ( $row = $statement->fetch () ) {
+		if ($row ['fuchs_gefangen']) {
+			$extraPoints [$row ['player_id']] ['fuchs_gefangen'] ++;
+			$extraPoints [$row ['fuchs_gefangen']] ['fuchs_verloren'] ++;
+		}
+		if ($row ['karlchen_gewonnen']) {
+			$extraPoints [$row ['player_id']] ['karlchen_gewonnen'] ++;
+		}
+		if ($row ['karlchen_gefangen']) {
+			$extraPoints [$row ['player_id']] ['karlchen_gefangen'] ++;
+			$extraPoints [$row ['karlchen_gefangen']] ['karlchen_verloren'] ++;
+		}
+		if ($row ['doppelkopf']) {
+			$extraPoints [$row ['player_id']] ['doppelkopf'] ++;
+		}
+		$nameSort[] = $players [$row ['player_id']];
+	}
+	error_reporting ( E_ALL );
+	
+}
+$smarty->assign ( 'extraPoints', $extraPoints );
 /*
  * ********************************************************************************
  * Historie über alle Doppelkopfrunden
