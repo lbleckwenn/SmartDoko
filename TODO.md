@@ -12,8 +12,10 @@
 * Hochzeit
 * Stille Hochzeit
 * Armut
-* Trumpfsolo
-* Kreuzsolo
+* Farbsolo Kreuz
+* Farbsolo Pik
+* Farbsolo Herz
+* Farbsolo Karo
 * Damensolo
 * Bubensolo
 * Fleischlos
@@ -23,8 +25,10 @@
 * Hochzeit
 * Stille Hochzeit
 * Armut
-* Trumpfsolo
-* Kreuzsolo
+* Farbsolo Kreuz
+* Farbsolo Pik
+* Farbsolo Herz
+* Farbsolo Karo
 * Damensolo
 * Bubensolo
 * Fleischlos

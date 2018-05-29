@@ -48,12 +48,22 @@
 				<table class="table table-bordered table-sm">
 					<thead>
 						<tr>
-							<th>Spielart</th>
-							<th>Alle Spieler</th> {foreach $players as $player}
-							<th>{$player}</th>{/foreach}
+							<th>Spieler</th> {foreach $gameTypes as $gameTypeID => $gameTypeData}
+							<th>{$gameTypeID}</th>{/foreach}
 						</tr>
 					</thead>
-					<tbody></tbody>
+					<tbody>
+						<tr>
+							<th>Gesamt</th>{foreach $gameTypes as $gameTypeID => $gameTypeData}
+							<td class="text-right">{$gameTypeData.overall.percent}% ({$gameTypeData.overall.absolut})</td>{/foreach}
+						</tr>
+						{foreach $players as $playerID => $player}
+						<tr>
+							<th>{$player}</th>{foreach $gameTypes as $gameTypeID => $gameTypeData}
+							<td class="text-right">{if $gameTypeData.$playerID.absolut}{$gameTypeData.$playerID.percent}% ({$gameTypeData.$playerID.absolut}){else}-{/if}</td>{/foreach}
+						</tr>
+						{/foreach}
+					</tbody>
 				</table>
 			</div>
 			<h3>Erspielte Extrapunkte</h3>
@@ -61,8 +71,8 @@
 				<table class="table table-bordered table-sm">
 					<thead>
 						<tr>
-							<th width="30%">Extrapunkt</th> {foreach $players as $player}
-							<th width="14%">{$player}</th>{/foreach}
+							<th>Extrapunkt</th> {foreach $players as $player}
+							<th>{$player}</th>{/foreach}
 						</tr>
 					</thead>
 					<tbody>
@@ -81,7 +91,10 @@
 						<tr>
 							<th>Karlchen gefangen</th>{foreach $players as $playerId => $player}
 							<td class="text-right">{if isset($extraPoints.$playerId.karlchen_gefangen)}{$extraPoints.$playerId.karlchen_gefangen}{else}-{/if}</td>{/foreach}
-						</tr><tr><td></td></tr>
+						</tr>
+						<tr>
+							<td></td>
+						</tr>
 						<tr>
 							<th>Fuchs verloren</th>{foreach $players as $playerId => $player}
 							<td class="text-right">{if isset($extraPoints.$playerId.fuchs_verloren)}{$extraPoints.$playerId.fuchs_verloren}{else}-{/if}</td>{/foreach}

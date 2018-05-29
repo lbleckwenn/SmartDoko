@@ -29,7 +29,7 @@ $summenPunkteSystem = true;
  * ********************************************************************************
  * Spieler laden
  */
-$statement = $pdo->prepare ( "SELECT players.* FROM players, user_player WHERE user_player.player_id = players.id AND user_player.user_id = ?" );
+$statement = $pdo->prepare ( "SELECT players.* FROM players, user_player WHERE user_player.player_id = players.id AND user_player.user_id = ? ORDER BY players.vorname ASC" );
 $result = $statement->execute ( array (
 		$_SESSION ['userid'] 
 ) );
@@ -90,6 +90,65 @@ $smarty->assign ( 'gamesOverall', sizeof ( $gamesOverall ) );
  * Häufigkeit der angesagten Spiele
  *
  */
+$statement = $pdo->prepare ( "SELECT games.* FROM games, game_data, user_player WHERE user_player.user_id = 1 AND user_player.player_id = game_data.player_id AND game_data.game_id = games.id ORDER BY games.id ASC" );
+$result = $statement->execute ( array (
+		$_SESSION ['userid'] 
+) );
+$gameTypes = $playerSum = array ();
+if ($statement->rowCount () > 0) {
+	$games = $statement->fetchall ( PDO::FETCH_UNIQUE | PDO::FETCH_ASSOC );
+	foreach ( $games as $gameID => $game ) {
+		$gameType = $game ['game_typ'];
+		if (! isset ( $gameTypes [$gameType] )) {
+			$gameTypes [$gameType] = array (
+					'overall' => array (
+							'percent' => 0,
+							'absolut' => 0 
+					) 
+			);
+			foreach ( $players as $playerID => $player ) {
+				if (! isset ( $playerSum [$playerID] )) {
+					$playerSum [$playerID] = 0;
+				}
+				$gameTypes [$gameType] += array (
+						$playerID => array (
+								'percent' => 0,
+								'absolut' => 0 
+						) 
+				);
+			}
+		}
+		$gameTypes [$gameType] ['overall'] ['absolut'] ++;
+		$gameTypes [$gameType] ['overall'] ['percent'] = round ( $gameTypes [$gameType] ['overall'] ['absolut'] / sizeof ( $games ) * 100 );
+		if ($gameType > 1) {
+			$statement = $pdo->prepare ( "SELECT * FROM player_data WHERE game_id = ? AND game_typ = ?" );
+			$result = $statement->execute ( array (
+					$gameID,
+					$gameType 
+			) );
+			$playerID = $statement->fetch () ['player_id'];
+			$gameTypes [$gameType] [$playerID] ['absolut'] ++;
+			$playerSum [$playerID] ++;
+		} else {
+			$statement = $pdo->prepare ( "SELECT * FROM game_data WHERE game_id = ?" );
+			$result = $statement->execute ( array (
+					$gameID 
+			) );
+			while ( $playerID = $statement->fetch () ['player_id'] ) {
+				$gameTypes [$gameType] [$playerID] ['absolut'] ++;
+				$playerSum [$playerID] ++;
+			}
+		}
+		foreach ( $gameTypes as $gameType => $gameTypeData ) {
+			foreach ( $players as $playerID => $player ) {
+				if ($playerSum [$playerID] > 0) {
+					$gameTypes [$gameType] [$playerID] ['percent'] = round ( $gameTypes [$gameType] [$playerID] ['absolut'] / $playerSum [$playerID] * 100 );
+				}
+			}
+		}
+	}
+}
+$smarty->assign ( 'gameTypes', $gameTypes );
 
 /*
  * ********************************************************************************
@@ -119,10 +178,9 @@ if ($statement->rowCount () > 0) {
 		if ($row ['doppelkopf']) {
 			$extraPoints [$row ['player_id']] ['doppelkopf'] ++;
 		}
-		$nameSort[] = $players [$row ['player_id']];
+		$nameSort [] = $players [$row ['player_id']];
 	}
 	error_reporting ( E_ALL );
-	
 }
 $smarty->assign ( 'extraPoints', $extraPoints );
 /*
