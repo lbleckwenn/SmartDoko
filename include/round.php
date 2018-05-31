@@ -185,13 +185,12 @@ if ($statement->rowCount () == 0) {
 				// *****************************************************************************
 				
 				if (! isset ( $_GET ['delete'] )) {
-					$statement = $pdo->prepare ( "SELECT * FROM player_data WHERE round_id = ? AND game_id = ? AND (vorbehalt != '' OR ansage != '')" );
+					$statement = $pdo->prepare ( "SELECT * FROM player_data WHERE AND game_id = ? AND game_typ > 1" );
 					$statement->execute ( array (
-							$round_id,
 							$game_id 
 					) );
 					if ($statement->rowCount () > 0) {
-						$error = "Es kann nur ein Vorbehalt pro Spiel ausgewählt werden. Der Vorbehalt muss vor einer Ansage angemeldet werden.";
+						$error = "Es kann nur ein Vorbehalt pro Spiel ausgewählt werden.";
 					} else {
 						$spieler = GetParam ( 'spieler', 'P', null );
 						$vorbehalt = GetParam ( 'vorbehalt', 'P', null );
@@ -199,26 +198,21 @@ if ($statement->rowCount () == 0) {
 						if ($spieler == null || $vorbehalt == null) {
 							$error = "Es wurden keine Daten übermittelt.";
 						} else {
-							if ($vorbehalt != 'solo') {
+							if ($vorbehalt == 2 || $vorbehalt == 4) {
 								if ($spieler == $partner) {
 									$error = "Bei einer Hochzeit oder Trumpfabgabe müssen zwei verschiedene Spieler ausgewählt werden.";
 								} else {
-									$statement = $pdo->prepare ( "INSERT INTO player_data (round_id, game_id, player_id, vorbehalt) VALUES (?, ?, ?, ?)" );
+									$statement = $pdo->prepare ( "INSERT INTO player_data (round_id, game_id, player_id, game_typ, mate_id) VALUES (?, ?, ?, ?, ?)" );
 									$statement->execute ( array (
 											$round_id,
 											$game_id,
 											$spieler,
-											$vorbehalt 
-									) );
-									$statement->execute ( array (
-											$round_id,
-											$game_id,
-											$partner,
-											$vorbehalt 
+											$vorbehalt,
+											$partner 
 									) );
 								}
 							} else {
-								$statement = $pdo->prepare ( "INSERT INTO player_data (round_id, game_id, player_id, vorbehalt) VALUES (?, ?, ?, ?)" );
+								$statement = $pdo->prepare ( "INSERT INTO player_data (round_id, game_id, player_id, game_typ) VALUES (?, ?, ?, ?)" );
 								$statement->execute ( array (
 										$round_id,
 										$game_id,
@@ -243,7 +237,7 @@ if ($statement->rowCount () == 0) {
 					}
 				} else {
 					// Spielerdaten löschen
-					$statement = $pdo->prepare ( "DELETE FROM player_data WHERE round_id = ? AND game_id = ? AND vorbehalt != ''" );
+					$statement = $pdo->prepare ( "DELETE FROM player_data WHERE round_id = ? AND game_id = ? AND game_typ != ''" );
 					$statement->execute ( array (
 							$round_id,
 							$game_id 
@@ -520,13 +514,13 @@ if ($statement->rowCount () == 0) {
 					$error = "Die Augenzahl der Parteien muss eingegeben werden.";
 				}
 				// Spieltyp ermitteln
-				$statement = $pdo->prepare ( "SELECT * FROM player_data WHERE round_id = ? AND game_id = ? AND vorbehalt = 'solo'" );
+				// $statement = $pdo->prepare ( "SELECT * FROM player_data WHERE round_id = ? AND game_id = ? AND vorbehalt = 'solo'" );
+				$statement = $pdo->prepare ( "SELECT game_types.isSolo FROM game_types, player_data WHERE game_types.id = player_data.game_typ AND player_data.game_id = ?" );
 				$statement->execute ( array (
-						$round_id,
 						$game_id 
 				) );
 				// Solo wenn in DB gespeichert oder bei Abrechnung angegeben.
-				if ($statement->rowCount () > 0 || $reSpieler2 == 'solo') {
+				if ($statement->fetch () ['isSolo'] || $reSpieler2 == 'solo') { // $statement->rowCount () > 0
 					$gameType = 'solo';
 				} else {
 					$gameType = 'normal';
@@ -658,7 +652,7 @@ if ($statement->rowCount () == 0) {
 					// Wenn Abrechnung genemigt wurde Daten speichern und nächstes Spiel
 					if ($save) {
 						// Spielpunkte speichern
-						$statement = $pdo->prepare ( "UPDATE games SET spiel_typ = ?, gewinner = ?, re_augen = ?, spiel_punkte = ? WHERE id = ?" );
+						$statement = $pdo->prepare ( "UPDATE games SET game_typ = ?, gewinner = ?, re_augen = ?, spiel_punkte = ? WHERE id = ?" );
 						$statement->execute ( array (
 								$gameType,
 								$gewinner,
@@ -836,6 +830,22 @@ switch ($step) {
 		$smarty->assign ( 'players_round', $players_round );
 		
 		// *****************************************************************************
+		// *** Spieltypen übergeben
+		// *****************************************************************************
+		$statement = $pdo->prepare ( "SELECT * FROM `game_types` ORDER BY `game_types`.`id` ASC" );
+		$result = $statement->execute ( array () );
+		$gameTypes = array ();
+		while ( $row = $statement->fetch () ) {
+			$id = $row ['id'];
+			if ($row ['id'] == 1) {
+				$gameTypes [''] = 'bitte auswählen';
+			} else {
+				$gameTypes [$id] = $row ['text'];
+			}
+		}
+		$smarty->assign ( 'gameTypes', $gameTypes );
+		
+		// *****************************************************************************
 		// *** Spieler des Spiels ermitteln
 		// *****************************************************************************
 		$statement = $pdo->prepare ( "SELECT players.*, game_data.partei FROM game_data, players WHERE game_data.round_id = ? AND game_data.game_id = ? AND game_data.player_id = players.id" );
@@ -890,22 +900,22 @@ switch ($step) {
 				}
 			}
 			$punkteliste [$i] ['spiel'] = abs ( $punkteSpiel );
-			$statement2 = $pdo->prepare ( "SELECT player_data.* FROM player_data, games WHERE games.round_id = ? AND games.game_number = ? AND games.id = player_data.game_id AND player_data.vorbehalt != ''" );
+			$statement2 = $pdo->prepare ( "SELECT player_data.* FROM player_data, games WHERE games.round_id = ? AND games.game_number = ? AND games.id = player_data.game_id AND player_data.game_typ != ''" );
 			$statement2->execute ( array (
 					$round_id,
 					$i 
 			) );
 			if ($statement2->rowCount () > 0) {
 				$row = $statement2->fetch ();
-				switch ($row ['vorbehalt']) {
-					case 'solo' :
-						$punkteliste [$i] ['re'] = 'S';
-						break;
-					case 'armut' :
+				switch ($row ['game_typ']) {
+					case 4 :
 						$punkteliste [$i] ['re'] = 'T';
 						break;
-					case 'hochzeit' :
+					case 2 :
 						$punkteliste [$i] ['re'] = 'H';
+						break;
+					default :
+						$punkteliste [$i] ['re'] = 'S';
 						break;
 				}
 			}
@@ -972,7 +982,7 @@ switch ($step) {
 		// *****************************************************************************
 		// *** Vorbehalt
 		// *****************************************************************************
-		$statement = $pdo->prepare ( "SELECT * FROM player_data WHERE round_id = ? AND game_id = ? AND vorbehalt != ''" );
+		$statement = $pdo->prepare ( "SELECT * FROM player_data WHERE round_id = ? AND game_id = ? AND game_typ != ''" );
 		$statement->execute ( array (
 				$round_id,
 				$game_id 
@@ -980,18 +990,17 @@ switch ($step) {
 		$vorbehaltText = '';
 		$gameType = 'normal';
 		if ($statement->rowCount () > 0) {
-			while ( $row = $statement->fetch () ) {
-				$vorbehalt = $row ['vorbehalt'];
-				if ($vorbehalt == 'solo') {
-					$vorbehaltText = $players_game [$row ['player_id']] . ' spielt ein Solo.';
-				} else {
-					$vorbehaltText .= $players_game [$row ['player_id']] . ' und ';
-				}
-			}
-			if ($vorbehalt != 'solo') {
-				$vorbehaltText = substr ( $vorbehaltText, 0, - 4 ) . 'spielen eine ' . (($vorbehalt == 'armut') ? 'Trumpfabgabe.' : 'Hochzeit.');
-			} else {
+			$row = $statement->fetch ();
+			$statement = $pdo->prepare ( "SELECT game_types.isSolo FROM game_types, player_data WHERE game_types.id = player_data.game_typ AND player_data.game_id = ?" );
+			$statement->execute ( array (
+					$game_id 
+			) );
+			$isSolo = $statement->fetch () ['isSolo'];
+			if ($isSolo) {
+				$vorbehaltText = $players_game [$row ['player_id']] . ' spielt ein Solo.';
 				$gameType = 'solo';
+			} else {
+				$vorbehaltText .= $players_game [$row ['player_id']] . ' und ' . $players_game [$row ['mate_id']] . ' spielen eine ' . (($row ['game_typ'] == 4) ? 'Trumpfabgabe.' : 'Hochzeit.');
 			}
 		}
 		$smarty->assign ( 'vorbehalt', $vorbehaltText );

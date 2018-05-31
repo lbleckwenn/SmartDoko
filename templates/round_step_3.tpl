@@ -33,8 +33,7 @@
 			<div class="col-sm-12 col-md-5">
 				<h3 class="mt-3">Spieler</h3>
 				<div class="row">
-					{if sizeof($parteien) == 1} {$col="col-12"} {elseif isset($parteien.unklar)} {$col="col-4"} {else} {$col="col-6"} {/if} {foreach $parteien as
-					$name => $spieler_partei}
+					{if sizeof($parteien) == 1} {$col="col-12"} {elseif isset($parteien.unklar)} {$col="col-4"} {else} {$col="col-6"} {/if} {foreach $parteien as $name => $spieler_partei}
 					<div class="{$col}">
 						<strong>{$name|ucfirst}</strong><br> {foreach $spieler_partei as $spieler} {$spieler}{if !$spieler@last}<br>{/if} {/foreach}
 					</div>
@@ -44,8 +43,7 @@
 			<div class="col-sm-12">
 				<h3 class="mt-3">Punktestand</h3>
 				<ul class="nav nav-tabs" id="punkte" role="tablist">
-					<li class="nav-item"><a class="nav-link" id="plusminus-tab" data-toggle="tab" href="#plusminus" role="tab" aria-controls="plusminus"
-						aria-selected="false">Plus/Minus</a></li>
+					<li class="nav-item"><a class="nav-link" id="plusminus-tab" data-toggle="tab" href="#plusminus" role="tab" aria-controls="plusminus" aria-selected="false">Plus/Minus</a></li>
 					<li class="nav-item"><a class="nav-link active" id="summen-tab" data-toggle="tab" href="#summen" role="tab" aria-controls="summen" aria-selected="true">Summen</a></li>
 				</ul>
 				<div class="tab-content" id="myTabContent">
@@ -130,11 +128,7 @@
 					<div class="form-group row">
 						<label for="vorbehalt" class="col-sm-3 col-form-label">Vorbehalt:</label>
 						<div class="col-sm-9">
-							<select class="form-control" id="vorbehalt" name="vorbehalt" required>
-								<option value="">bitte auswählen</option>
-								<option value="solo">Solo</option>
-								<option value="hochzeit">Hochzeit</option>
-								<option value="armut">Trumpfabgabe</option>
+							<select class="form-control" id="vorbehalt" name="vorbehalt" required> {html_options options=$gameTypes}
 							</select>
 						</div>
 					</div>
@@ -155,13 +149,13 @@
 			<script>
 				$( '#vorbehalt').change(function() {
 					var select = $('#vorbehalt').val();
-					if (select != 'solo') {
-						$('#partner').prop('required',true);
-						$('#partner').prop('disabled',false);
-					} else {
+					if (select != '2' && select != '4') {
 						$('#partner').prop('required',false);
 						$('#partner').prop('disabled',true);
 						$('#partner').val('');
+					} else {
+						$('#partner').prop('required',true);
+						$('#partner').prop('disabled',false);
 					}
 				});
 			</script>
