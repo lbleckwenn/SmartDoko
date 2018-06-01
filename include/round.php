@@ -185,15 +185,15 @@ if ($statement->rowCount () == 0) {
 				// *****************************************************************************
 				
 				if (! isset ( $_GET ['delete'] )) {
-					$statement = $pdo->prepare ( "SELECT * FROM player_data WHERE AND game_id = ? AND game_typ > 1" );
+					$vorbehalt = GetParam ( 'vorbehalt', 'P', null );
+					$statement = $pdo->prepare ( "SELECT * FROM player_data WHERE game_id = ? AND (game_typ != '' OR ansage != '')" );
 					$statement->execute ( array (
 							$game_id 
 					) );
-					if ($statement->rowCount () > 0) {
-						$error = "Es kann nur ein Vorbehalt pro Spiel ausgewählt werden.";
+					if ($statement->rowCount () > 0 && $vorbehalt != 3) {
+						$error = "Es kann nur ein Vorbehalt pro Spiel ausgewählt werden. Der Vorbehalt muss vor einer Ansage angemeldet werden (außer bei einer stillen Hochzeit).";
 					} else {
 						$spieler = GetParam ( 'spieler', 'P', null );
-						$vorbehalt = GetParam ( 'vorbehalt', 'P', null );
 						$partner = GetParam ( 'partner', 'P', null );
 						if ($spieler == null || $vorbehalt == null) {
 							$error = "Es wurden keine Daten übermittelt.";
