@@ -8,7 +8,7 @@
  
 //Tragt hier eure Verbindungsdaten zur Datenbank ein
 $db_host = 'localhost';
-$db_name = 'webdoko';
+$db_name = 'smartdoko';
 $db_user = 'root';
 $db_password = '';
 $db_prefix = '';
