@@ -25,11 +25,11 @@
 <script src="./javascript/jquery-3.2.1.min.js"></script>
 <script src="./javascript/popper.min.js"></script>
 <script src="./javascript/bootstrap.min.js"></script>
+<link rel="stylesheet" href="stylesheet/fontawesome/css/fontawesome-all.css">
 <title>SmartDoko</title>
 </head>
 <body>
-	{include file='navbar.tpl'}{assign var="fullPathToTemplate" value="./templates/$page.tpl"} {if file_exists($fullPathToTemplate)} {include
-	file="$page.tpl"} {else}
+	{include file='navbar.tpl'}{assign var="fullPathToTemplate" value="./templates/$page.tpl"} {if file_exists($fullPathToTemplate)} {include file="$page.tpl"} {else}
 	<div class="container">
 		<div class="alert alert-danger" role="alert">
 			<h4 class="alert-heading">Fehler beim Seitenaufruf!</h4>
