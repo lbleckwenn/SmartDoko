@@ -35,6 +35,7 @@ $pages = array (
 		'splashscreen',
 		'register',
 		'login',
+		'account',
 		'passwortvergessen',
 		'passwortzuruecksetzen',
 		'logout',
@@ -48,7 +49,7 @@ if (! in_array ( $page, $pages )) {
 	$page = 'splashscreen';
 }
 if (is_checked_in () && $page == 'splashscreen') {
-	$page = 'overview';
+	$page = 'statistics';
 }
 if ($page != 'splashscreen') {
 	include ("./include/$page.php");
