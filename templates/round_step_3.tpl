@@ -32,19 +32,25 @@
 			</div>
 			<div class="col-sm-12 col-md-5">
 				<h3 class="mt-3">Spieler</h3>
-				<div class="row">
-					{if sizeof($parteien) == 1} {$col="col-12"} {elseif isset($parteien.unklar)} {$col="col-4"} {else} {$col="col-6"} {/if} {foreach $parteien as $name => $spieler_partei}
-					<div class="{$col}">
-						<strong>{$name|ucfirst}</strong><br> {foreach $spieler_partei as $spieler} {$spieler}{if !$spieler@last}<br>{/if} {/foreach}
-					</div>
+				<dl class="row">
+					<dt class="col-sm-3">Geber:</dt>
+					<dd class="col-sm-9">{$geber}</dd>
+					{if sizeof($aussetzer) >0}
+					<dt class="col-sm-3">Aussetzer:</dt>
+					<dd class="col-sm-9">{foreach $aussetzer as $spieltNicht}{$spieltNicht}{if !$spieltNicht@last}, {/if}{/foreach}</dd>
+					{/if} {foreach $parteien as $name => $spieler_partei}
+					<dt class="col-sm-3">{$name|ucfirst}:</dt>
+					<dd class="col-sm-9">{foreach $spieler_partei as $spieler} {$spieler}{if !$spieler@last}, {/if} {/foreach}</dd>
 					{/foreach}
-				</div>
+				</dl>
 			</div>
 			<div class="col-sm-12">
 				<h3 class="mt-3">Punktestand</h3>
 				<ul class="nav nav-tabs" id="punkte" role="tablist">
-					<li class="nav-item"><a class="nav-link" id="plusminus-tab" data-toggle="tab" href="#plusminus" role="tab" aria-controls="plusminus" aria-selected="false">Plus/Minus</a></li>
-					<li class="nav-item"><a class="nav-link active" id="summen-tab" data-toggle="tab" href="#summen" role="tab" aria-controls="summen" aria-selected="true">Summen</a></li>
+					<li class="nav-item"><a class="nav-link" id="plusminus-tab" data-toggle="tab" href="#plusminus" role="tab" aria-controls="plusminus"
+						aria-selected="false">Plus/Minus</a></li>
+					<li class="nav-item"><a class="nav-link active" id="summen-tab" data-toggle="tab" href="#summen" role="tab" aria-controls="summen"
+						aria-selected="true">Summen</a></li>
 				</ul>
 				<div class="tab-content" id="myTabContent">
 					<div class="tab-pane fade" id="plusminus" role="tabpanel" aria-labelledby="plusminus-tab">
@@ -397,7 +403,7 @@
 								<tr>
 									<th>Platz</th>
 									<th>Name</th>
-									<th>Punkte</th>
+									<th colspan="2">Punkte</th>
 									<th>Siege</th>
 									<!-- <th>Summe</th> -->
 								</tr>
@@ -408,6 +414,7 @@
 									<th class="text-right">{$daten@index +1}</th>
 									<td>{$daten.name}</td>
 									<td class="text-right">{$daten.plusminus}</td>
+									<td class="text-right">{$daten.summe}</td>
 									<td class="text-right">{$daten.siege}</td>
 									<!-- <td class="text-right">{$daten.summe}</td> -->
 								</tr>
