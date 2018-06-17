@@ -526,7 +526,7 @@ if ($statement->rowCount () == 0) {
 				} else {
 					$isSolo = false;
 				}
-				$gameType = $gameData ['id'];
+				$gameType = ($gameData ['id'] == null) ? 1 : $gameData ['id'];
 				// Beide Spieler der Re-Partei bei Normalspiel vorhanden?
 				if ($isSolo == false && ($reSpieler1 == '' || $reSpieler2 == '')) {
 					$error = 'Beide Spieler der "Re"-Partei müssen angegeben werden.';
@@ -747,7 +747,7 @@ if ($statement->rowCount () == 0) {
 					) );
 					$statement = $pdo->prepare ( "DELETE FROM games WHERE id = ?" );
 					$statement->execute ( array (
-							$game_id
+							$game_id 
 					) );
 					$statement = $pdo->prepare ( "UPDATE rounds SET games = games -1, is_running = 0 WHERE id = ?" );
 					$statement->execute ( array (
@@ -827,10 +827,10 @@ switch ($step) {
 		) );
 		$players_round = $aussetzer = array ();
 		while ( $row = $statement->fetch () ) {
-			if(!$row ['spielt']) {
+			if (! $row ['spielt']) {
 				$aussetzer [$row ['id']] = $row ['vorname'] . (($mitNachnamen) ? ' ' . $row ['nachname'] : '');
 			}
-			if($row ['gibt']) {
+			if ($row ['gibt']) {
 				$geber = $row ['vorname'] . (($mitNachnamen) ? ' ' . $row ['nachname'] : '');
 			}
 			$players_round [$row ['id']] = $row ['vorname'] . (($mitNachnamen) ? ' ' . $row ['nachname'] : '');
