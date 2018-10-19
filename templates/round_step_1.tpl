@@ -44,7 +44,10 @@
 					<tr>
 						<th>Ort</th>
 						<th>Datum</th>
+						<th>Spiele</th>
+						<th>Mitspieler</th>
 						<th>Punkte</th>
+						<th>Siege</th>
 						<th>&nbsp;</th>
 					</tr>
 				</thead>
@@ -52,8 +55,13 @@
 					{foreach $runden as $runde}
 					<tr>
 						<td>{$runde.location}</td>
-						<td>{$runde.date}</td>
-						<td>{foreach $runde.player as $player_id => $punkte}{$players.$player_id}<span class="float-right">{$punkte}&nbsp;</span><br>{/foreach}
+						<td>{$runde.date|date_format:"d.m.Y"}</td>
+						<td>{$runde.games}</td>
+						<td>{foreach $runde.player as $player_id => $punkte}{$players.$player_id}<br>{/foreach}
+						</td>
+						<td>{foreach $runde.player as $player_id => $punkte}<span class="float-right">{$punkte}&nbsp;</span><br>{/foreach}
+						</td>
+						<td>{foreach $runde.siege as $player_id => $anzahl}<span class="float-right">{$anzahl}&nbsp;</span><br>{/foreach}
 						</td>
 						<td>{if $runde.is_running}läuft{else}beendet{/if}</td>
 					</tr>
