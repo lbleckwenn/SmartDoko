@@ -31,7 +31,7 @@ $summenPunkteSystem = true;
  */
 $statement = $pdo->prepare ( "SELECT players.* FROM players, user_player WHERE user_player.player_id = players.id AND user_player.user_id = ? ORDER BY players.vorname ASC" );
 $result = $statement->execute ( array (
-		$_SESSION ['userid'] 
+		$_SESSION ['userid']
 ) );
 $players = array ();
 while ( $row = $statement->fetch () ) {
@@ -48,12 +48,12 @@ if (0) {
 	// Nur Spiele mit eigener Beteiligung
 	$statement = $pdo->prepare ( "" );
 	$result = $statement->execute ( array (
-			getUserPlayerID () 
+			getUserPlayerID ()
 	) );
 } else {
 	$statement = $pdo->prepare ( "SELECT game_data.* FROM game_data, players, user_player WHERE user_player.player_id = game_data.player_id AND user_player.user_id = ? AND game_data.player_id = players.id" );
 	$result = $statement->execute ( array (
-			$_SESSION ['userid'] 
+			$_SESSION ['userid']
 	) );
 }
 $averagePoints = $gamesOverall = array ();
@@ -75,7 +75,7 @@ if ($statement->rowCount () > 0) {
 					'games' => 1,
 					'playerName' => $playerName,
 					'points' => $gamePoints,
-					'average' => $gamePoints 
+					'average' => $gamePoints
 			);
 			$sortName [] = $playerName;
 		}
@@ -87,12 +87,17 @@ $smarty->assign ( 'gamesOverall', sizeof ( $gamesOverall ) );
 
 /*
  * ********************************************************************************
- * Häufigkeit der angesagten Spiele
+ * Häufigkeit der Spieltypen
  *
  */
+
+$statement = $pdo->prepare ( "SELECT * FROM `game_types`" );
+$result = $statement->execute ();
+$gameTypeNames = $statement->fetchall ( PDO::FETCH_UNIQUE | PDO::FETCH_ASSOC );
+$smarty->assign ( 'gameTypeNames', $gameTypeNames );
 $statement = $pdo->prepare ( "SELECT games.* FROM games, game_data, user_player WHERE user_player.user_id = 1 AND user_player.player_id = game_data.player_id AND game_data.game_id = games.id ORDER BY games.id ASC" );
 $result = $statement->execute ( array (
-		$_SESSION ['userid'] 
+		$_SESSION ['userid']
 ) );
 $gameTypes = $playerSum = array ();
 if ($statement->rowCount () > 0) {
@@ -103,8 +108,8 @@ if ($statement->rowCount () > 0) {
 			$gameTypes [$gameType] = array (
 					'overall' => array (
 							'percent' => 0,
-							'absolut' => 0 
-					) 
+							'absolut' => 0
+					)
 			);
 			foreach ( $players as $playerID => $player ) {
 				if (! isset ( $playerSum [$playerID] )) {
@@ -113,8 +118,8 @@ if ($statement->rowCount () > 0) {
 				$gameTypes [$gameType] += array (
 						$playerID => array (
 								'percent' => 0,
-								'absolut' => 0 
-						) 
+								'absolut' => 0
+						)
 				);
 			}
 		}
@@ -124,7 +129,7 @@ if ($statement->rowCount () > 0) {
 			$statement = $pdo->prepare ( "SELECT * FROM player_data WHERE game_id = ? AND game_typ = ?" );
 			$result = $statement->execute ( array (
 					$gameID,
-					$gameType 
+					$gameType
 			) );
 			$playerID = $statement->fetch () ['player_id'];
 			$gameTypes [$gameType] [$playerID] ['absolut'] ++;
@@ -132,7 +137,7 @@ if ($statement->rowCount () > 0) {
 		} else {
 			$statement = $pdo->prepare ( "SELECT * FROM game_data WHERE game_id = ?" );
 			$result = $statement->execute ( array (
-					$gameID 
+					$gameID
 			) );
 			while ( $playerID = $statement->fetch () ['player_id'] ) {
 				$gameTypes [$gameType] [$playerID] ['absolut'] ++;
@@ -159,7 +164,7 @@ $smarty->assign ( 'gameTypes', $gameTypes );
 $extraPoints = array ();
 $statement = $pdo->prepare ( "SELECT player_data.* FROM player_data, user_player WHERE (fuchs_gefangen OR karlchen_gewonnen OR karlchen_gefangen OR doppelkopf) AND user_player.player_id = player_data.player_id AND user_player.user_id = ?" );
 $result = $statement->execute ( array (
-		$_SESSION ['userid'] 
+		$_SESSION ['userid']
 ) );
 if ($statement->rowCount () > 0) {
 	error_reporting ( E_ALL & ~ E_NOTICE );
@@ -191,7 +196,7 @@ $smarty->assign ( 'extraPoints', $extraPoints );
 
 $statement = $pdo->prepare ( "SELECT * FROM rounds WHERE user_id = ? ORDER BY date DESC" );
 $statement->execute ( array (
-		$user ['id'] 
+		$user ['id']
 ) );
 $runden = array ();
 while ( $row = $statement->fetch () ) {
@@ -199,7 +204,7 @@ while ( $row = $statement->fetch () ) {
 			'date' => $row ['date'],
 			'location' => $row ['location'],
 			'is_running' => $row ['is_running'],
-			'player' => array () 
+			'player' => array ()
 	);
 }
 
@@ -207,13 +212,13 @@ $statement1 = $pdo->prepare ( "SELECT * FROM round_player WHERE round_id = ?" );
 $statement2 = $pdo->prepare ( "SELECT sum(punkte) FROM `game_data` WHERE round_id = ? AND player_id = ? AND punkte > 0" );
 foreach ( $runden as $runde_id => $runde ) {
 	$statement1->execute ( array (
-			$runde_id 
+			$runde_id
 	) );
 	$players = $statement1->fetchAll ( PDO::FETCH_ASSOC );
 	foreach ( $players as $player ) {
 		$statement2->execute ( array (
 				$runde_id,
-				$player ['player_id'] 
+				$player ['player_id']
 		) );
 		$row = $statement2->fetch ();
 		$runden [$runde_id] ['player'] [$player ['player_id']] = $row ['sum(punkte)'];

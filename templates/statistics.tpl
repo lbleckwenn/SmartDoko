@@ -43,13 +43,13 @@
 					</tbody>
 				</table>
 			</div>
-			<h3>Häufigkeit der angesagten Spiele</h3>
+			<h3>Häufigkeit der Spielarten</h3>
 			<div class="table-responsive">
 				<table class="table table-bordered table-sm">
 					<thead>
 						<tr>
 							<th>Spieler</th> {foreach $gameTypes as $gameTypeID => $gameTypeData}
-							<th>{$gameTypeID}</th>{/foreach}
+							<th>{$gameTypeNames.$gameTypeID.text}</th>{/foreach}
 						</tr>
 					</thead>
 					<tbody>
