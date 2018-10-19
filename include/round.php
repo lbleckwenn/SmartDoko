@@ -1128,37 +1128,3 @@ switch ($step) {
 		break;
 }
 $smarty->assign ( 'step', $step );
-function checkIfTwoElementsEqual($ar) {
-	for($i = 0; $i < count ( $ar ); $i ++) {
-		for($j = $i + 1; $j < count ( $ar ); $j ++) {
-			if ($ar [$i] == $ar [$j]) {
-				return true;
-			}
-		}
-	}
-	return false;
-}
-function getKurzText($text) {
-	switch ($text) {
-		case 'keine 90' :
-			return 'k90';
-		case 'keine 60' :
-			return 'k60';
-		case 'keine 30' :
-			return 'k30';
-		case 'schwarz' :
-			return 'schw.';
-	}
-}
-function getWertAbsage($text) {
-	switch ($text) {
-		case 'keine 90' :
-			return '90';
-		case 'keine 60' :
-			return '60';
-		case 'keine 30' :
-			return '30';
-		case 'schwarz' :
-			return '0';
-	}
-}
