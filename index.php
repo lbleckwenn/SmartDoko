@@ -43,6 +43,7 @@ $pages = array (
 		'settings',
 		'player',
 		'round',
+		'spielzettel',
 		'user' 
 );
 if (! in_array ( $page, $pages )) {
