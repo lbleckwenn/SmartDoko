@@ -104,6 +104,10 @@ if ($statement->rowCount () > 0) {
 	$games = $statement->fetchall ( PDO::FETCH_UNIQUE | PDO::FETCH_ASSOC );
 	foreach ( $games as $gameID => $game ) {
 		$gameType = $game ['game_typ'];
+		if ($gameType == NULL) {
+			// Bei laufenden Runden steht der Spieltyp des aktuellen Spiels noch nicht in der Datenbank
+			continue;
+		}
 		if (! isset ( $gameTypes [$gameType] )) {
 			$gameTypes [$gameType] = array (
 					'overall' => array (
