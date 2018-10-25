@@ -47,14 +47,14 @@ function zaehlePunkte($reAugen, $ansagen, $absagen, $sonderpunkte, $gewinner, $s
 	if ($gewinner != 'niemand') {
 		$auswertungsLog ['7.2.2 (a) - Allgemein'] [] = array (
 				'text' => 'gewonnen',
-				'punkte' => 1 
+				'punkte' => 1
 		);
 	}
 	for($augen = 90; $augen >= 0; $augen -= 30) {
 		if ($augenVerlierer < $augen) {
 			$auswertungsLog ['7.2.2 (a) - Allgemein'] [] = array (
 					'text' => "unter $augen gespielt",
-					'punkte' => 1 
+					'punkte' => 1
 			);
 		}
 	}
@@ -62,42 +62,42 @@ function zaehlePunkte($reAugen, $ansagen, $absagen, $sonderpunkte, $gewinner, $s
 		if ($augenVerlierer == 0) {
 			$auswertungsLog ['7.2.2 (a) - Allgemein'] [] = array (
 					'text' => 'schwarz gespielt',
-					'punkte' => 1 
+					'punkte' => 1
 			);
 		}
 		// Regel 7.2.2 (b) - Punkte für Ansagen
 		if (isset ( $ansagen ['re'] ) && $ansagen ['re']) {
 			$auswertungsLog ['7.2.2 (b) - Es wurde'] [] = array (
 					'text' => '"Re" angesagt',
-					'punkte' => 2 
+					'punkte' => 2
 			);
 		}
 		if (isset ( $ansagen ['kontra'] ) && $ansagen ['kontra']) {
 			$auswertungsLog ['7.2.2 (b) - Es wurde'] [] = array (
 					'text' => '"Kontra" angesagt',
-					'punkte' => 2 
+					'punkte' => 2
 			);
 		}
-		
+
 		// Regel 7.2.2 (c) - Punkte für Absagen der Re-Partei
 		if (isset ( $absagen ['re'] )) {
 			for($augen = 90; $augen > 0; $augen -= 30) {
 				if ($absagen ['re'] <= $augen) {
 					$auswertungsLog ['7.2.2 (c) - Es wurde von der Re-Partei'] [] = array (
 							'text' => '"Keine ' . $augen . '" abgesagt',
-							'punkte' => 1 
+							'punkte' => 1
 					);
 				}
 			}
 		}
-		
+
 		// Regel 7.2.2 (d) - Punkte für Absagen der Kontra-Partei
 		if (isset ( $absagen ['kontra'] )) {
 			for($augen = 90; $augen > 0; $augen -= 30) {
 				if ($absagen ['kontra'] <= $augen) {
 					$auswertungsLog ['7.2.2 (d) - Es wurde von der Kontra-Partei'] [] = array (
 							'text' => '"Keine ' . $augen . '" abgesagt',
-							'punkte' => 1 
+							'punkte' => 1
 					);
 				}
 			}
@@ -105,22 +105,30 @@ function zaehlePunkte($reAugen, $ansagen, $absagen, $sonderpunkte, $gewinner, $s
 	}
 	// Regel 7.2.2 (e) - gegen Absagen Kontra-Partei erreicht
 	if (isset ( $absagen ['kontra'] )) {
-		for($augen = 90; $augen > 0; $augen -= 30) {
+		for($augen = 90; $augen >= 0; $augen -= 30) {
 			if ($reAugen >= $augen + 30 && $absagen ['kontra'] <= $augen) {
+				if ($augen == 0)
+					$absage = "schwarz";
+				else
+					$absage = "keine %d";
 				$auswertungsLog ['7.2.2 (e) - Es wurden von der Re-Partei'] [] = array (
-						'text' => sprintf ( '%d Augen gegen "keine %d" erreicht', $augen + 30, $augen ),
-						'punkte' => ($kontraAugen < $reAugen || $gewinner == 're' ? 1 : - 1) 
+						'text' => sprintf ( '%d Augen gegen "' . $absage . '" erreicht', $augen + 30, $augen ),
+						'punkte' => ($kontraAugen < $reAugen || $gewinner == 're' ? 1 : - 1)
 				);
 			}
 		}
 	}
 	// Regel 7.2.2 (f) - gegen Absagen Re-Partei erreicht
 	if (isset ( $absagen ['re'] )) {
-		for($augen = 90; $augen > 0; $augen -= 30) {
+		for($augen = 90; $augen >= 0; $augen -= 30) {
 			if ($kontraAugen >= $augen + 30 && $absagen ['re'] <= $augen) {
+				if ($augen == 0)
+					$absage = "schwarz";
+				else
+					$absage = "keine %d";
 				$auswertungsLog ['7.2.2 (f) - Es wurden von der Kontra-Partei'] [] = array (
-						'text' => sprintf ( '%d Augen gegen "keine %d" erreicht', $augen + 30, $augen ),
-						'punkte' => ($kontraAugen >= $reAugen ? 1 : - 1) 
+						'text' => sprintf ( '%d Augen gegen "' . $absage . '" erreicht', $augen + 30, $augen ),
+						'punkte' => ($kontraAugen >= $reAugen ? 1 : - 1)
 				);
 			}
 		}
@@ -130,7 +138,7 @@ function zaehlePunkte($reAugen, $ansagen, $absagen, $sonderpunkte, $gewinner, $s
 		if ($gewinner == 'kontra') {
 			$auswertungsLog ['7.2.3 - Sonderpunkte'] [] = array (
 					'text' => 'gegen die Kreuz Damen gewonnen',
-					'punkte' => 1 
+					'punkte' => 1
 			);
 		}
 		foreach ( $sonderpunkte as $partei => $parteiSonderpunkte ) {
@@ -147,7 +155,7 @@ function zaehlePunkte($reAugen, $ansagen, $absagen, $sonderpunkte, $gewinner, $s
 				foreach ( $parteiSonderpunkte as $sonderpunkt ) {
 					$auswertungsLog ['7.2.3 - Sonderpunkte'] [] = array (
 							'text' => ucfirst ( $partei ) . ": $sonderpunkt",
-							'punkte' => 1 * $multiplikator 
+							'punkte' => 1 * $multiplikator
 					);
 				}
 			}
@@ -167,13 +175,13 @@ function zaehlePunkte($reAugen, $ansagen, $absagen, $sonderpunkte, $gewinner, $s
 		return array (
 				're' => $spielpunkte * (($reAugen > $kontraAugen) ? 1 : - 1) /* * (($spielTyp == 'solo') ? 3 : 1)*/,
 				'kontra' => $spielpunkte * (($reAugen > $kontraAugen) ? - 1 : 1),
-				'log' => $auswertungsLog 
+				'log' => $auswertungsLog
 		);
 	} else {
 		return array (
 				're' => $spielpunkte * (($gewinner == 're') ? 1 : - 1) /* * (($spielTyp == 'solo') ? 3 : 1)*/,
 				'kontra' => $spielpunkte * (($gewinner == 'kontra') ? 1 : - 1),
-				'log' => $auswertungsLog 
+				'log' => $auswertungsLog
 		);
 	}
 }
