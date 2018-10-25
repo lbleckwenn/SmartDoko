@@ -1,21 +1,46 @@
 <?php
-// *****************************************************************************
-// *** Punkteliste
-// *****************************************************************************
-$round_id = 14;
+/**
+ * This file is part of the "SmartDoko" package.
+ * Copyright (C) 2018 Lars Bleckwenn <lars.bleckwenn@web.de>
+ *
+ * "SmartDoko" is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * "SmartDoko" is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+$user = check_user ();
+if (! $user) {
+	$smarty->assign ( 'error', 'Bitte zuerst <a href="login.php">einloggen</a>' );
+	$page = 'splashscreen';
+	return;
+}
+
+/*
+ * @todo Script abhärten. Die per GET übergebene Variable wird noch nicht überprüft
+ */
+$round_id = GetParam ( 'round_id', 'G' );
+
 $statement = $pdo->prepare ( "SELECT * FROM rounds WHERE id = ? " );
 $result = $statement->execute ( array (
 		$round_id
 ) );
 $aktuellesSpiel = $statement->fetch () ['games'];
 $smarty->assign ( 'aktuellesSpiel', $aktuellesSpiel );
-$statement = $pdo->prepare ( "SELECT players.*, round_player.spielt, round_player.gibt FROM round_player, players WHERE round_player.round_id = ? AND round_player.player_id = players.id " );
+$statement = $pdo->prepare ( "SELECT players.*, round_player.platz, round_player.spielt, round_player.gibt FROM round_player, players WHERE round_player.round_id = ? AND round_player.player_id = players.id " );
 $result = $statement->execute ( array (
 		$round_id
 ) );
-$players_round = $aussetzer = array ();
-while ( $row = $statement->fetch () ) {
-	$players_round [$row ['id']] = $row ['vorname'] . (($mitNachnamen) ? ' ' . $row ['nachname'] : '');
+$players_round = $statement->fetchAll ( PDO::FETCH_UNIQUE | PDO::FETCH_ASSOC );
+foreach ( $players_round as $player_id => $player ) {
+	$players_round [$player_id] ['anzeige'] = $player ['vorname'] . (($mitNachnamen) ? ' ' . $player ['nachname'] : '');
 }
 $smarty->assign ( 'players_round', $players_round );
 $punkteliste = $sieger = $sortSieger = array ();
@@ -26,13 +51,12 @@ foreach ( $players_round as $player_id => $player ) {
 			'siege' => 0
 	);
 }
-$statement = $pdo->prepare ( "SELECT game_data.*, games.gewinner FROM games, game_data WHERE games.round_id = ? AND games.game_number = ? AND games.id = game_data.game_id " );
+$statement = $pdo->prepare ( "SELECT game_data.*, games.re_augen, games.gewinner FROM games, game_data WHERE games.round_id = ? AND games.game_number = ? AND games.id = game_data.game_id " );
 for($i = 1; $i <= $aktuellesSpiel; $i ++) {
 	$punkteliste [$i] ['re'] = $punkteliste [$i] ['kontra'] = '';
 	foreach ( $players_round as $player_id => $player ) {
 		$punkteliste [$i] [$player_id] ['plusminus'] = $punkteliste [$i - 1] [$player_id] ['plusminus'];
 		$punkteliste [$i] [$player_id] ['summe'] = $punkteliste [$i - 1] [$player_id] ['summe'];
-		$punkteliste [$i] [$player_id] ['siege'] = $punkteliste [$i - 1] [$player_id] ['siege'];
 		$punkteliste [$i] [$player_id] ['spielte'] = false;
 	}
 	$statement->execute ( array (
@@ -41,6 +65,8 @@ for($i = 1; $i <= $aktuellesSpiel; $i ++) {
 	) );
 	while ( $row = $statement->fetch () ) { // PDO::FETCH_ASSOC
 		$punkteSpiel = $row ['punkte'];
+		$punkteliste [$i] ['sieger'] = $row ['gewinner'];
+		$punkteliste [$i] ['augen'] = $row ['re_augen'] . ':' . (240 - $row ['re_augen']);
 		if ($punkteSpiel >= 0) {
 			$punkteliste [$i] [$row ['player_id']] ['summe'] += $punkteSpiel;
 		}
@@ -48,7 +74,7 @@ for($i = 1; $i <= $aktuellesSpiel; $i ++) {
 		$punkteliste [$i] [$row ['player_id']] ['punkte_spiel'] = $punkteSpiel;
 		$punkteliste [$i] [$row ['player_id']] ['spielte'] = true;
 		if ($row ['gewinner'] == $row ['partei'] && $row ['gewinner'] != '') {
-			$punkteliste [$i] [$row ['player_id']] ['siege'] ++;
+			$punkteliste [$i] [$row ['player_id']] ['sieger'] = true;
 		}
 	}
 	$punkteliste [$i] ['spiel'] = abs ( $punkteSpiel );
@@ -118,15 +144,5 @@ for($i = 1; $i <= $aktuellesSpiel; $i ++) {
 	$punkteliste [$i] ['re'] = ltrim ( $punkteliste [$i] ['re'], ", " );
 	$punkteliste [$i] ['kontra'] = ltrim ( $punkteliste [$i] ['kontra'], ', ' );
 }
-foreach ( $players_round as $player_id => $player ) {
-	$sieger [$player_id] = array (
-			'name' => $players_round [$player_id],
-			'plusminus' => $punkteliste [$aktuellesSpiel] [$player_id] ['plusminus'],
-			'summe' => $punkteliste [$aktuellesSpiel] [$player_id] ['summe'],
-			'siege' => $punkteliste [$aktuellesSpiel] [$player_id] ['siege']
-	);
-	$sortSieger [] = $punkteliste [$aktuellesSpiel] [$player_id] ['plusminus'];
-}
-array_multisort ( $sortSieger, SORT_DESC, $sieger );
+
 $smarty->assign ( 'punkteliste', $punkteliste );
-$smarty->assign ( 'sieger', $sieger );
