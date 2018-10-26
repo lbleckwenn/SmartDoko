@@ -1,78 +1,112 @@
-<h2>
-	<strong>{$gewinner}</strong> gewinnt
-</h2>
-<div class="row mt-3">
-	<div class="col-sm-12">
-		<div id="accordion">
-			<div class="card">
-				<div class="card-header" id="headingOne">
-					<h5 class="mb-0">
-						<button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">Punkte</button>
-					</h5>
-				</div>
-				<div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
-					<div class="card-body">
-						{foreach $parteien as $id => $partei} {if $gameType=='solo' && $partei == 're'}{$multi = 3}{else}{$multi = 1}{/if}
-						<p class="mb-1">{$players_game.$id} ({$partei|ucfirst}) erhält {$log.$partei * $multi} Punkte.</p>
-						{/foreach}
+<div class="modal-header">
+	<h5 class="modal-title" id="Spieldetails">
+		<strong>{$gewinner}</strong> gewinnt
+	</h5>
+	<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		<span aria-hidden="true">&times;</span>
+	</button>
+</div>
+<div class="modal-body">
+	<div class="row">
+		<div class="col-sm-12">
+			<div id="accordion">
+				<div class="card">
+					<div class="card-header" id="headingOne">
+						<h5 class="mb-0">
+							<button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseTwo">Zusammenfassung</button>
+						</h5>
 					</div>
-				</div>
-			</div>
-			<div class="card">
-				<div class="card-header" id="headingTwo">
-					<h5 class="mb-0">
-						<button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-							Wertung</button>
-					</h5>
-				</div>
-				<div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
-					<div class="card-body">
-						<div class="table-responsive-sm">
+					<div id="collapseThree" class="collapse show" aria-labelledby="headingTwo" data-parent="#accordion">
+						<div class="card-body">
 							<table class="table table-sm">
-								<thead>
-									<tr>
-										<th colspan="2">Detalierte Aufstellung</th>
-										<th class="text-right">Punkte</th>
-									</tr>
-								</thead>
 								<tbody>
-									{foreach $log.log as $regel => $regelPunkte}
 									<tr>
-										<td colspan="3">Regel {$regel}</td>
+										<td><strong>Re</strong></td>
+										<td>Namen</td>
+										<td>Punkte</td>
+										<td>Augen</td>
 									</tr>
-									{foreach $regelPunkte as $punkt}
 									<tr>
-										<td>&nbsp;</td>
-										<td>{$punkt.text}</td>
-										<td class="text-right">{$punkt.punkte}</td>
+										<td><strong>Kontra</strong></td>
+										<td>Namen</td>
+										<td>Punkte</td>
+										<td>Augen</td>
 									</tr>
-									{/foreach} {/foreach}
 								</tbody>
-								<tfoot>
-									<tr>
-										<td><strong>Summe</strong></td>
-										<td>&nbsp;</td>
-										<td class="text-right"><strong>{$log.re|abs}</strong></td>
-									</tr>
-								</tfoot>
 							</table>
+							<strong class="mt-3">Spielverlauf</strong>
+							<!-- Auflistung der An- und Absagen sowie Sonderpunkte -->
+							{if $vorbehalt}
+							<p class="mb-1">{$vorbehalt}</p>
+							{/if} {if sizeof($ansagen)>0} {foreach $ansagen as $id => $ansage}
+							<p class="mb-1">{$ansage}</p>
+							{/foreach} {/if}{if sizeof($absagen)>0} {foreach $absagen as $id => $absage}
+							<p class="mb-1">{$absage}</p>
+							{/foreach} {/if} {if sizeof($sonderpunkte)>0} {foreach $sonderpunkte as $id => $sonderpunkt}
+							<p class="mb-1">{$sonderpunkt}</p>
+							{/foreach} {/if}
 						</div>
 					</div>
 				</div>
-			</div>
-			<div class="card">
-				<div class="card-header" id="headingTwo">
-					<h5 class="mb-0">
-						<button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseTwo">
-							Zusammenfassung</button>
-					</h5>
+				<div class="card">
+					<div class="card-header" id="headingTwo">
+						<h5 class="mb-0">
+							<button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">Punkte</button>
+						</h5>
+					</div>
+					<div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+						<div class="card-body">
+							{foreach $parteien as $id => $partei} {if $gameType=='solo' && $partei == 're'}{$multi = 3}{else}{$multi = 1}{/if}
+							<p class="mb-1">{$players_game.$id} ({$partei|ucfirst}) erhält {$log.$partei * $multi} Punkte.</p>
+							{/foreach}
+						</div>
+					</div>
 				</div>
-				<div id="collapseThree" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
-					<div class="card-body">
-						<p>Ansagen</p>
+				<div class="card">
+					<div class="card-header" id="headingTwo">
+						<h5 class="mb-0">
+							<button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">Wertung</button>
+						</h5>
+					</div>
+					<div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+						<div class="card-body">
+							<div class="table-responsive-sm">
+								<table class="table table-sm">
+									<thead>
+										<tr>
+											<th colspan="2">Detalierte Aufstellung</th>
+											<th class="text-right">Punkte</th>
+										</tr>
+									</thead>
+									<tbody>
+										{foreach $log.log as $regel => $regelPunkte}
+										<tr>
+											<td colspan="3">Regel {$regel}</td>
+										</tr>
+										{foreach $regelPunkte as $punkt}
+										<tr>
+											<td>&nbsp;</td>
+											<td>{$punkt.text}</td>
+											<td class="text-right">{$punkt.punkte}</td>
+										</tr>
+										{/foreach} {/foreach}
+									</tbody>
+									<tfoot>
+										<tr>
+											<td><strong>Summe</strong></td>
+											<td>&nbsp;</td>
+											<td class="text-right"><strong>{$log.re|abs}</strong></td>
+										</tr>
+									</tfoot>
+								</table>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
+</div>
+<div class="modal-footer">
+	<button type="button" class="btn btn-secondary" data-dismiss="modal">Schließen</button>
 </div>

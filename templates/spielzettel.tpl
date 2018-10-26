@@ -33,20 +33,7 @@
 <!-- Modal -->
 <div class="modal fade" id="spielDetails" tabindex="-1" role="dialog" aria-labelledby="Spieldetails" aria-hidden="true">
 	<div class="modal-dialog modal-dialog-centered" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h5 class="modal-title" id="Spieldetails">Spieldetails</h5>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-				</button>
-			</div>
-			<div class="modal-body">
-				<span id="testtext">...</span>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-dismiss="modal">Schließen</button>
-			</div>
-		</div>
+		<div class="modal-content"></div>
 	</div>
 </div>
 <script>
@@ -56,6 +43,6 @@ $('#spielDetails').on('show.bs.modal', function (event) {
 	  // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
 	  // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
 	  //$('#testtext').text(gameId)
-	  $(this).find('.modal-body').load('index.php?page=spieldetails&spielid=' + gameId);
+	  $(this).find('.modal-content').load('index.php?page=spieldetails&spielid=' + gameId);
 	})
 </script>

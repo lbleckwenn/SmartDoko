@@ -41,7 +41,6 @@ $result = $statement->execute ( array (
 ) );
 $players_game = $statement->fetchall (); // PDO::FETCH_ASSOC
 $parteien = array ();
-$re = 0;
 foreach ( $players_game as $player ) {
 	$parteien [$player ['id']] = $player ['partei'];
 }
@@ -130,6 +129,84 @@ $smarty->assign ( 'parteien', $parteien );
 $smarty->assign ( 'log', $punkte );
 $smarty->assign ( 'gameType', (($isSolo == true) ? 'solo' : 'normal') );
 $smarty->assign ( 'players_game', $players_game );
+
+// *****************************************************************************
+// *** Vorbehalt
+// *****************************************************************************
+$statement = $pdo->prepare ( "SELECT * FROM player_data WHERE game_id = ? AND game_typ != ''" );
+$statement->execute ( array (
+		$game_id
+) );
+$vorbehaltText = '';
+if ($statement->rowCount () > 0) {
+	$row = $statement->fetch ();
+	if ($isSolo) {
+		$vorbehaltText = $players_game [$row ['player_id']] . ' spielt ein Solo.';
+	} else {
+		$vorbehaltText .= $players_game [$row ['player_id']] . ' und ' . $players_game [$row ['mate_id']] . ' spielen eine ' . (($row ['game_typ'] == 4) ? 'Trumpfabgabe.' : 'Hochzeit.');
+	}
+}
+$smarty->assign ( 'vorbehalt', $vorbehaltText );
+// *****************************************************************************
+// *** Ansagen
+// *****************************************************************************
+$statement = $pdo->prepare ( "SELECT * FROM player_data WHERE game_id = ? AND ansage != ''" );
+$statement->execute ( array (
+		$game_id
+) );
+$ansagen = array ();
+if ($statement->rowCount () > 0) {
+	while ( $row = $statement->fetch () ) {
+		$ansagen [$row ['id']] = sprintf ( '%s hat "%s" gesagt.', $players_game [$row ['player_id']], ucfirst ( $row ['ansage'] ) );
+	}
+}
+$smarty->assign ( 'ansagen', $ansagen );
+// *****************************************************************************
+// *** Absagen
+// *****************************************************************************
+$statement1 = $pdo->prepare ( "SELECT * FROM player_data WHERE game_id = ? AND absage != ''" );
+$statement1->execute ( array (
+		$game_id
+) );
+$absagen = array ();
+if ($statement1->rowCount () > 0) {
+	while ( $row = $statement1->fetch () ) {
+		$absagen [$row ['id']] = sprintf ( '%s hat "%s" gesagt.', $players_game [$row ['player_id']], $row ['absage'] );
+		$kurzText = getKurzText ( $row ['absage'] );
+		$statement2 = $pdo->prepare ( "SELECT * FROM game_data WHERE game_id = ? AND player_id = ?" );
+		$statement2->execute ( array (
+				$game_id,
+				$row ['player_id']
+		) );
+		$player = $statement2->fetch ();
+	}
+}
+$smarty->assign ( 'absagen', $absagen );
+// *****************************************************************************
+// *** Sonderpunkte
+// *****************************************************************************
+$statement = $pdo->prepare ( "SELECT * FROM player_data WHERE game_id = ? AND (fuchs_gefangen != '' OR karlchen_gewonnen != '' OR karlchen_gefangen != '' OR doppelkopf != '')" );
+$statement->execute ( array (
+		$game_id
+) );
+$sonderpunkte = array ();
+if ($statement->rowCount () > 0) {
+	while ( $row = $statement->fetch () ) {
+		if ($row ['fuchs_gefangen']) {
+			$sonderpunkte [$row ['id']] = sprintf ( "%s hat einen Fuchs von %s gefangen.", $players_game [$row ['player_id']], $players_game [$row ['fuchs_gefangen']] );
+		}
+		if ($row ['karlchen_gefangen']) {
+			$sonderpunkte [$row ['id']] = sprintf ( "%s hat ein Karlchen von %s gefangen.", $players_game [$row ['player_id']], $players_game [$row ['karlchen_gefangen']] );
+		}
+		if ($row ['karlchen_gewonnen']) {
+			$sonderpunkte [$row ['id']] = sprintf ( "Karlchen von %s macht den letzten Stich.", $players_game [$row ['player_id']] );
+		}
+		if ($row ['doppelkopf']) {
+			$sonderpunkte [$row ['id']] = sprintf ( "%s hat einen Doppelkopf.", $players_game [$row ['player_id']] );
+		}
+	}
+}
+$smarty->assign ( 'sonderpunkte', $sonderpunkte );
 
 $smarty->display ( 'spieldetails.tpl' );
 // var_dump ( $gewinner, $punkte );
