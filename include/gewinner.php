@@ -150,16 +150,12 @@ function zaehlePunkte($reAugen, $ansagen, $absagen, $sonderpunkte, $gewinner, $s
 			}
 		}
 	}
-	// echo ('<table>');
 	$spielpunkte = 0;
 	foreach ( $auswertungsLog as $regel => $punkte ) {
-		// /echo ("<tr><td>{$punkte['text']}</td><td>{$punkte['punkte']}</td></tr>");
 		foreach ( $punkte as $punkt ) {
 			$spielpunkte += $punkt ['punkte'];
 		}
 	}
-	// echo ('</table>');
-	// echo ('<br>' . $spielpunkte . ' Punkte<br><br>');
 	if ($gewinner == 'niemand') {
 		return array (
 				're' => $spielpunkte * (($reAugen > $kontraAugen) ? 1 : - 1) /* * (($spielTyp == 'solo') ? 3 : 1)*/,
