@@ -45,6 +45,7 @@ $pages = array (
 		'round',
 		'history',
 		'spielzettel',
+		'spieldetails',
 		'user'
 );
 if (! in_array ( $page, $pages )) {

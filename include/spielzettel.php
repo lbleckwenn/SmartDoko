@@ -77,6 +77,7 @@ for($i = 1; $i <= $aktuellesSpiel; $i ++) {
 			$punkteliste [$i] [$row ['player_id']] ['sieger'] = true;
 		}
 		$punkteliste [$i] ['spiel'] = $row ['spiel_punkte'];
+		$punkteliste [$i] ['gameId'] = $row ['game_id'];
 	}
 	$statement2 = $pdo->prepare ( "SELECT player_data.* FROM player_data, games WHERE games.round_id = ? AND games.game_number = ? AND games.id = player_data.game_id AND player_data.game_typ != ''" );
 	$statement2->execute ( array (
