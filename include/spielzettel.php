@@ -51,7 +51,7 @@ foreach ( $players_round as $player_id => $player ) {
 			'siege' => 0
 	);
 }
-$statement = $pdo->prepare ( "SELECT game_data.*, games.re_augen, games.gewinner FROM games, game_data WHERE games.round_id = ? AND games.game_number = ? AND games.id = game_data.game_id " );
+$statement = $pdo->prepare ( "SELECT game_data.*, games.re_augen, games.spiel_punkte, games.gewinner FROM games, game_data WHERE games.round_id = ? AND games.game_number = ? AND games.id = game_data.game_id " );
 for($i = 1; $i <= $aktuellesSpiel; $i ++) {
 	$punkteliste [$i] ['re'] = $punkteliste [$i] ['kontra'] = '';
 	foreach ( $players_round as $player_id => $player ) {
@@ -76,8 +76,8 @@ for($i = 1; $i <= $aktuellesSpiel; $i ++) {
 		if ($row ['gewinner'] == $row ['partei'] && $row ['gewinner'] != '') {
 			$punkteliste [$i] [$row ['player_id']] ['sieger'] = true;
 		}
+		$punkteliste [$i] ['spiel'] = $row ['spiel_punkte'];
 	}
-	$punkteliste [$i] ['spiel'] = abs ( $punkteSpiel );
 	$statement2 = $pdo->prepare ( "SELECT player_data.* FROM player_data, games WHERE games.round_id = ? AND games.game_number = ? AND games.id = player_data.game_id AND player_data.game_typ != ''" );
 	$statement2->execute ( array (
 			$round_id,
