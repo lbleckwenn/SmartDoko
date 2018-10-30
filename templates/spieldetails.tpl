@@ -22,19 +22,21 @@
 								<tbody>
 									<tr>
 										<td><strong>Re</strong></td>
-										<td>Namen</td>
+										<td>{foreach $partei.re.spieler as $id}{$players_game.$id}{if !$id@last}<br>{/if}{/foreach}
+										</td>
 										<td>Punkte</td>
-										<td>Augen</td>
+										<td>{$partei.re.augen} Augen</td>
 									</tr>
 									<tr>
 										<td><strong>Kontra</strong></td>
-										<td>Namen</td>
+										<td>{foreach $partei.kontra.spieler as $id}{$players_game.$id}{if !$id@last}<br>{/if}{/foreach}
+										</td>
 										<td>Punkte</td>
-										<td>Augen</td>
+										<td>{$partei.kontra.augen} Augen</td>
 									</tr>
 								</tbody>
 							</table>
-							<strong class="mt-3">Spielverlauf</strong>
+							{if $vorbehalt || sizeof($ansagen)+sizeof($absagen)+sizeof($sonderpunkte)>0} <strong class="mt-3">Spielverlauf</strong>
 							<!-- Auflistung der An- und Absagen sowie Sonderpunkte -->
 							{if $vorbehalt}
 							<p class="mb-1">{$vorbehalt}</p>
@@ -44,7 +46,7 @@
 							<p class="mb-1">{$absage}</p>
 							{/foreach} {/if} {if sizeof($sonderpunkte)>0} {foreach $sonderpunkte as $id => $sonderpunkt}
 							<p class="mb-1">{$sonderpunkt}</p>
-							{/foreach} {/if}
+							{/foreach} {/if}{/if}
 						</div>
 					</div>
 				</div>
@@ -56,7 +58,7 @@
 					</div>
 					<div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
 						<div class="card-body">
-							{foreach $parteien as $id => $partei} {if $gameType=='solo' && $partei == 're'}{$multi = 3}{else}{$multi = 1}{/if}
+							{foreach $spielerPartei as $id => $partei} {if $gameType=='solo' && $partei == 're'}{$multi = 3}{else}{$multi = 1}{/if}
 							<p class="mb-1">{$players_game.$id} ({$partei|ucfirst}) erhält {$log.$partei * $multi} Punkte.</p>
 							{/foreach}
 						</div>

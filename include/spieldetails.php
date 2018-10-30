@@ -40,9 +40,10 @@ $result = $statement->execute ( array (
 		$game_id
 ) );
 $players_game = $statement->fetchall (); // PDO::FETCH_ASSOC
-$parteien = array ();
+$spielerPartei = $partei = array ();
 foreach ( $players_game as $player ) {
-	$parteien [$player ['id']] = $player ['partei'];
+	$spielerPartei [$player ['id']] = $player ['partei'];
+	$partei [$player ['partei']] ['spieler'] [] = $player ['id'];
 }
 
 // Augen von Re ermitteln
@@ -51,6 +52,8 @@ $statement->execute ( array (
 		$game_id
 ) );
 $reAugen = $statement->fetch () ['re_augen'];
+$partei ['re'] ['augen'] = $reAugen;
+$partei ['kontra'] ['augen'] = 240 - $reAugen;
 
 include ('gewinner.php');
 // Ansagen ermitteln
@@ -82,8 +85,8 @@ $statement->execute ( array (
 if ($statement->rowCount () > 0) {
 	while ( $row = $statement->fetch () ) {
 		$absageWert = getWertAbsage ( $row ['absage'] );
-		if (! isset ( $absagen [$parteien [$row ['player_id']]] ) || $absageWert < $absagen [$parteien [$row ['player_id']]]) {
-			$absagen [$parteien [$row ['player_id']]] = $absageWert;
+		if (! isset ( $absagen [$spielerPartei [$row ['player_id']]] ) || $absageWert < $absagen [$spielerPartei [$row ['player_id']]]) {
+			$absagen [$spielerPartei [$row ['player_id']]] = $absageWert;
 		}
 	}
 }
@@ -100,16 +103,16 @@ $statement->execute ( array (
 if ($statement->rowCount () > 0) {
 	while ( $row = $statement->fetch () ) {
 		if ($row ['fuchs_gefangen'] > 0) {
-			$sonderpunkte [$parteien [$row ['player_id']]] [] = "Fuchs gefangen";
+			$sonderpunkte [$spielerPartei [$row ['player_id']]] [] = "Fuchs gefangen";
 		}
 		if ($row ['karlchen_gefangen'] > 0) {
-			$sonderpunkte [$parteien [$row ['player_id']]] [] = "Karlchen gefangen";
+			$sonderpunkte [$spielerPartei [$row ['player_id']]] [] = "Karlchen gefangen";
 		}
 		if ($row ['karlchen_gewonnen'] > 0) {
-			$sonderpunkte [$parteien [$row ['player_id']]] [] = "Karlchen gewonnen";
+			$sonderpunkte [$spielerPartei [$row ['player_id']]] [] = "Karlchen gewonnen";
 		}
 		if ($row ['doppelkopf'] > 0) {
-			$sonderpunkte [$parteien [$row ['player_id']]] [] = "Doppelkopf";
+			$sonderpunkte [$spielerPartei [$row ['player_id']]] [] = "Doppelkopf";
 		}
 	}
 }
@@ -125,7 +128,8 @@ while ( $row = $statement->fetch () ) {
 	$players_game [$row ['id']] = $row ['vorname'] . (($mitNachnamen) ? ' ' . $row ['nachname'] : '');
 }
 $smarty->assign ( 'gewinner', ucfirst ( $gewinner ) );
-$smarty->assign ( 'parteien', $parteien );
+$smarty->assign ( 'spielerPartei', $spielerPartei );
+$smarty->assign ( 'partei', $partei );
 $smarty->assign ( 'log', $punkte );
 $smarty->assign ( 'gameType', (($isSolo == true) ? 'solo' : 'normal') );
 $smarty->assign ( 'players_game', $players_game );
