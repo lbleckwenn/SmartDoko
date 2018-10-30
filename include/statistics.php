@@ -29,7 +29,8 @@ $summenPunkteSystem = true;
  * ********************************************************************************
  * Spieler laden
  */
-$statement = $pdo->prepare ( "SELECT players.* FROM players, user_player WHERE user_player.player_id = players.id AND user_player.user_id = ? ORDER BY players.vorname ASC" );
+$statement = $pdo->prepare ( "SELECT players.* FROM players, user_player WHERE user_player.player_id = players.id AND user_player.user_id = 1 ORDER BY players.vorname ASC" );
+// $statement = $pdo->prepare ( "SELECT * FROM players ORDER BY vorname ASC" );
 $result = $statement->execute ( array (
 		$_SESSION ['userid']
 ) );
@@ -43,16 +44,23 @@ $smarty->assign ( 'players', $players );
  * ********************************************************************************
  * Durchschnittliche Punkte
  * SELECT rounds.* FROM rounds, round_player WHERE round_player.player_id = 1 AND rounds.id = round_player.round_id
+ *
+ * Eigene Runden und die von Freunden:
+ * SELECT rounds.* FROM rounds, user_friend WHERE user_friend.userId2 = 2 AND rounds.user_id = user_friend.userId1 OR rounds.user_id = 2
+ *
+ * Vorheriger SQL-String
+ * SELECT game_data.* FROM game_data, players, user_player WHERE user_player.player_id = game_data.player_id AND user_player.user_id = 1 AND game_data.player_id = players.id
  */
 if (0) {
 	// Nur Spiele mit eigener Beteiligung
-	$statement = $pdo->prepare ( "" );
+	$statement = $pdo->prepare ( "SELECT game_data.* FROM game_data, rounds, round_player WHERE game_data.round_id = rounds.id AND rounds.id = round_player.round_id AND round_player.player_id = ? ORDER BY date DESC, id ASC " );
 	$result = $statement->execute ( array (
-			getUserPlayerID ()
+			$_SESSION ['userid']
 	) );
 } else {
-	$statement = $pdo->prepare ( "SELECT game_data.* FROM game_data, players, user_player WHERE user_player.player_id = game_data.player_id AND user_player.user_id = ? AND game_data.player_id = players.id" );
+	$statement = $pdo->prepare ( "SELECT game_data.* FROM game_data, rounds, user_friend WHERE game_data.round_id = rounds.id AND user_friend.userId2 = ? AND rounds.user_id = user_friend.userId1 OR rounds.user_id = ? " );
 	$result = $statement->execute ( array (
+			$_SESSION ['userid'],
 			$_SESSION ['userid']
 	) );
 }
@@ -95,7 +103,7 @@ $statement = $pdo->prepare ( "SELECT * FROM `game_types`" );
 $result = $statement->execute ();
 $gameTypeNames = $statement->fetchall ( PDO::FETCH_UNIQUE | PDO::FETCH_ASSOC );
 $smarty->assign ( 'gameTypeNames', $gameTypeNames );
-$statement = $pdo->prepare ( "SELECT games.* FROM games, game_data, user_player WHERE user_player.user_id = 1 AND user_player.player_id = game_data.player_id AND game_data.game_id = games.id ORDER BY games.id ASC" );
+$statement = $pdo->prepare ( "SELECT games.* FROM games, game_data, user_player WHERE user_player.user_id = ? AND user_player.player_id = game_data.player_id AND game_data.game_id = games.id ORDER BY games.id ASC" );
 $result = $statement->execute ( array (
 		$_SESSION ['userid']
 ) );
