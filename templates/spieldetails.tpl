@@ -18,20 +18,20 @@
 					</div>
 					<div id="collapseThree" class="collapse show" aria-labelledby="headingTwo" data-parent="#accordion">
 						<div class="card-body">
-							<table class="table table-sm">
+							<table class="table table-sm border-bottom">
 								<tbody>
 									<tr>
 										<td><strong>Re</strong></td>
 										<td>{foreach $partei.re.spieler as $id}{$players_game.$id}{if !$id@last}<br>{/if}{/foreach}
 										</td>
-										<td>Punkte</td>
+										<td class="text-right pr-4">{$partei.re.punkte} Punkt{if abs($partei.re.punkte)!=1}e{/if}</td>
 										<td>{$partei.re.augen} Augen</td>
 									</tr>
 									<tr>
 										<td><strong>Kontra</strong></td>
 										<td>{foreach $partei.kontra.spieler as $id}{$players_game.$id}{if !$id@last}<br>{/if}{/foreach}
 										</td>
-										<td>Punkte</td>
+										<td class="text-right pr-4">{$partei.kontra.punkte} Punkt{if abs($partei.kontra.punkte)!=1}e{/if}</td>
 										<td>{$partei.kontra.augen} Augen</td>
 									</tr>
 								</tbody>
@@ -53,20 +53,6 @@
 				<div class="card">
 					<div class="card-header" id="headingTwo">
 						<h5 class="mb-0">
-							<button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">Punkte</button>
-						</h5>
-					</div>
-					<div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
-						<div class="card-body">
-							{foreach $spielerPartei as $id => $partei} {if $gameType=='solo' && $partei == 're'}{$multi = 3}{else}{$multi = 1}{/if}
-							<p class="mb-1">{$players_game.$id} ({$partei|ucfirst}) erhält {$log.$partei * $multi} Punkte.</p>
-							{/foreach}
-						</div>
-					</div>
-				</div>
-				<div class="card">
-					<div class="card-header" id="headingTwo">
-						<h5 class="mb-0">
 							<button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">Wertung</button>
 						</h5>
 					</div>
@@ -81,7 +67,7 @@
 										</tr>
 									</thead>
 									<tbody>
-										{foreach $log.log as $regel => $regelPunkte}
+										{foreach $log as $regel => $regelPunkte}
 										<tr>
 											<td colspan="3">Regel {$regel}</td>
 										</tr>
@@ -93,13 +79,6 @@
 										</tr>
 										{/foreach} {/foreach}
 									</tbody>
-									<tfoot>
-										<tr>
-											<td><strong>Summe</strong></td>
-											<td>&nbsp;</td>
-											<td class="text-right"><strong>{$log.re|abs}</strong></td>
-										</tr>
-									</tfoot>
 								</table>
 							</div>
 						</div>
