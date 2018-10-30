@@ -32,7 +32,10 @@ $statement = $pdo->prepare ( "SELECT * FROM rounds WHERE id = ? " );
 $result = $statement->execute ( array (
 		$round_id
 ) );
-$aktuellesSpiel = $statement->fetch () ['games'];
+$row = $statement->fetch ();
+$aktuellesSpiel = $row ['games'];
+if ($row ['is_running'])
+	$aktuellesSpiel --;
 $smarty->assign ( 'aktuellesSpiel', $aktuellesSpiel );
 $statement = $pdo->prepare ( "SELECT players.*, round_player.platz, round_player.spielt, round_player.gibt FROM round_player, players WHERE round_player.round_id = ? AND round_player.player_id = players.id " );
 $result = $statement->execute ( array (
