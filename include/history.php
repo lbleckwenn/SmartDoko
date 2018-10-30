@@ -31,9 +31,9 @@ while ( $row = $statement->fetch () ) {
 }
 $smarty->assign ( 'players', $players );
 
-$statement = $pdo->prepare ( "SELECT * FROM rounds WHERE user_id = ? ORDER BY date DESC" );
+$statement = $pdo->prepare ( "SELECT rounds.* FROM rounds, round_player WHERE rounds.id = round_player.round_id AND round_player.player_id = ? ORDER BY date DESC, id ASC " );
 $statement->execute ( array (
-		$user ['id']
+		$user ['playerId']
 ) );
 $runden = array ();
 while ( $row = $statement->fetch () ) {
