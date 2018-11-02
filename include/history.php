@@ -31,15 +31,23 @@ while ( $row = $statement->fetch () ) {
 }
 $smarty->assign ( 'players', $players );
 
-$statement = $pdo->prepare ( "SELECT rounds.* FROM rounds, round_player WHERE rounds.id = round_player.round_id AND round_player.player_id = ? ORDER BY date DESC, id ASC " );
-$statement->execute ( array (
-		$user ['playerId']
-) );
+if ($nurRundenMitBeteiligung) {
+	$statement = $pdo->prepare ( "SELECT rounds.* FROM rounds, round_player WHERE rounds.id = round_player.round_id AND round_player.player_id = :playerId GROUP BY id ORDER BY date DESC, id ASC " );
+	$statement->execute ( array (
+			'playerId'=>$user ['playerId']
+	) );
+} else {
+	$statement = $pdo->prepare ( "SELECT rounds.* FROM rounds, round_player, players, user_friend WHERE rounds.id = round_player.round_id AND (round_player.player_id = :playerId OR (round_player.player_id = players.id AND players.user_id = user_friend.userId1 AND user_friend.userId2 = :userId)) GROUP BY id ORDER BY date DESC, id ASC " );
+	$statement->execute ( array (
+			'playerId'=>$user ['playerId'],
+			'userId'=>$user ['id']
+	) );
+}
 $runden = array ();
 while ( $row = $statement->fetch () ) {
 	$runden [$row ['id']] = array (
 			'date' => strtotime ( $row ['date'] ),
-			'games' => $row ['games'],
+			'games' => $row ['games'] - $row ['is_running'],
 			'location' => $row ['location'],
 			'is_running' => $row ['is_running'],
 			'player' => array ()
