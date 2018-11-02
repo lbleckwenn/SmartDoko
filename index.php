@@ -23,6 +23,8 @@ require_once ('include/dbFunctions.inc.php');
 require_once ('include/login.inc.php');
 require_once ('include/Smarty.class.php');
 $mitNachnamen = getConfig ( 'mitNachnamen' );
+$nurRundenMitBeteiligung = getConfig ( 'nurRundenMitBeteiligung' );
+$summenPunkteSystem = getConfig ( 'summenPunkteSystem' );
 $f = new formreload ();
 
 $success = $error = false;
