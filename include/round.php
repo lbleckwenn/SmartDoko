@@ -57,9 +57,10 @@ if ($statement->rowCount () == 0) {
 						1
 				) );
 				$round_id = $pdo->lastInsertId ();
-				$statement = $pdo->prepare ( "INSERT INTO games (round_id, game_number) VALUES (?, ?)" );
+				$statement = $pdo->prepare ( "INSERT INTO games (round_id, game_number, isRunning) VALUES (?, ?, ?)" );
 				$result = $statement->execute ( array (
 						$round_id,
+						1,
 						1
 				) );
 				if ($result) {
@@ -657,8 +658,9 @@ if ($statement->rowCount () == 0) {
 					// Wenn Abrechnung genemigt wurde Daten speichern und nächstes Spiel
 					if ($save) {
 						// Spielpunkte speichern
-						$statement = $pdo->prepare ( "UPDATE games SET game_typ = ?, gewinner = ?, re_augen = ?, spiel_punkte = ? WHERE id = ?" );
+						$statement = $pdo->prepare ( "UPDATE games SET isRunning = ?, game_typ = ?, gewinner = ?, re_augen = ?, spiel_punkte = ? WHERE id = ?" );
 						$statement->execute ( array (
+								0,
 								$gameType,
 								$gewinner,
 								$reAugen,
@@ -711,10 +713,11 @@ if ($statement->rowCount () == 0) {
 								$round_id
 						) );
 
-						$statement = $pdo->prepare ( "INSERT INTO games (round_id, game_number) VALUES (?, ?)" );
+						$statement = $pdo->prepare ( "INSERT INTO games (round_id, game_number, isRunning) VALUES (?, ?, ?)" );
 						$result = $statement->execute ( array (
 								$round_id,
-								$aktuellesSpiel
+								$aktuellesSpiel,
+								1
 						) );
 						$game_id = $pdo->lastInsertId ();
 
