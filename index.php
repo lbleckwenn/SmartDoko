@@ -45,9 +45,11 @@ $pages = array (
 		'settings',
 		'player',
 		'round',
+		'runde',
 		'history',
 		'spielzettel',
 		'spieldetails',
+		'stat_rangliste',
 		'user'
 );
 if (! in_array ( $page, $pages )) {

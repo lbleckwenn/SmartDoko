@@ -36,7 +36,6 @@ if ($statement->rowCount () == 0) {
 	// *****************************************************************************
 	// *** keine offene Runde gefunden
 	// *****************************************************************************
-
 	$step = 1;
 	if (isset ( $_GET ['newRound'] )) {
 		if ($f->easycheck ()) {
@@ -84,6 +83,31 @@ if ($statement->rowCount () == 0) {
 	$round = $statement->fetch ();
 	$round_id = $round ['id'];
 	$aktuellesSpiel = $round ['games'];
+	
+	// laudende Runde löschen
+	if(isset ( $_GET ['abbrechen'] )) {
+		$statement = $pdo->prepare ( "DELETE FROM games WHERE round_id = ?" );
+		$statement->execute ( array (
+				$round_id
+		) );
+		$statement = $pdo->prepare ( "DELETE FROM game_data WHERE round_id = ?" );
+		$statement->execute ( array (
+				$round_id
+		) );
+		$statement = $pdo->prepare ( "DELETE FROM player_data WHERE round_id = ?" );
+		$statement->execute ( array (
+				$round_id
+		) );
+		$statement = $pdo->prepare ( "DELETE FROM round_player WHERE round_id = ?" );
+		$statement->execute ( array (
+				$round_id
+		) );
+		$statement = $pdo->prepare ( "DELETE FROM rounds WHERE id = ?" );
+		$statement->execute ( array (
+				$round_id
+		) );		
+	}
+	// *****************************************************************************
 	$anzahlSpieler = $round ['player'];
 	$statement = $pdo->prepare ( "SELECT * FROM games WHERE round_id = ? AND game_number = ?" );
 	$statement->execute ( array (
@@ -139,9 +163,6 @@ if ($statement->rowCount () == 0) {
 						$step = 3;
 					}
 				} else {
-					/**
-					 * Nicht vergessen auch die Spielerdaten zu löschen wenn die Tabellenstruktur dafür ausgearbeitet wurde
-					 */
 					$statement = $pdo->prepare ( "DELETE FROM games WHERE round_id = ?" );
 					$statement->execute ( array (
 							$round_id

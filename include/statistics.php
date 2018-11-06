@@ -23,16 +23,90 @@ if (! $user) {
 	return;
 }
 
-$summenPunkteSystem = true;
-
 /*
  * ********************************************************************************
  * Spieler laden
  */
-$statement = $pdo->prepare ( "SELECT players.* FROM players, user_player WHERE user_player.player_id = players.id AND user_player.user_id = 1 ORDER BY players.vorname ASC" );
-// $statement = $pdo->prepare ( "SELECT * FROM players ORDER BY vorname ASC" );
+$statement = $pdo->prepare ( "SELECT *, CONCAT(vorname, ' ', nachname) as komplett, (SELECT count(*) FROM round_player WHERE round_player.player_id = players.id) AS runden FROM `players` ORDER BY nachname ASC, vorname ASC" );
+$statement->execute ();
+$alleSpieler = $statement->fetchAll ( PDO::FETCH_UNIQUE | PDO::FETCH_ASSOC );
+foreach ( $alleSpieler as $spielerId => $spieler ) {
+	if ($spieler ['runden'] == 0) {
+		// Spieler ohne Beteiligung nicht berücksichtigen
+		unset ( $alleSpieler [$spielerId] );
+		continue;
+	}
+	$alleSpieler [$spielerId] ['punktePlusMinus'] = 0;
+	$alleSpieler [$spielerId] ['punkteSumme'] = 0;
+	$alleSpieler [$spielerId] ['siege'] = 0;
+	$alleSpieler [$spielerId] ['spiele'] = 0;
+}
+
+/*
+ * ********************************************************************************
+ * Spiele laden
+ */
+
+$statement = $pdo->prepare ( "SELECT * FROM games" );
+$statement->execute ();
+$spiele = $statement->fetchAll ( PDO::FETCH_UNIQUE | PDO::FETCH_ASSOC );
+
+/*
+ * ********************************************************************************
+ * Spieldaten laden
+ */
+
+$statement = $pdo->prepare ( "SELECT * FROM game_data" );
+$statement->execute ();
+$spieleSpielerParteiPunkte = $statement->fetchAll ( PDO::FETCH_UNIQUE | PDO::FETCH_ASSOC );
+
+/*
+ * ********************************************************************************
+ * Spiel- und Spielerdaten zusammenführen
+ */
+
+foreach ( $spieleSpielerParteiPunkte as $spieleSpielerParteiPunkte ) {
+	$spielId = $spieleSpielerParteiPunkte ['game_id'];
+	if ($spiele [$spielId] ['isRunning']) {
+		// laufende Spiele nicht mit einbeziehen
+		continue;
+	}
+	$spielerId = $spieleSpielerParteiPunkte ['player_id'];
+	$spielerPunkte = $spieleSpielerParteiPunkte ['punkte'];
+	$alleSpieler [$spielerId] ['punktePlusMinus'] += $spielerPunkte;
+	$alleSpieler [$spielerId] ['punkteSumme'] += ($spielerPunkte > 0 ? $spielerPunkte : 0);
+	$alleSpieler [$spielerId] ['siege'] += ($spieleSpielerParteiPunkte ['partei'] == $spiele [$spielId] ['gewinner'] ? 1 : 0);
+	$alleSpieler [$spielerId] ['spiele'] ++;
+}
+
+/*
+ * ********************************************************************************
+ * Durchnittliche Punkte ermittlen und Spieler nach Punkten sortieren
+ */
+$sortPunkte = array ();
+$sortFeld = ($summenPunkteSystem ? 'schnittSpielePunkteSumme' : 'schnittSpielePunktePlusMinus');
+foreach ( $alleSpieler as $spielerId => $spieler ) {
+	$alleSpieler [$spielerId] ['schnittSpielePunktePlusMinus'] = $alleSpieler [$spielerId] ['punktePlusMinus'] / $alleSpieler [$spielerId] ['spiele'];
+	$alleSpieler [$spielerId] ['schnittSpielePunkteSumme'] = $alleSpieler [$spielerId] ['punkteSumme'] / $alleSpieler [$spielerId] ['spiele'];
+	$alleSpieler [$spielerId] ['schnittSiegeSpiele'] = $alleSpieler [$spielerId] ['siege'] / $alleSpieler [$spielerId] ['spiele'] * 100;
+	$sortPunkte [] = $alleSpieler [$spielerId] [$sortFeld];
+}
+array_multisort ( $sortPunkte, SORT_DESC, $alleSpieler );
+$smarty->assign ( 'rangliste', $alleSpieler );
+
+/*
+ * ********************************************************************************
+ * Alter Programmcode
+ */
+
+if ($nurRundenMitBeteiligung) {
+	$statement = $pdo->prepare ( "SELECT players.* FROM players, user_player WHERE user_player.player_id = players.id AND user_player.user_id = :userId ORDER BY players.vorname ASC" );
+} else {
+	$statement = $pdo->prepare ( "SELECT players.* FROM players, user_friend, user_player WHERE user_player.player_id = players.id AND (user_player.user_id = :userId OR (user_player.user_id = user_friend.userId1 AND user_friend.userId2 = :userId)) GROUP BY id ORDER BY players.vorname ASC " );
+}
+
 $result = $statement->execute ( array (
-		$_SESSION ['userid']
+		'userId' => $_SESSION ['userid']
 ) );
 $players = array ();
 while ( $row = $statement->fetch () ) {
@@ -51,22 +125,28 @@ $smarty->assign ( 'players', $players );
  * Vorheriger SQL-String
  * SELECT game_data.* FROM game_data, players, user_player WHERE user_player.player_id = game_data.player_id AND user_player.user_id = 1 AND game_data.player_id = players.id
  */
-if (0) {
+if ($nurRundenMitBeteiligung) {
 	// Nur Spiele mit eigener Beteiligung
-	$statement = $pdo->prepare ( "SELECT game_data.* FROM game_data, rounds, round_player WHERE game_data.round_id = rounds.id AND rounds.id = round_player.round_id AND round_player.player_id = ? ORDER BY date DESC, id ASC " );
+	$statement = $pdo->prepare ( "SELECT game_data.*, games.game_typ FROM games, game_data, rounds, round_player WHERE game_data.round_id = rounds.id AND games.id = game_data.game_id AND rounds.id = round_player.round_id AND round_player.player_id = ? ORDER BY date DESC, id ASC " );
 	$result = $statement->execute ( array (
 			$_SESSION ['userid']
 	) );
 } else {
-	$statement = $pdo->prepare ( "SELECT game_data.* FROM game_data, rounds, user_friend WHERE game_data.round_id = rounds.id AND user_friend.userId2 = ? AND rounds.user_id = user_friend.userId1 OR rounds.user_id = ? " );
+	$statement = $pdo->prepare ( "SELECT game_data.*, games.game_typ FROM games, game_data, rounds, user_friend WHERE game_data.round_id = rounds.id AND games.id = game_data.game_id AND ( ( rounds.user_id = user_friend.userId1 AND user_friend.userId2 = ? ) OR rounds.user_id = ? ) GROUP BY id " );
 	$result = $statement->execute ( array (
 			$_SESSION ['userid'],
 			$_SESSION ['userid']
 	) );
 }
+$game_data = $statement->fetchAll ( PDO::FETCH_UNIQUE | PDO::FETCH_ASSOC );
+
 $averagePoints = $gamesOverall = array ();
 if ($statement->rowCount () > 0) {
-	while ( $row = $statement->fetch () ) {
+	foreach ( $game_data as $row ) {
+		if ($row ['game_typ'] == NULL) {
+			// Bei laufenden Runden steht der Spieltyp des aktuellen Spiels noch nicht in der Datenbank
+			continue;
+		}
 		$gamesOverall [$row ['game_id']] = true;
 		$playerId = $row ['player_id'];
 		$playerName = $players [$playerId];

@@ -1,0 +1,18 @@
+
+ALTER TABLE `games` ADD `isRunning` INT NOT NULL DEFAULT '0' AFTER `game_number`;
+
+INSERT INTO `config` (`id`, `name`, `value`) VALUES (NULL, 'nurRundenMitBeteiligung', '0'), (NULL, 'summenPunkteSystem', '1');
+
+ALTER TABLE `game_types` ADD `kurzText` VARCHAR(10) NULL AFTER `text`;
+
+CREATE TABLE `user_friend` (
+  `id` int(11) NOT NULL,
+  `userId1` int(11) NOT NULL,
+  `userId2` int(11) NOT NULL,
+  `token` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+ALTER TABLE `user_friend`
+  ADD PRIMARY KEY (`id`);
+ALTER TABLE `user_friend`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+INSERT INTO `user_friend` (`id`, `userId1`, `userId2`, `token`) VALUES (NULL, '1', '2', NULL), (NULL, '2', '1', NULL);
