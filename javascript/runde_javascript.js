@@ -35,9 +35,8 @@ $(document).on("click", '#buttons > button.btn', function(event) {
 		karlchengefangen : 1
 	};
 	if (buttonId in sonderpunkte) {
-		sonderpunkt = buttonId;
-		
-		$('#menu').html(createMenu('', [], getPossibleButtons()));
+		sonderpunkt = buttonId;		
+		$('#menu').html(createMenu('', [], ['speichern','abbrechen']));
 		return;
 	}
 	if ($.isNumeric(buttonId)) {
@@ -66,7 +65,7 @@ $(document).on("click", '#buttons > button.btn', function(event) {
 		anzeigeAnsagen = false;
 		anzeigeSonderpunkt = false;
 		anzeigeStilleHochzeit = false;
-		// Anzeige Absageauswahl
+		$('#menu').html(createMenu('Absage auswählen', [], getPossibleButtons()));
 		break;
 	case 'hochzeit':
 		spielTyp = 2;
@@ -235,6 +234,10 @@ function allButtons() {
 		abrechnung : {
 			farbe : 'btn-success',
 			text : 'Spielabrechnung'
+		},
+		speichern : {
+			farbe : 'btn-success',
+			text : 'Speichern'
 		},
 		beenden : {
 			farbe : 'btn-danger',
