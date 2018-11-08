@@ -1,13 +1,19 @@
 // Initialisierung
-
-var spielTyp;
-var anzeigeAnsagen = true;
-var anzeigeSonderpunkt = true;
-var anzeigeStilleHochzeit = true;
+var spielTyp = spielDaten.spielTyp;
+var alleSpieler = spielDaten.alleSpieler;
+var anzeige = {
+	re : true,
+	kontra : true,
+	absage : true,
+	sonderpunkt : true,
+	stillehochzeit : true
+}
 var auswahl = 'spieler';
 var spieler;
 var partner;
 var gegner;
+var ansage;
+var absage;
 var sonderpunkt;
 var players = alleSpielerIds;
 $('#menu').html(createMenu('Auswahl:', players, [ 'abrechnung', 'beenden' ]));
@@ -26,7 +32,6 @@ $(document).on("click", '#buttons > button.btn', function(event) {
 	if (buttonId in solos) {
 		spielTyp = solos[buttonId];
 		$('#menu').html(createMenu('', [], getPossibleButtons()));
-		return;
 	}
 	sonderpunkte = {
 		doppelkopf : 0,
@@ -35,8 +40,14 @@ $(document).on("click", '#buttons > button.btn', function(event) {
 		karlchengefangen : 1
 	};
 	if (buttonId in sonderpunkte) {
-		sonderpunkt = buttonId;		
-		$('#menu').html(createMenu('', [], ['speichern','abbrechen']));
+		sonderpunkt = buttonId;
+		if (sonderpunkt.substr(-8) == 'gefangen') {
+			auswahl = 'gegner';
+			players = getPlayersWithout(spieler);
+			$('#menu').html(createMenu('Gefangen von:', players, [ 'abbrechen' ]));
+		} else {
+			$('#menu').html(confirmationRequest());
+		}
 		return;
 	}
 	if ($.isNumeric(buttonId)) {
@@ -52,41 +63,78 @@ $(document).on("click", '#buttons > button.btn', function(event) {
 			break;
 		}
 		if (spielTyp) {
-			$('#menu').html(createMenu('', [], getPossibleButtons()));
+			var topText = '';
+			if (spielTyp == 2 || spielTyp == 4) {
+				var topText = 'Absage gilt auch als Ansage:';
+			}
+			$('#menu').html(createMenu(topText, [], getPossibleButtons()));
+		} else if (sonderpunkt) {
+			$('#menu').html(confirmationRequest());
 		} else {
 			$('#menu').html(createMenu('Bitte auswählen:', [], [ 're', 'kontra', 'sonderpunkt', 'hochzeit', 'armut', 'solo', 'abbrechen' ]));
 		}
 	}
+	var absagen = {
+		keine90 : 90,
+		keine60 : 60,
+		keine30 : 30,
+		schwarz : 0
+	};
+	if (buttonId in absagen) {
+		if (!ansage) {
+			ansage = 're';
+		}
+		absage = buttonId;
+		$('#menu').html(confirmationRequest());
+	}
+
 	switch (buttonId) {
+	case 'abbrechen':
+		location.reload();
+		break;
+	case 'ueberspringen':
+		$('#menu').html(confirmationRequest());
+		break;
 	case 're':
 	case 'kontra':
 		// Spieler hat Re oder Kontra angesagt
-		spielTyp = 1;
-		anzeigeAnsagen = false;
-		anzeigeSonderpunkt = false;
-		anzeigeStilleHochzeit = false;
-		$('#menu').html(createMenu('Absage auswählen', [], getPossibleButtons()));
+		if (!spielTyp) {
+			spielTyp = 1;
+		}
+		ansage = buttonId;
+		if (anzeige.absage) {
+			anzeige.re = false;
+			anzeige.kontra = false;
+			anzeige.sonderpunkt = false;
+			anzeige.stillehochzeit = false;
+			$('#menu').html(createMenu('Absage auswählen:', [], getPossibleButtons()));
+		} else {
+			$('#menu').html(confirmationRequest());
+		}
 		break;
 	case 'hochzeit':
 		spielTyp = 2;
 		auswahl = 'partner';
-		anzeigeSonderpunkt = false;
-		anzeigeStilleHochzeit = false;
+		anzeige.kontra = false;
+		anzeige.sonderpunkt = false;
+		anzeige.stillehochzeit = false;
 		players = getPlayersWithout(spieler);
 		$('#menu').html(createMenu('Mitspieler auswählen', players, [ 'abbrechen' ]));
 		break;
 	case 'armut':
 		spielTyp = 4;
 		auswahl = 'partner';
-		anzeigeSonderpunkt = false;
-		anzeigeStilleHochzeit = false;
+		anzeige.kontra = false;
+		anzeige.sonderpunkt = false;
+		anzeige.stillehochzeit = false;
 		players = getPlayersWithout(spieler);
 		$('#menu').html(createMenu('Mitspieler auswählen', players, [ 'abbrechen' ]));
 		break;
 	case 'solo':
-		anzeigeSonderpunkt = false;
-		anzeigeStilleHochzeit = false;
-		$('#menu').html(createMenu('Solo auswählen', [], [ 'kreuzsolo', 'piksolo', 'herzsolo', 'karosolo', 'damensolo', 'bubensolo', 'fleischlos', 'abbrechen' ]));
+		anzeige.kontra = false;
+		anzeige.sonderpunkt = false;
+		anzeige.stillehochzeit = false;
+		$('#menu').html(createMenu('Solo auswählen', [], [ 'damensolo', 'bubensolo', 'fleischlos', 'kreuzsolo', 'piksolo', 'herzsolo', 'karosolo', 'stillehochzeit', 'abbrechen' ]));
 		break;
 	case 'sonderpunkt':
 		$('#menu').html(createMenu('Sonderpunkt auswählen', [], [ 'doppelkopf', 'fuchsgefangen', 'karlchen', 'karlchengefangen', 'abbrechen' ]));
@@ -110,16 +158,45 @@ function createMenu(text, players, buttons) {
 	retvar += '</span>';
 	return retvar;
 }
+function confirmationRequest() {
+	var retvar = '<p class="font-weight-bold">Bitte Bestätigen:</p>';
+	if (spielTyp != spielDaten.spielTyp) {
+		switch (spielTyp) {
+		case 2:
+			retvar += '<p>' + spieler + ' und ' + partner + ' spielen eine Hochzeit.</p>';
+			if (ansage) {
+				retvar += '<p>Es wurde "Re" an';
+				if (absage) {
+					retvar += '- und "' + absage + '" ab';
+				}
+				retvar += 'gesagt.</p>';
+			}
+		}
+	}
+	retvar += '<input type="text" value="' + spielTyp + '">';
+	retvar += '<input type="text" value="' + spieler + '">';
+	retvar += '<input type="text" value="' + ansage + '">';
+	retvar += '<input type="text" value="' + absage + '">';
+	retvar += '<input type="text" value="' + partner + '">';
+	retvar += '<input type="text" value="' + sonderpunkt + '">';
+	retvar += '<input type="text" value="' + gegner + '">';
+	retvar += debug();
+	return retvar;
+}
 function debug() {
 	var retvar = '<dl class="row mt-3">';
+	retvar += '<dt class="col-7">auswahl</dt><dd class="col-5">' + auswahl + '</dd>';
 	retvar += '<dt class="col-7">spielTyp</dt><dd class="col-5">' + spielTyp + '</dd>';
 	retvar += '<dt class="col-7">spieler</dt><dd class="col-5">' + spieler + '</dd>';
+	retvar += '<dt class="col-7">ansage</dt><dd class="col-5">' + ansage + '</dd>';
+	retvar += '<dt class="col-7">absage</dt><dd class="col-5">' + absage + '</dd>';
 	retvar += '<dt class="col-7">partner</dt><dd class="col-5">' + partner + '</dd>';
 	retvar += '<dt class="col-7">gegner</dt><dd class="col-5">' + gegner + '</dd>';
 	retvar += '<dt class="col-7">sonderpunkt</dt><dd class="col-5">' + sonderpunkt + '</dd>';
-	retvar += '<dt class="col-7">anzeigeAnsagen</dt><dd class="col-5">' + anzeigeAnsagen + '</dd>';
-	retvar += '<dt class="col-7">anzeigeSonderpunkt</dt><dd class="col-5">' + anzeigeSonderpunkt + '</dd>';
-	retvar += '<dt class="col-7">anzeigeStilleHochzeit</dt><dd class="col-5">' + anzeigeStilleHochzeit + '</dd>';
+	retvar += '<dt class="col-7">anzeige.re</dt><dd class="col-5">' + anzeige.re + '</dd>';
+	retvar += '<dt class="col-7">anzeige.kontra</dt><dd class="col-5">' + anzeige.kontra + '</dd>';
+	retvar += '<dt class="col-7">anzeige.sonderpunkt</dt><dd class="col-5">' + anzeige.sonderpunkt + '</dd>';
+	retvar += '<dt class="col-7">anzeige.stillehochzeit</dt><dd class="col-5">' + anzeige.stillehochzeit + '</dd>';
 	retvar += '</dl>';
 	return retvar;
 }
@@ -128,7 +205,7 @@ function createButton(button) {
 	if ($.isNumeric(button)) {
 		buttons[button] = {
 			farbe : 'btn-primary',
-			text : alleSpieler[button]
+			text : alleSpieler[button].vorname
 		};
 	}
 	return '<button type="button" class="btn ' + buttons[button].farbe + ' btn-block" id="' + button + '">' + buttons[button].text + '</button>';
@@ -144,18 +221,31 @@ function getPlayersWithout(player) {
 }
 function getPossibleButtons() {
 	var buttons = [];
-	if (anzeigeAnsagen) {
-		buttons.push('re', 'kontra');
+	if (anzeige.re) {
+		buttons.push('re');
+	}
+	if (anzeige.kontra) {
+		buttons.push('kontra');
 	}
 	buttons.push('keine90', 'keine60', 'keine30', 'schwarz');
-	if (anzeigeSonderpunkt) {
+	anzeige.absage = false;
+	if (anzeige.sonderpunkt) {
 		buttons.push('sonderpunkt');
 	}
-	if (anzeigeStilleHochzeit) {
+	if (anzeige.stillehochzeit) {
 		buttons.push('stillehochzeit');
 	}
-	buttons.push('abbrechen');
+	buttons.push('ueberspringen', 'abbrechen');
 	return buttons;
+}
+function zeigeAnsage(partei) {
+	var retvar
+	for ( var spielerId in alleSpieler) {
+		if (allespieler[spielerId].partei == partei) {
+			return false;
+		}
+	}
+	return true;
 }
 function allButtons() {
 	return {
@@ -181,11 +271,11 @@ function allButtons() {
 		},
 		bubensolo : {
 			farbe : 'btn-primary',
-			text : 'Bubuensolo'
+			text : 'Bubensolo'
 		},
 		fleischlos : {
 			farbe : 'btn-primary',
-			text : 'Fleischloser'
+			text : 'Fleischlos'
 		},
 		re : {
 			farbe : 'btn-primary',
@@ -238,6 +328,10 @@ function allButtons() {
 		speichern : {
 			farbe : 'btn-success',
 			text : 'Speichern'
+		},
+		ueberspringen : {
+			farbe : 'btn-success',
+			text : 'Überspringen'
 		},
 		beenden : {
 			farbe : 'btn-danger',
