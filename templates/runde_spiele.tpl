@@ -2,11 +2,6 @@
 var alleSpielerIds = [{foreach $alleSpieler as $spielerId => $spieler}{if !$spieler@first}, {/if}{$spielerId}{/foreach}];
 var spielDaten = {
 	alleSpieler : {
-		4 : {
-			vorname : 'Heiko',
-			punkte : 0,
-			partei : null
-		},
 		5 : {
 			vorname : 'Holger',
 			punkte : 0,
@@ -17,23 +12,27 @@ var spielDaten = {
 			punkte : 0,
 			partei : null
 		},
+		22 : {
+			vorname : 'Michael',
+			punkte : 0,
+			partei : null
+		},
 		1 : {
 			vorname : 'Lars',
 			punkte : 0,
 			partei : null
 		}
 	},
-	spielTyp : null,
+	spielTyp : 0,
 	ansagen : {
-		re : false,
-		kontra : false
+		re : 0,
+		kontra : 0
 	},
 	absagen : {
 		re : null,
 		kontra : null
 	}
 };
-
 </script>
 
 <h3>Spiel {$aktuellesSpiel}</h3>
