@@ -229,19 +229,55 @@ if (! $f->easycheck ()) {
 			// *****************************************************************************
 			// *** Spieler des Spiels ermitteln
 			// *****************************************************************************
-			$statement = $pdo->prepare ( "SELECT players.*, CONCAT(players.vorname, ' ', players.nachname) as komplett, round_player.spielt, round_player.gibt FROM round_player, players WHERE round_player.round_id = ? AND round_player.player_id = players.id " );
+			$ansage = $absage = array (
+					're' => false,
+					'kontra' => false
+			);
+			$gameTyp = 0;
+			$statement = $pdo->prepare ( "SELECT game_data.*, player_data.game_typ, player_data.ansage, player_data.absage FROM game_data LEFT JOIN player_data ON player_data.game_id = :gameId AND (player_data.absage IS NOT NULL OR player_data.game_typ IS NOT NULL OR player_data.ansage IS NOT NULL) AND player_data.player_id = game_data.player_id WHERE game_data.game_id = :gameId" );
 			$result = $statement->execute ( array (
-					$round_id
+					'gameId' => $game_id
 			) );
-			$alleSpieler = $statement->fetchAll ( PDO::FETCH_UNIQUE | PDO::FETCH_ASSOC );
-			foreach ( $alleSpieler as $spielerId => $spieler ) {
-				if ($spieler ['gibt']) {
-					$geber = ($mitNachnamen ? $spieler ['komplett'] : $spieler ['vorname']);
+			while ( $row = $statement->fetch ( PDO::FETCH_ASSOC ) ) {
+				if ($row ['game_typ']) {
+					$gameTyp = $row ['game_typ'];
 				}
-				if (! $spieler ['spielt']) {
-					unset ( $alleSpieler [$spielerId] );
+				if ($row ['ansage']) {
+					$ansage [$row ['ansage']] = true;
+				}
+				if ($row ['absage']) {
+					$absage [$row ['partei']] = $row ['absage'];
 				}
 			}
+			if ($gameTyp == 0 && ($ansage ['re'] || $ansage ['kontra'])) {
+				$gameTyp = 1;
+			}
+			$statement = $pdo->prepare ( "SELECT players.*, CONCAT(players.vorname, ' ', players.nachname) as komplett, round_player.spielt, gd.partei as partei, sum(game_data.punkte) as punkte, round_player.gibt FROM round_player, players LEFT JOIN game_data ON round_id = :roundId and game_data.player_id = players.id and punkte > 0 LEFT JOIN game_data gd ON gd.game_id = :gameId and gd.player_id = players.id WHERE round_player.round_id = :roundId AND round_player.player_id = players.id GROUP BY id ORDER BY round_player.platz" );
+			$result = $statement->execute ( array (
+					'roundId' => $round_id,
+					'gameId' => $game_id
+			) );
+			$alleSpieler = $statement->fetchAll ( PDO::FETCH_UNIQUE | PDO::FETCH_ASSOC );
+			$jsObjectSpieler = '{';
+			$re = $kontra = 0;
+			foreach ( $alleSpieler as $spielerId => $spieler ) {
+				$spielerName = ($mitNachnamen ? $spieler ['komplett'] : $spieler ['vorname']);
+				if ($spieler ['gibt']) {
+					$geber = $spielerName;
+				}
+				if ($spieler ['spielt']) {
+					$jsObjectSpieler .= sprintf ( "%d: {name: '%s', partei: %s}, ", $spielerId, $spielerName, ($spieler ['partei'] ? "'{$spieler ['partei']}'" : 'null') );
+					if ($spieler ['partei'] == 're')
+						$re ++;
+					if ($spieler ['partei'] == 'kontra')
+						$kontra ++;
+				}
+			}
+			$smarty->assign ( 'jsObjectSpieler', $jsObjectSpieler . '}' );
+			$smarty->assign ( 'jsObjectSpielTyp', $gameTyp );
+			$smarty->assign ( 'jsObjectAnzahl', sprintf ( '{re: %d, kontra: %d}', $re, $kontra ) );
+			$smarty->assign ( 'jsObjectAnsagen', sprintf ( '{re: %s, kontra: %s}', ($ansage ['re'] ? 'true' : 'false'), ($ansage ['kontra'] ? 'true' : 'false') ) );
+			$smarty->assign ( 'jsObjectAbsagen', sprintf ( '{re: %s, kontra: %s}', ($absage ['re'] ? "'{$absage ['re']}'" : 'null'), ($absage ['kontra'] ? "'{$absage ['kontra']}'" : 'null') ) );
 			$smarty->assign ( 'alleSpieler', $alleSpieler );
 			$smarty->assign ( 'geber', $geber );
 		}

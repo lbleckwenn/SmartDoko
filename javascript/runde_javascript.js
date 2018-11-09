@@ -1,6 +1,6 @@
 // Initialisierung
 var spielTyp = spielDaten.spielTyp;
-var alleSpieler = spielDaten.alleSpieler;
+var alleSpieler = spielDaten.spieler;
 var anzeige = {
 	re : true,
 	kontra : true,
@@ -16,8 +16,8 @@ var ansage;
 var absage;
 var sonderpunkt;
 var spielName;
-var players = alleSpielerIds;
-$('#menu').html(createMenu('Auswahl:', players, [ 'abrechnung', 'beenden' ]));
+var players = spielDaten.spielerIds;
+$('#menu').html(createMenu('Auswahl:', players, [ 'zwischenstand', 'abrechnung', 'beenden' ]));
 
 $(document).on("click", '#buttons > button.btn', function(event) {
 	var buttonId = this.id;
@@ -25,13 +25,17 @@ $(document).on("click", '#buttons > button.btn', function(event) {
 	if (buttonId in absagen) {
 		if (!ansage) {
 			if (spielTyp == 1) {
-				if (spielDaten.ansagen.re == 1) {
+				if (spielDaten.anzahl.re == 1) {
 					ansage = 're';
 				} else {
 					ansage = 'kontra';
 				}
 			} else {
-				ansage = 're';
+				if (alleSpieler[spieler].partei != null) {
+					ansage = alleSpieler[spieler].partei;
+				} else {
+					ansage = 're';
+				}
 			}
 		}
 		absage = absagen[buttonId];
@@ -72,7 +76,7 @@ $(document).on("click", '#buttons > button.btn', function(event) {
 		}
 		if (spielTyp) {
 			var topText = 'Auswahl:';
-			if (spielTyp == 2 || spielTyp == 4) {
+			if ((spielTyp == 2 || spielTyp == 4) && !spielDaten.ansagen.re) {
 				var topText = 'Absage gilt auch als "Re"-Ansage:';
 			}
 			$('#menu').html(createMenu(topText, [], getPossibleButtons()));
@@ -81,6 +85,10 @@ $(document).on("click", '#buttons > button.btn', function(event) {
 		}
 	}
 	switch (buttonId) {
+	case 'zwischenstand':
+		$('#menu').html($('#rangliste').html());
+		return;
+		break;
 	case 'abbrechen':
 		location.reload();
 		break;
@@ -159,19 +167,19 @@ function confirmationRequest() {
 		if (spielTyp == 1) {
 			retvar += 'Normalspiel';
 		} else if (spielTyp == 2 || spielTyp == 4) {
-			retvar += alleSpieler[spieler].vorname + ' und ' + alleSpieler[partner].vorname + ' spielen eine ' + capitalizeFirstLetter(spielName);
+			retvar += alleSpieler[spieler].name + ' und ' + alleSpieler[partner].name + ' spielen eine ' + capitalizeFirstLetter(spielName);
 		} else {
 			if (spielTyp == 3) {
 				var artikel = 'eine ';
 			} else {
 				var artikel = 'ein ';
 			}
-			retvar += alleSpieler[spieler].vorname + ' spielt ' + artikel + capitalizeFirstLetter(buttons[spielName].text);
+			retvar += alleSpieler[spieler].name + ' spielt ' + artikel + capitalizeFirstLetter(buttons[spielName].text);
 		}
 		retvar += '.<br>';
 	}
-	if (ansage && spielDaten.ansagen[ansage] == 0) {
-		retvar += alleSpieler[spieler].vorname + ' hat "' + capitalizeFirstLetter(ansage) + '" an';
+	if (ansage && !spielDaten.ansagen[ansage]) {
+		retvar += alleSpieler[spieler].name + ' hat "' + capitalizeFirstLetter(ansage) + '" an';
 		if (absage) {
 			retvar += '- und "' + absage + '" ab';
 		}
@@ -182,12 +190,12 @@ function confirmationRequest() {
 		} else {
 			var partei = alleSpieler[spieler].partei;
 		}
-		retvar += alleSpieler[spieler].vorname + ' hat "' + absage + '" für die "' + capitalizeFirstLetter(partei) + '"-Partei abgesagt.</br>';
+		retvar += alleSpieler[spieler].name + ' hat "' + absage + '" für die "' + capitalizeFirstLetter(partei) + '"-Partei abgesagt.</br>';
 	}
 	if (sonderpunkt) {
-		retvar += 'Sonderpunkt für ' + alleSpieler[spieler].vorname + ': ' + capitalizeFirstLetter(buttons[sonderpunkt].text);
+		retvar += 'Sonderpunkt für ' + alleSpieler[spieler].name + ': ' + capitalizeFirstLetter(buttons[sonderpunkt].text);
 		if (gegner) {
-			retvar += ' von ' + alleSpieler[gegner].vorname;
+			retvar += ' von ' + alleSpieler[gegner].name;
 		}
 	}
 	retvar += '</p>';
@@ -208,33 +216,46 @@ function createButton(button) {
 	if ($.isNumeric(button)) {
 		buttons[button] = {
 			farbe : 'btn-primary',
-			text : alleSpieler[button].vorname
+			text : alleSpieler[button].name
 		};
 	}
 	return '<button type="button" class="btn ' + buttons[button].farbe + ' btn-block" id="' + button + '">' + buttons[button].text + '</button>';
 }
 function getPlayersWithout(player) {
 	var players = [];
-	for (i = 0; i < alleSpielerIds.length; i++) {
-		if (alleSpielerIds[i] != player) {
-			players.push(alleSpielerIds[i]);
+	for (i = 0; i < spielDaten.spielerIds.length; i++) {
+		if (spielDaten.spielerIds[i] != player) {
+			players.push(spielDaten.spielerIds[i]);
 		}
 	}
 	return players;
 }
 function getPossibleButtons() {
 	var buttons = [];
-	if (alleSpieler[spieler].partei == null && (spielDaten.ansagen.re + spielDaten.ansagen.kontra < 3)) {
-		if (anzeige.re && (spielDaten.ansagen.re == 0 || (spielDaten.ansagen.re == 1 && spielDaten.ansagen.kontra != 0))) {
+	// if (alleSpieler[spieler].partei == null && (spielDaten.anzahl.re +
+	// spielDaten.anzahl.kontra) < 3) {
+	if (spielDaten.ansagen.re == false || spielDaten.ansagen.kontra == false || (spielDaten.anzahl.kontra == 1 && spielDaten.anzahl.re == 1)) {
+		if (anzeige.re && ((!spielDaten.ansagen.re && alleSpieler[spieler].partei != 'kontra') || (spielDaten.anzahl.re == 1 && spielDaten.anzahl.kontra == 1))) {
 			buttons.push('re');
 		}
-		if (anzeige.kontra && (spielDaten.ansagen.kontra == 0 || (spielDaten.ansagen.kontra == 1 && spielDaten.ansagen.re != 0))) {
+		if (anzeige.kontra && ((!spielDaten.ansagen.kontra && alleSpieler[spieler].partei != 're') || (spielDaten.anzahl.kontra == 1 && spielDaten.anzahl.re == 1))) {
 			buttons.push('kontra');
 		}
 	}
-	if ((spielDaten.ansagen.re == spielDaten.ansagen.kontra && spielDaten.ansagen.re != 1) || alleSpieler[spieler].partei != null || ansage
-			|| ((spielDaten.ansagen.re + spielDaten.ansagen.kontra) % 2 != 0)) {
-		buttons.push('keine90', 'keine60', 'keine30', 'schwarz');
+	if ((spielDaten.anzahl.re == spielDaten.anzahl.kontra && spielDaten.anzahl.re != 1) || alleSpieler[spieler].partei != null || ansage
+			|| ((spielDaten.anzahl.re + spielDaten.anzahl.kontra) % 2 != 0)) {
+		if (alleSpieler[spieler].partei != null && spielDaten.absagen[alleSpieler[spieler].partei] != null) {
+			switch (spielDaten.absagen[alleSpieler[spieler].partei]) {
+			case 'keine 90':
+				buttons.push('keine60');
+			case 'keine 60':
+				buttons.push('keine30');
+			case 'keine 30':
+				buttons.push('schwarz');
+			}
+		} else {
+			buttons.push('keine90', 'keine60', 'keine30', 'schwarz');
+		}
 		anzeige.absage = false;
 	}
 	if (anzeige.sonderpunkt) {
@@ -291,6 +312,10 @@ function allSonderpunkte() {
 }
 function allButtons() {
 	return {
+		zwischenstand : {
+			farbe : 'btn-info',
+			text : 'Zwischenstand'
+		},
 		kreuzsolo : {
 			farbe : 'btn-primary',
 			text : 'Farbsolo (Kreuz)'

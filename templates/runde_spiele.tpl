@@ -1,37 +1,11 @@
 <script>
-var alleSpielerIds = [{foreach $alleSpieler as $spielerId => $spieler}{if !$spieler@first}, {/if}{$spielerId}{/foreach}];
 var spielDaten = {
-	alleSpieler : {
-		5 : {
-			vorname : 'Holger',
-			punkte : 0,
-			partei : null
-		},
-		20 : {
-			vorname : 'Arne',
-			punkte : 0,
-			partei : null
-		},
-		22 : {
-			vorname : 'Michael',
-			punkte : 0,
-			partei : null
-		},
-		1 : {
-			vorname : 'Lars',
-			punkte : 0,
-			partei : null
-		}
-	},
-	spielTyp : 0,
-	ansagen : {
-		re : 0,
-		kontra : 0
-	},
-	absagen : {
-		re : null,
-		kontra : null
-	}
+	spieler: {$jsObjectSpieler},
+	spielerIds: [{foreach $alleSpieler as $spielerId => $spieler}{if !$spieler@first}, {/if}{$spielerId}{/foreach}],
+	spielTyp : {$jsObjectSpielTyp},
+	anzahl : {$jsObjectAnzahl},
+	ansagen : {$jsObjectAnsagen},
+	absagen :{$jsObjectAbsagen}
 };
 </script>
 
@@ -42,5 +16,28 @@ var spielDaten = {
 <div class="row">
 	<div class="col-sm-12 col-md-3" id="menu"></div>
 </div>
-
+<div class="invisible" id="rangliste">
+	<p class="font-weight-bold">Zwischenstand nach {$aktuellesSpiel-1} Spielen:</p>
+	<div class="table-responsive">
+		<table class="table table-bordered table-sm">
+			<thead>
+				<tr>
+					<th>Platz</th>
+					<th>Name</th>
+					<th>Punkte</th>
+				</tr>
+			</thead>
+			<tbody>
+				{foreach $alleSpieler as $spielerId => $spieler}
+				<tr>
+					<td class="col-1 text-right pr-2">{$spieler@iteration}</td>
+					<td>{$spieler.vorname}</td>
+					<td class="text-right pr-2">{$spieler.punkte+0}</td>
+				</tr>
+				{/foreach}
+			</tbody>
+		</table>
+	</div>
+	<button type="button" class="btn btn-danger btn-block" onclick="$('#menu').html(createMenu('Auswahl:', players, [ 'zwischenstand', 'abrechnung', 'beenden' ]))">Zurück</button>
+</div>
 <script src="./javascript/runde_javascript.js"></script>
