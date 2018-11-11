@@ -14,7 +14,10 @@ var spielDaten = {
 	Geber:<span class="float-right">{$geber}</span>
 </p>
 <div class="row">
-	<div class="col-sm-12 col-md-3" id="menu"></div>
+	<form action="index.php?page=runde&spieldaten=1" class="col-12" id="formSpielDaten" method="post">
+		{$token}
+		<div class="col-12" id="menu"></div>
+	</form>
 </div>
 <div class="invisible" id="rangliste">
 	<p class="font-weight-bold">Zwischenstand nach {$aktuellesSpiel-1} Spielen:</p>
@@ -38,6 +41,7 @@ var spielDaten = {
 			</tbody>
 		</table>
 	</div>
-	<button type="button" class="btn btn-danger btn-block" onclick="$('#menu').html(createMenu('Auswahl:', players, [ 'zwischenstand', 'abrechnung', 'beenden' ]))">Zurück</button>
+	<button type="button" class="btn btn-danger btn-block"
+		onclick="$('#menu').html(createMenu('Auswahl:', players, [ 'zwischenstand', 'abrechnung', 'beenden' ]))">Zurück</button>
 </div>
 <script src="./javascript/runde_javascript.js"></script>

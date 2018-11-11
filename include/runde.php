@@ -34,7 +34,7 @@ if (! $f->easycheck ()) {
 	// *****************************************************************************
 	$statement = $pdo->prepare ( "SELECT * FROM rounds WHERE user_id = ? AND is_running = 1" );
 	$statement->execute ( array (
-			$user ['id']
+			$user ['id'] 
 	) );
 	if ($statement->rowCount () == 0) {
 		// *****************************************************************************
@@ -45,79 +45,12 @@ if (! $f->easycheck ()) {
 			// *****************************************************************************
 			// *** Aber es wurden Daten für eine neue Runde übermittelt
 			// *****************************************************************************
-			$datum = trim ( GetParam ( 'datum' ) );
-			$datum = strtotime ( $datum );
-			$ort = trim ( GetParam ( 'ort' ) );
-			$anzahlSpieler = trim ( GetParam ( 'anzahl' ) );
-			if ($anzahlSpieler < 4) {
-				$error = 'Eine Doppelkopfrunde besteht aus mindestens vier Spielern.';
-			} else {
-				$statement = $pdo->prepare ( "INSERT INTO rounds (user_id, date, location, player, games, is_running) VALUES (?, ?, ?, ?, ?, ?)" );
-				$result = $statement->execute ( array (
-						$user ['id'],
-						date ( 'Y-m-d', $datum ),
-						$ort,
-						$anzahlSpieler,
-						1,
-						1
-				) );
-				$round_id = $pdo->lastInsertId ();
-				$statement = $pdo->prepare ( "INSERT INTO games (round_id, game_number, isRunning) VALUES (?, ?, ?)" );
-				$result = $statement->execute ( array (
-						$round_id,
-						1,
-						1
-				) );
-				if ($result) {
-					$success = 'Die neue Doppelkopfrunde wurde angelegt.';
-					$step = 2;
-				} else {
-					$error = 'Die neue Doppelkopfrunde konte nicht angelegt werden.';
-				}
-			}
+			include ('runde_neu.php');
 		} else {
 			// *****************************************************************************
 			// *** Anzeige der bisherigen Runden mit Ergebnissen
 			// *****************************************************************************
-			$statement = $pdo->prepare ( "SELECT * FROM rounds WHERE user_id = ? ORDER BY date DESC" );
-			$statement->execute ( array (
-					$user ['id']
-			) );
-			$runden = array ();
-			while ( $row = $statement->fetch () ) {
-				$runden [$row ['id']] = array (
-						'date' => strtotime ( $row ['date'] ),
-						'games' => $row ['games'],
-						'location' => $row ['location'],
-						'is_running' => $row ['is_running'],
-						'player' => array ()
-				);
-			}
-
-			$statement1 = $pdo->prepare ( "SELECT * FROM round_player WHERE round_id = ?" );
-			$statement2 = $pdo->prepare ( "SELECT sum(punkte) FROM `game_data` WHERE round_id = ? AND player_id = ? AND punkte > 0" );
-			$statement3 = $pdo->prepare ( "SELECT count(*) from games, game_data WHERE games.round_id = ? and game_data.player_id = ? and game_data.partei = games.gewinner and games.id = game_data.game_id" );
-			foreach ( $runden as $runde_id => $runde ) {
-				$statement1->execute ( array (
-						$runde_id
-				) );
-				$players = $statement1->fetchAll ( PDO::FETCH_ASSOC );
-				foreach ( $players as $player ) {
-					$statement2->execute ( array (
-							$runde_id,
-							$player ['player_id']
-					) );
-					$row = $statement2->fetch ();
-					$runden [$runde_id] ['player'] [$player ['player_id']] = $row ['sum(punkte)'];
-					$statement3->execute ( array (
-							$runde_id,
-							$player ['player_id']
-					) );
-					$row = $statement3->fetch ();
-					$runden [$runde_id] ['siege'] [$player ['player_id']] = $row ['count(*)'];
-				}
-			}
-			$smarty->assign ( 'runden', $runden );
+			include ('runde_historie.php');
 		}
 	} else {
 		// *****************************************************************************
@@ -131,23 +64,23 @@ if (! $f->easycheck ()) {
 		if (isset ( $_GET ['abbrechen'] )) {
 			$statement = $pdo->prepare ( "DELETE FROM games WHERE round_id = ?" );
 			$statement->execute ( array (
-					$round_id
+					$round_id 
 			) );
 			$statement = $pdo->prepare ( "DELETE FROM game_data WHERE round_id = ?" );
 			$statement->execute ( array (
-					$round_id
+					$round_id 
 			) );
 			$statement = $pdo->prepare ( "DELETE FROM player_data WHERE round_id = ?" );
 			$statement->execute ( array (
-					$round_id
+					$round_id 
 			) );
 			$statement = $pdo->prepare ( "DELETE FROM round_player WHERE round_id = ?" );
 			$statement->execute ( array (
-					$round_id
+					$round_id 
 			) );
 			$statement = $pdo->prepare ( "DELETE FROM rounds WHERE id = ?" );
 			$statement->execute ( array (
-					$round_id
+					$round_id 
 			) );
 		}
 		// *****************************************************************************
@@ -155,7 +88,7 @@ if (! $f->easycheck ()) {
 		$statement = $pdo->prepare ( "SELECT * FROM games WHERE round_id = ? AND game_number = ?" );
 		$statement->execute ( array (
 				$round_id,
-				$aktuellesSpiel
+				$aktuellesSpiel 
 		) );
 		$game = $statement->fetch ();
 		$game_id = $game ['id'];
@@ -164,7 +97,7 @@ if (! $f->easycheck ()) {
 		// *****************************************************************************
 		$statement = $pdo->prepare ( "SELECT players.* FROM round_player, players WHERE round_player.round_id = ? AND round_player.player_id = players.id" );
 		$result = $statement->execute ( array (
-				$round_id
+				$round_id 
 		) );
 		if ($statement->rowCount () != $anzahlSpieler) {
 			// *****************************************************************************
@@ -192,7 +125,7 @@ if (! $f->easycheck ()) {
 								$mitspieler = array (
 										$round_id,
 										$game_id,
-										$spieler [$i]
+										$spieler [$i] 
 								);
 								$statement2->execute ( $mitspieler );
 							}
@@ -203,19 +136,19 @@ if (! $f->easycheck ()) {
 				} else {
 					$statement = $pdo->prepare ( "DELETE FROM games WHERE round_id = ?" );
 					$statement->execute ( array (
-							$round_id
+							$round_id 
 					) );
 					$statement = $pdo->prepare ( "DELETE FROM game_data WHERE round_id = ?" );
 					$statement->execute ( array (
-							$round_id
+							$round_id 
 					) );
 					$statement = $pdo->prepare ( "DELETE FROM round_player WHERE round_id = ?" );
 					$statement->execute ( array (
-							$round_id
+							$round_id 
 					) );
 					$statement = $pdo->prepare ( "DELETE FROM rounds WHERE round_id = ?" );
 					$statement->execute ( array (
-							$round_id
+							$round_id 
 					) );
 					$step = 1;
 				}
@@ -225,18 +158,39 @@ if (! $f->easycheck ()) {
 			// *** Spieler für Runde wurden bereits festgelegt
 			// *****************************************************************************
 			$step = 3;
+			if (isset ( $_GET ['spieldaten'] )) {
+				$spielTyp = GetParam ( 'spielTyp' );
+				$spieler = GetParam ( 'spieler' );
+				$ansage = GetParam ( 'ansage' );
+				$absage = GetParam ( 'absage' );
+				$partner = GetParam ( 'partner' );
+				$sonderpunkt = GetParam ( 'sonderpunkt' );
+				$gegner = GetParam ( 'gegner' );
+				if ($sonderpunkt != 'null') {
+					include ('runde_sonderpunkt.php');
+				}
+				if ($spielTyp != 0) {
+					include ('runde_spieltyp.php');
+				}
+				if ($ansage != 'null') {
+					include ('runde_ansage.php');
+				}
+				if ($absage != 'null') {
+					include ('runde_absage.php');
+				}
+			}
 			$smarty->assign ( 'aktuellesSpiel', $aktuellesSpiel );
 			// *****************************************************************************
 			// *** Spieler des Spiels ermitteln
 			// *****************************************************************************
 			$ansage = $absage = array (
 					're' => false,
-					'kontra' => false
+					'kontra' => false 
 			);
 			$gameTyp = 0;
 			$statement = $pdo->prepare ( "SELECT game_data.*, player_data.game_typ, player_data.ansage, player_data.absage FROM game_data LEFT JOIN player_data ON player_data.game_id = :gameId AND (player_data.absage IS NOT NULL OR player_data.game_typ IS NOT NULL OR player_data.ansage IS NOT NULL) AND player_data.player_id = game_data.player_id WHERE game_data.game_id = :gameId" );
 			$result = $statement->execute ( array (
-					'gameId' => $game_id
+					'gameId' => $game_id 
 			) );
 			while ( $row = $statement->fetch ( PDO::FETCH_ASSOC ) ) {
 				if ($row ['game_typ']) {
@@ -255,7 +209,7 @@ if (! $f->easycheck ()) {
 			$statement = $pdo->prepare ( "SELECT players.*, CONCAT(players.vorname, ' ', players.nachname) as komplett, round_player.spielt, gd.partei as partei, sum(game_data.punkte) as punkte, round_player.gibt FROM round_player, players LEFT JOIN game_data ON round_id = :roundId and game_data.player_id = players.id and punkte > 0 LEFT JOIN game_data gd ON gd.game_id = :gameId and gd.player_id = players.id WHERE round_player.round_id = :roundId AND round_player.player_id = players.id GROUP BY id ORDER BY round_player.platz" );
 			$result = $statement->execute ( array (
 					'roundId' => $round_id,
-					'gameId' => $game_id
+					'gameId' => $game_id 
 			) );
 			$alleSpieler = $statement->fetchAll ( PDO::FETCH_UNIQUE | PDO::FETCH_ASSOC );
 			$jsObjectSpieler = '{';
@@ -282,6 +236,6 @@ if (! $f->easycheck ()) {
 			$smarty->assign ( 'geber', $geber );
 		}
 	}
-
+	
 	$smarty->assign ( 'step', $step );
 }

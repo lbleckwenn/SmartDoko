@@ -1,6 +1,7 @@
 // Initialisierung
-var spielTyp = spielDaten.spielTyp;
 var alleSpieler = spielDaten.spieler;
+var spielTyp = spielDaten.spielTyp;
+var players = spielDaten.spielerIds;
 var anzeige = {
 	re : true,
 	kontra : true,
@@ -9,14 +10,15 @@ var anzeige = {
 	stillehochzeit : true
 }
 var auswahl = 'spieler';
-var spieler;
-var partner;
-var gegner;
-var ansage;
-var absage;
-var sonderpunkt;
-var spielName;
-var players = spielDaten.spielerIds;
+var spieler = null;
+var partner = null;
+var gegner = null;
+var ansage = null;
+var absage = null;
+var sonderpunkt = null;
+var spielName = null;
+var reSpieler1 = null;
+var reSpieler2 = null;
 $('#menu').html(createMenu('Auswahl:', players, [ 'zwischenstand', 'abrechnung', 'beenden' ]));
 
 $(document).on("click", '#buttons > button.btn', function(event) {
@@ -69,6 +71,18 @@ $(document).on("click", '#buttons > button.btn', function(event) {
 		case 'gegner':
 			gegner = buttonId;
 			break;
+		case 'reSpieler1':
+			spieler = buttonId;
+			auswahl = 'reSpieler2';
+			players = getPlayersWithout(spieler);
+			$('#menu').html(createMenu('Zweiten Re-Spieler auswählen:', players, [ 'abbrechen' ]));
+			return;
+			break;
+		case 'reSpieler2':
+			partner = buttonId;
+			$('#menu').html(finishGame());
+			return;
+			break;
 		}
 		if (sonderpunkt) {
 			$('#menu').html(confirmationRequest());
@@ -76,8 +90,10 @@ $(document).on("click", '#buttons > button.btn', function(event) {
 		}
 		if (spielTyp) {
 			var topText = 'Auswahl:';
-			if ((spielTyp == 2 || spielTyp == 4) && !spielDaten.ansagen.re) {
-				var topText = 'Absage gilt auch als "Re"-Ansage:';
+			if ((spielTyp == 2 || spielTyp == 4) && !spielDaten.ansagen.re && alleSpieler[spieler].partei != 'kontra') {
+				topText = 'Absage gilt auch als "Re"-Ansage:';
+			} else if (alleSpieler[spieler].partei && !spielDaten.ansagen[alleSpieler[spieler].partei]) {
+				topText = 'Absage gilt auch als "' + capitalizeFirstLetter(alleSpieler[spieler].partei) + '"-Ansage:';
 			}
 			$('#menu').html(createMenu(topText, [], getPossibleButtons()));
 		} else {
@@ -89,8 +105,43 @@ $(document).on("click", '#buttons > button.btn', function(event) {
 		$('#menu').html($('#rangliste').html());
 		return;
 		break;
+	case 'abrechnung':
+		if (!isSolo(spielTyp) && spielDaten.anzahl.re < 2) {
+			if (spielDaten.anzahl.re == 0 && !spieler) {
+				auswahl = 'reSpieler1';
+				$('#menu').html(createMenu('Einen Re-Spieler auswählen:', spielDaten.spielerIds, [ 'abbrechen' ]));
+			}
+			if (spielDaten.anzahl.re == 1 && !partner) {
+				auswahl = 'reSpieler2';
+				players = getPlayersWithout(spieler);
+				$('#menu').html(createMenu('Zweiten Re-Spieler auswählen:', players, [ 'abbrechen' ]));
+			}
+		} else {
+			$('#menu').html(finishGame());
+		}
+		break;
 	case 'abbrechen':
-		location.reload();
+		spielTyp = spielDaten.spielTyp;
+		players = spielDaten.spielerIds;
+		anzeige = {
+			re : true,
+			kontra : true,
+			absage : true,
+			sonderpunkt : true,
+			stillehochzeit : true
+		}
+		auswahl = 'spieler';
+		spieler = null;
+		partner = null;
+		gegner = null;
+		ansage = null;
+		absage = null;
+		sonderpunkt = null;
+		spielName = null;
+		$('#menu').html(createMenu('Auswahl:', players, [ 'zwischenstand', 'abrechnung', 'beenden' ]));
+		break;
+	case 'speichern':
+		$('#formSpielDaten').submit();
 		break;
 	case 'ueberspringen':
 		$('#menu').html(confirmationRequest());
@@ -160,8 +211,15 @@ function createMenu(text, players, buttons) {
 	retvar += '</span>';
 	return retvar;
 }
+function finishGame() {
+	var retvar = '<span id="buttons">';
+	retvar += debug();
+	retvar += '</span>';
+	return retvar;
+}
 function confirmationRequest() {
-	var retvar = '<p class="font-weight-bold">Bitte Bestätigen:</p><p>';
+	var retvar = '<span id="buttons">';
+	retvar += '<p class="font-weight-bold">Bitte Bestätigen:</p><p>';
 	var buttons = allButtons();
 	if (spielTyp != spielDaten.spielTyp) {
 		if (spielTyp == 1) {
@@ -199,16 +257,17 @@ function confirmationRequest() {
 		}
 	}
 	retvar += '</p>';
+	retvar += '<input type="hidden" name="spielTyp" value="' + spielTyp + '">';
+	retvar += '<input type="hidden" name="spieler" value="' + spieler + '">';
+	retvar += '<input type="hidden" name="ansage" value="' + ansage + '">';
+	retvar += '<input type="hidden" name="absage" value="' + absage + '">';
+	retvar += '<input type="hidden" name="partner" value="' + partner + '">';
+	retvar += '<input type="hidden" name="sonderpunkt" value="' + sonderpunkt + '">';
+	retvar += '<input type="hidden" name="gegner" value="' + gegner + '">';
 	retvar += createButton('speichern');
 	retvar += createButton('abbrechen');
-	retvar += '<input type="text" value="' + spielTyp + '">';
-	retvar += '<input type="text" value="' + spieler + '">';
-	retvar += '<input type="text" value="' + ansage + '">';
-	retvar += '<input type="text" value="' + absage + '">';
-	retvar += '<input type="text" value="' + partner + '">';
-	retvar += '<input type="text" value="' + sonderpunkt + '">';
-	retvar += '<input type="text" value="' + gegner + '">';
 	retvar += debug();
+	retvar += '</span>';
 	return retvar;
 }
 function createButton(button) {
@@ -261,8 +320,13 @@ function getPossibleButtons() {
 	if (anzeige.sonderpunkt) {
 		buttons.push('sonderpunkt');
 	}
-	if (anzeige.stillehochzeit && alleSpieler[spieler].partei != 'kontra') {
-		buttons.push('stillehochzeit');
+	if (anzeige.stillehochzeit) {
+		if (alleSpieler[spieler].partei != 'kontra' && spielDaten.anzahl.re == 0) {
+			buttons.push('stillehochzeit');
+		}
+		if (alleSpieler[spieler].partei == 're' && spielDaten.anzahl.re == 1) {
+			buttons.push('stillehochzeit');
+		}
 	}
 	if (spielTyp != spielDaten.spielTyp) {
 		buttons.push('ueberspringen');
@@ -282,6 +346,15 @@ function zeigeAnsage(partei) {
 function capitalizeFirstLetter(string) {
 	// https://stackoverflow.com/questions/1026069/how-do-i-make-the-first-letter-of-a-string-uppercase-in-javascript
 	return string.charAt(0).toUpperCase() + string.slice(1);
+}
+function isSolo(spielTyp) {
+	var solos = allSolos();
+	for (solo in solos) {
+		if (solos[solo] == spielTyp) {
+			return true;
+		}
+	}
+	return false;
 }
 function allSolos() {
 	return {

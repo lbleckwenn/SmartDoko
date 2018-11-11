@@ -29,10 +29,10 @@ if (! $user) {
 
 $statement = $pdo->prepare ( "SELECT * FROM rounds WHERE user_id = ? AND is_running = 1" );
 $statement->execute ( array (
-		$user ['id']
+		$user ['id'] 
 ) );
 if ($statement->rowCount () == 0) {
-
+	
 	// *****************************************************************************
 	// *** keine offene Runde gefunden
 	// *****************************************************************************
@@ -53,14 +53,14 @@ if ($statement->rowCount () == 0) {
 						$ort,
 						$anzahlSpieler,
 						1,
-						1
+						1 
 				) );
 				$round_id = $pdo->lastInsertId ();
 				$statement = $pdo->prepare ( "INSERT INTO games (round_id, game_number, isRunning) VALUES (?, ?, ?)" );
 				$result = $statement->execute ( array (
 						$round_id,
 						1,
-						1
+						1 
 				) );
 				if ($result) {
 					$success = 'Die neue Doppelkopfrunde wurde angelegt.';
@@ -74,63 +74,63 @@ if ($statement->rowCount () == 0) {
 		}
 	}
 } else {
-
+	
 	// *****************************************************************************
 	// *** offene Runde gefunden, Daten der Runde laden
 	// *****************************************************************************
-
+	
 	$step = 2;
 	$round = $statement->fetch ();
 	$round_id = $round ['id'];
 	$aktuellesSpiel = $round ['games'];
 	
 	// laudende Runde löschen
-	if(isset ( $_GET ['abbrechen'] )) {
+	if (isset ( $_GET ['abbrechen'] )) {
 		$statement = $pdo->prepare ( "DELETE FROM games WHERE round_id = ?" );
 		$statement->execute ( array (
-				$round_id
+				$round_id 
 		) );
 		$statement = $pdo->prepare ( "DELETE FROM game_data WHERE round_id = ?" );
 		$statement->execute ( array (
-				$round_id
+				$round_id 
 		) );
 		$statement = $pdo->prepare ( "DELETE FROM player_data WHERE round_id = ?" );
 		$statement->execute ( array (
-				$round_id
+				$round_id 
 		) );
 		$statement = $pdo->prepare ( "DELETE FROM round_player WHERE round_id = ?" );
 		$statement->execute ( array (
-				$round_id
+				$round_id 
 		) );
 		$statement = $pdo->prepare ( "DELETE FROM rounds WHERE id = ?" );
 		$statement->execute ( array (
-				$round_id
-		) );		
+				$round_id 
+		) );
 	}
 	// *****************************************************************************
 	$anzahlSpieler = $round ['player'];
 	$statement = $pdo->prepare ( "SELECT * FROM games WHERE round_id = ? AND game_number = ?" );
 	$statement->execute ( array (
 			$round_id,
-			$aktuellesSpiel
+			$aktuellesSpiel 
 	) );
 	$game = $statement->fetch ();
 	$game_id = $game ['id'];
-
+	
 	// *****************************************************************************
 	// *** schauen, ob für die Runde schon Spieler festgelegt wurden
 	// *****************************************************************************
-
+	
 	$statement = $pdo->prepare ( "SELECT players.* FROM round_player, players WHERE round_player.round_id = ? AND round_player.player_id = players.id" );
 	$result = $statement->execute ( array (
-			$round_id
+			$round_id 
 	) );
 	if ($statement->rowCount () != $anzahlSpieler) {
-
+		
 		// *****************************************************************************
 		// *** noch keine Spieler für die Runde festgelegt
 		// *****************************************************************************
-
+		
 		if (isset ( $_GET ['selectPlayer'] )) {
 			if ($f->easycheck ()) {
 				if (GetParam ( 'submit' ) == 'save') {
@@ -154,7 +154,7 @@ if ($statement->rowCount () == 0) {
 								$mitspieler = array (
 										$round_id,
 										$game_id,
-										$spieler [$i]
+										$spieler [$i] 
 								);
 								$statement2->execute ( $mitspieler );
 							}
@@ -165,19 +165,19 @@ if ($statement->rowCount () == 0) {
 				} else {
 					$statement = $pdo->prepare ( "DELETE FROM games WHERE round_id = ?" );
 					$statement->execute ( array (
-							$round_id
+							$round_id 
 					) );
 					$statement = $pdo->prepare ( "DELETE FROM game_data WHERE round_id = ?" );
 					$statement->execute ( array (
-							$round_id
+							$round_id 
 					) );
 					$statement = $pdo->prepare ( "DELETE FROM round_player WHERE round_id = ?" );
 					$statement->execute ( array (
-							$round_id
+							$round_id 
 					) );
 					$statement = $pdo->prepare ( "DELETE FROM rounds WHERE round_id = ?" );
 					$statement->execute ( array (
-							$round_id
+							$round_id 
 					) );
 					$step = 1;
 				}
@@ -186,31 +186,31 @@ if ($statement->rowCount () == 0) {
 			}
 		}
 	} else {
-
+		
 		// *****************************************************************************
 		// *** Spieler für Runde wurden bereits festgelegt
 		// *****************************************************************************
-
+		
 		$step = 3;
-
+		
 		$statement = $pdo->prepare ( "SELECT players.*, game_data.partei FROM game_data, players WHERE game_data.round_id = ? AND game_data.game_id = ? AND game_data.player_id = players.id" );
 		$result = $statement->execute ( array (
 				$round_id,
-				$game_id
+				$game_id 
 		) );
 		$players_game = $statement->fetchall (); // PDO::FETCH_ASSOC
 		if (isset ( $_GET ['reservation'] )) {
 			if ($f->easycheck ()) {
-
+				
 				// *****************************************************************************
 				// *** Vorbehalte speichern
 				// *****************************************************************************
-
+				
 				if (! isset ( $_GET ['delete'] )) {
 					$vorbehalt = GetParam ( 'vorbehalt', 'P', null );
 					$statement = $pdo->prepare ( "SELECT * FROM player_data WHERE game_id = ? AND (game_typ != '' OR ansage != '')" );
 					$statement->execute ( array (
-							$game_id
+							$game_id 
 					) );
 					if ($statement->rowCount () > 0 && $vorbehalt != 3) {
 						$error = "Es kann nur ein Vorbehalt pro Spiel ausgewählt werden. Der Vorbehalt muss vor einer Ansage angemeldet werden (außer bei einer stillen Hochzeit).";
@@ -230,7 +230,7 @@ if ($statement->rowCount () == 0) {
 											$game_id,
 											$spieler,
 											$vorbehalt,
-											$partner
+											$partner 
 									) );
 								}
 							} else {
@@ -239,7 +239,7 @@ if ($statement->rowCount () == 0) {
 										$round_id,
 										$game_id,
 										$spieler,
-										$vorbehalt
+										$vorbehalt 
 								) );
 							}
 							foreach ( $players_game as $player_game ) {
@@ -252,7 +252,7 @@ if ($statement->rowCount () == 0) {
 								$statement->execute ( array (
 										$partei,
 										$game_id,
-										$player_game ['id']
+										$player_game ['id'] 
 								) );
 							}
 						}
@@ -262,26 +262,26 @@ if ($statement->rowCount () == 0) {
 					$statement = $pdo->prepare ( "DELETE FROM player_data WHERE round_id = ? AND game_id = ? AND game_typ != ''" );
 					$statement->execute ( array (
 							$round_id,
-							$game_id
+							$game_id 
 					) );
 					// Spielpartei löschen
 					$statement = $pdo->prepare ( "UPDATE game_data SET partei = '' WHERE game_id = ? AND round_id = ?" );
 					$statement->execute ( array (
 							$game_id,
-							$round_id
+							$round_id 
 					) );
 				}
 			} else {
 				$error = 'Bitte nicht die "Reload"-Funktion des Browsers nutzen.';
 			}
 		}
-
+		
 		if (isset ( $_GET ['ansage'] )) {
 			if ($f->easycheck ()) {
 				// *****************************************************************************
 				// *** Ansagen speichern
 				// *****************************************************************************
-
+				
 				if (! isset ( $_GET ['delete'] )) {
 					$spieler = GetParam ( 'spieler', 'P', null );
 					$ansage = GetParam ( 'ansage', 'P', null );
@@ -294,7 +294,7 @@ if ($statement->rowCount () == 0) {
 						$statement->execute ( array (
 								$round_id,
 								$game_id,
-								$ansage
+								$ansage 
 						) );
 						if ($statement->rowCount () > 0) {
 							$error = "Re und Kontra können jeweils nur einmal angesagt werden.";
@@ -304,7 +304,7 @@ if ($statement->rowCount () == 0) {
 						$result = $statement->execute ( array (
 								$round_id,
 								$game_id,
-								$spieler
+								$spieler 
 						) );
 						$row = $statement->fetch ();
 						if ($row ['partei'] != '' && $row ['partei'] != $ansage) {
@@ -316,30 +316,30 @@ if ($statement->rowCount () == 0) {
 									$round_id,
 									$game_id,
 									$spieler,
-									$ansage
+									$ansage 
 							) );
 							$statement = $pdo->prepare ( "UPDATE game_data SET partei = ? WHERE game_id = ? AND player_id = ?" );
 							$statement->execute ( array (
 									$ansage,
 									$game_id,
-									$spieler
+									$spieler 
 							) );
 						}
 					}
 				} else {
 					$statement = $pdo->prepare ( "SELECT * FROM player_data WHERE id = ?" );
 					$statement->execute ( array (
-							$_GET ['delete']
+							$_GET ['delete'] 
 					) );
 					$row = $statement->fetch ();
 					$statement = $pdo->prepare ( "DELETE FROM player_data WHERE id = ?" );
 					$statement->execute ( array (
-							$_GET ['delete']
+							$_GET ['delete'] 
 					) );
 					$statement = $pdo->prepare ( "UPDATE game_data SET partei = '' WHERE game_id = ? AND player_id = ?" );
 					$statement->execute ( array (
 							$game_id,
-							$row ['player_id']
+							$row ['player_id'] 
 					) );
 				}
 			} else {
@@ -348,11 +348,11 @@ if ($statement->rowCount () == 0) {
 		}
 		if (isset ( $_GET ['absage'] )) {
 			if ($f->easycheck ()) {
-
+				
 				// *****************************************************************************
 				// *** Absagen speichern
 				// *****************************************************************************
-
+				
 				if (! isset ( $_GET ['delete'] )) {
 					$spieler = GetParam ( 'spieler', 'P', null );
 					$absage = GetParam ( 'absage', 'P', null );
@@ -364,7 +364,7 @@ if ($statement->rowCount () == 0) {
 						$statement = $pdo->prepare ( "SELECT * FROM player_data WHERE round_id = ? AND game_id = ? AND ansage != ''" );
 						$statement->execute ( array (
 								$round_id,
-								$game_id
+								$game_id 
 						) );
 						if ($statement->rowCount () == 0) {
 							// keine Ansage
@@ -379,7 +379,7 @@ if ($statement->rowCount () == 0) {
 							$statement->execute ( array (
 									$ansage,
 									$game_id,
-									$spieler
+									$spieler 
 							) );
 							// Absage speichern
 							$statement = $pdo->prepare ( "INSERT INTO player_data (round_id, game_id, player_id, absage) VALUES (?, ?, ?, ?)" );
@@ -387,7 +387,7 @@ if ($statement->rowCount () == 0) {
 									$round_id,
 									$game_id,
 									$spieler,
-									$absage
+									$absage 
 							) );
 						}
 						if ($statement->rowCount () == 2) {
@@ -397,7 +397,7 @@ if ($statement->rowCount () == 0) {
 							$statement->execute ( array (
 									$round_id,
 									$game_id,
-									$spieler
+									$spieler 
 							) );
 							$row = $statement->fetch ();
 							$partei = GetParam ( 'partei', 'P', null );
@@ -411,7 +411,7 @@ if ($statement->rowCount () == 0) {
 									$statement->execute ( array (
 											$partei,
 											$game_id,
-											$spieler
+											$spieler 
 									) );
 								}
 								// Absage speichern
@@ -420,7 +420,7 @@ if ($statement->rowCount () == 0) {
 										$round_id,
 										$game_id,
 										$spieler,
-										$absage
+										$absage 
 								) );
 							}
 						}
@@ -429,7 +429,7 @@ if ($statement->rowCount () == 0) {
 					// Absagen löschen
 					$statement = $pdo->prepare ( "DELETE FROM player_data WHERE id = ?" );
 					$statement->execute ( array (
-							$_GET ['delete']
+							$_GET ['delete'] 
 					) );
 				}
 			} else {
@@ -441,7 +441,7 @@ if ($statement->rowCount () == 0) {
 				// *****************************************************************************
 				// *** Sonderpunkte speichern
 				// *****************************************************************************
-
+				
 				if (! isset ( $_GET ['delete'] )) {
 					$spieler = GetParam ( 'spieler' );
 					$sonderpunkt = GetParam ( 'sonderpunkt' );
@@ -453,14 +453,14 @@ if ($statement->rowCount () == 0) {
 									$round_id,
 									$game_id,
 									$spieler,
-									1
+									1 
 							) );
 							break;
 						case 'fuchs_gefangen' :
 							$statement = $pdo->prepare ( "SELECT * FROM player_data WHERE round_id = ? AND game_id = ? AND fuchs_gefangen != ''" );
 							$statement->execute ( array (
 									$round_id,
-									$game_id
+									$game_id 
 							) );
 							if ($statement->rowCount () == 2) {
 								$error = "Mehr als zwei Füchse können nicht gefangen werden.";
@@ -470,7 +470,7 @@ if ($statement->rowCount () == 0) {
 										$round_id,
 										$game_id,
 										$spieler,
-										$verlierer
+										$verlierer 
 								) );
 							}
 							break;
@@ -478,7 +478,7 @@ if ($statement->rowCount () == 0) {
 							$statement = $pdo->prepare ( "SELECT * FROM player_data WHERE round_id = ? AND game_id = ? AND karlchen_gefangen != ''" );
 							$statement->execute ( array (
 									$round_id,
-									$game_id
+									$game_id 
 							) );
 							if ($statement->rowCount () == 2) {
 								$error = "Mehr als zwei Karlchen können nicht gefangen werden.";
@@ -488,7 +488,7 @@ if ($statement->rowCount () == 0) {
 										$round_id,
 										$game_id,
 										$spieler,
-										$verlierer
+										$verlierer 
 								) );
 							}
 							break;
@@ -496,7 +496,7 @@ if ($statement->rowCount () == 0) {
 							$statement = $pdo->prepare ( "SELECT * FROM player_data WHERE round_id = ? AND game_id = ? AND karlchen_gewonnen != ''" );
 							$statement->execute ( array (
 									$round_id,
-									$game_id
+									$game_id 
 							) );
 							if ($statement->rowCount () == 1) {
 								$error = "Nur ein Karlchen kann gewinnen.";
@@ -506,7 +506,7 @@ if ($statement->rowCount () == 0) {
 										$round_id,
 										$game_id,
 										$spieler,
-										1
+										1 
 								) );
 							}
 							break;
@@ -514,14 +514,14 @@ if ($statement->rowCount () == 0) {
 				} else {
 					$statement = $pdo->prepare ( "DELETE FROM player_data WHERE id = ?" );
 					$statement->execute ( array (
-							$_GET ['delete']
+							$_GET ['delete'] 
 					) );
 				}
 			} else {
 				$error = 'Bitte nicht die "Reload"-Funktion des Browsers nutzen.';
 			}
 		}
-
+		
 		if (isset ( $_GET ['gameCalculate'] )) {
 			if ($f->easycheck ()) {
 				// *****************************************************************************
@@ -542,7 +542,7 @@ if ($statement->rowCount () == 0) {
 				// $statement = $pdo->prepare ( "SELECT * FROM player_data WHERE round_id = ? AND game_id = ? AND vorbehalt = 'solo'" );
 				$statement = $pdo->prepare ( "SELECT game_types.* FROM game_types, player_data WHERE game_types.id = player_data.game_typ AND player_data.game_id = ?" );
 				$statement->execute ( array (
-						$game_id
+						$game_id 
 				) );
 				// Solo wenn in DB gespeichert oder bei Abrechnung angegeben.
 				$gameData = $statement->fetch ();
@@ -595,7 +595,7 @@ if ($statement->rowCount () == 0) {
 				// Gefangene Füchse und Karlchen überprüfen
 				$statement = $pdo->prepare ( "SELECT * FROM player_data WHERE game_id = ? AND (fuchs_gefangen > 0 OR karlchen_gefangen > 0)" );
 				$statement->execute ( array (
-						$game_id
+						$game_id 
 				) );
 				if ($statement->rowCount () > 0) {
 					while ( $row = $statement->fetch () ) {
@@ -613,13 +613,13 @@ if ($statement->rowCount () == 0) {
 					// Ansagen ermitteln
 					$ansagen = array (
 							're' => false,
-							'kontra' => false
+							'kontra' => false 
 					);
 					$statement = $pdo->prepare ( "SELECT * FROM player_data WHERE game_id = ? AND ansage = ?" );
 					foreach ( $ansagen as $ansage => $value ) {
 						$statement->execute ( array (
 								$game_id,
-								$ansage
+								$ansage 
 						) );
 						if ($statement->rowCount () > 0) {
 							$ansagen [$ansage] = true;
@@ -634,7 +634,7 @@ if ($statement->rowCount () == 0) {
 					$statement = $pdo->prepare ( "SELECT player_data.* FROM player_data, game_data WHERE game_data.game_id = ? AND player_data.game_id = ? AND game_data.player_id = player_data.player_id AND player_data.absage != ''" );
 					$statement->execute ( array (
 							$game_id,
-							$game_id
+							$game_id 
 					) );
 					if ($statement->rowCount () > 0) {
 						while ( $row = $statement->fetch () ) {
@@ -647,12 +647,12 @@ if ($statement->rowCount () == 0) {
 					// Sonderpunkte
 					$sonderpunkte = array (
 							're' => array (),
-							'kontra' => array ()
+							'kontra' => array () 
 					);
 					// AND game_data.partei = ?
 					$statement = $pdo->prepare ( "SELECT player_data.* FROM player_data, game_data WHERE game_data.game_id = ? AND player_data.game_id = game_data.game_id AND game_data.player_id = player_data.player_id AND (player_data.fuchs_gefangen > 0 OR player_data.karlchen_gewonnen > 0 OR player_data.karlchen_gefangen > 0 OR player_data.doppelkopf > 0)" );
 					$statement->execute ( array (
-							$game_id
+							$game_id 
 					) );
 					if ($statement->rowCount () > 0) {
 						while ( $row = $statement->fetch () ) {
@@ -671,11 +671,11 @@ if ($statement->rowCount () == 0) {
 						}
 					}
 					$gewinner = ermitteleGewinner ( $reAugen, $ansagen, $absagen );
-
+					
 					$punkte = zaehlePunkte ( $reAugen, $ansagen, $absagen, $sonderpunkte, $gewinner, (($isSolo == true) ? 'solo' : 'normal') );
-
+					
 					$save = GetParam ( 'save', 'P', 0 );
-
+					
 					// Wenn Abrechnung genemigt wurde Daten speichern und nächstes Spiel
 					if ($save) {
 						// Spielpunkte speichern
@@ -686,7 +686,7 @@ if ($statement->rowCount () == 0) {
 								$gewinner,
 								$reAugen,
 								abs ( $punkte ['re'] ),
-								$game_id
+								$game_id 
 						) );
 						$statement = $pdo->prepare ( "UPDATE game_data set partei = ?, punkte = ? WHERE game_id = ? AND player_id = ?" );
 						foreach ( $parteien as $player_id => $partei ) {
@@ -694,20 +694,20 @@ if ($statement->rowCount () == 0) {
 									$partei,
 									$punkte [$partei] * (($isSolo == true && $partei == 're') ? 3 : 1),
 									$game_id,
-									$player_id
+									$player_id 
 							) );
 						}
 						// Spieler der Runde für nächstes Spiel laden
 						$statement = $pdo->prepare ( "SELECT * FROM round_player WHERE round_id = ?" );
 						$statement->execute ( array (
-								$round_id
+								$round_id 
 						) );
 						$players_round = $spielt = $gibt = array ();
 						while ( $row = $statement->fetch () ) {
 							$players_round [] = array (
 									'player_id' => $row ['player_id'],
 									'spielt' => $row ['spielt'],
-									'gibt' => $row ['gibt']
+									'gibt' => $row ['gibt'] 
 							);
 							$spielt [] = $row ['spielt'];
 							$gibt [] = $row ['gibt'];
@@ -723,7 +723,7 @@ if ($statement->rowCount () == 0) {
 										$spielt [$key],
 										$gibt [$key],
 										$round_id,
-										$player ['player_id']
+										$player ['player_id'] 
 								) );
 							}
 						}
@@ -731,24 +731,24 @@ if ($statement->rowCount () == 0) {
 						$statement = $pdo->prepare ( "UPDATE rounds SET games = ? WHERE id = ? " );
 						$statement->execute ( array (
 								$aktuellesSpiel,
-								$round_id
+								$round_id 
 						) );
-
+						
 						$statement = $pdo->prepare ( "INSERT INTO games (round_id, game_number, isRunning) VALUES (?, ?, ?)" );
 						$result = $statement->execute ( array (
 								$round_id,
 								$aktuellesSpiel,
-								1
+								1 
 						) );
 						$game_id = $pdo->lastInsertId ();
-
+						
 						$statement = $pdo->prepare ( "INSERT INTO game_data (round_id, game_id, player_id) VALUES (?, ?, ?)" );
 						foreach ( $players_round as $key => $player ) {
 							if ($spielt [$key]) {
 								$statement->execute ( array (
 										$round_id,
 										$game_id,
-										$player ['player_id']
+										$player ['player_id'] 
 								) );
 							}
 						}
@@ -770,15 +770,15 @@ if ($statement->rowCount () == 0) {
 				if ($endOfRound) {
 					$statement = $pdo->prepare ( "DELETE FROM game_data WHERE game_id = ?" );
 					$statement->execute ( array (
-							$game_id
+							$game_id 
 					) );
 					$statement = $pdo->prepare ( "DELETE FROM games WHERE id = ?" );
 					$statement->execute ( array (
-							$game_id
+							$game_id 
 					) );
 					$statement = $pdo->prepare ( "UPDATE rounds SET games = games -1, is_running = 0 WHERE id = ?" );
 					$statement->execute ( array (
-							$round_id
+							$round_id 
 					) );
 					header ( "location: index.php?page=statistics" );
 					exit ();
@@ -800,7 +800,7 @@ switch ($step) {
 	case 1 :
 		$statement = $pdo->prepare ( "SELECT * FROM rounds WHERE user_id = ? ORDER BY date DESC" );
 		$statement->execute ( array (
-				$user ['id']
+				$user ['id'] 
 		) );
 		$runden = array ();
 		while ( $row = $statement->fetch () ) {
@@ -809,28 +809,28 @@ switch ($step) {
 					'games' => $row ['games'],
 					'location' => $row ['location'],
 					'is_running' => $row ['is_running'],
-					'player' => array ()
+					'player' => array () 
 			);
 		}
-
+		
 		$statement1 = $pdo->prepare ( "SELECT * FROM round_player WHERE round_id = ?" );
 		$statement2 = $pdo->prepare ( "SELECT sum(punkte) FROM `game_data` WHERE round_id = ? AND player_id = ? AND punkte > 0" );
 		$statement3 = $pdo->prepare ( "SELECT count(*) from games, game_data WHERE games.round_id = ? and game_data.player_id = ? and game_data.partei = games.gewinner and games.id = game_data.game_id" );
 		foreach ( $runden as $runde_id => $runde ) {
 			$statement1->execute ( array (
-					$runde_id
+					$runde_id 
 			) );
 			$players = $statement1->fetchAll ( PDO::FETCH_ASSOC );
 			foreach ( $players as $player ) {
 				$statement2->execute ( array (
 						$runde_id,
-						$player ['player_id']
+						$player ['player_id'] 
 				) );
 				$row = $statement2->fetch ();
 				$runden [$runde_id] ['player'] [$player ['player_id']] = $row ['sum(punkte)'];
 				$statement3->execute ( array (
 						$runde_id,
-						$player ['player_id']
+						$player ['player_id'] 
 				) );
 				$row = $statement3->fetch ();
 				$runden [$runde_id] ['siege'] [$player ['player_id']] = $row ['count(*)'];
@@ -841,7 +841,7 @@ switch ($step) {
 	case 2 :
 		$statement = $pdo->prepare ( "SELECT players.* FROM user_player, players WHERE user_player.user_id = ? AND user_player.player_id = players.id" );
 		$result = $statement->execute ( array (
-				$user ['id']
+				$user ['id'] 
 		) );
 		$players = array ();
 		while ( $row = $statement->fetch () ) {
@@ -857,7 +857,7 @@ switch ($step) {
 		// *****************************************************************************
 		$statement = $pdo->prepare ( "SELECT players.*, round_player.spielt, round_player.gibt FROM round_player, players WHERE round_player.round_id = ? AND round_player.player_id = players.id " );
 		$result = $statement->execute ( array (
-				$round_id
+				$round_id 
 		) );
 		$players_round = $aussetzer = array ();
 		while ( $row = $statement->fetch () ) {
@@ -872,7 +872,7 @@ switch ($step) {
 		$smarty->assign ( 'players_round', $players_round );
 		$smarty->assign ( 'aussetzer', $aussetzer );
 		$smarty->assign ( 'geber', $geber );
-
+		
 		// *****************************************************************************
 		// *** Spieltypen übergeben
 		// *****************************************************************************
@@ -888,14 +888,14 @@ switch ($step) {
 			}
 		}
 		$smarty->assign ( 'gameTypes', $gameTypes );
-
+		
 		// *****************************************************************************
 		// *** Spieler des Spiels ermitteln
 		// *****************************************************************************
 		$statement = $pdo->prepare ( "SELECT players.*, game_data.partei FROM game_data, players WHERE game_data.round_id = ? AND game_data.game_id = ? AND game_data.player_id = players.id" );
 		$result = $statement->execute ( array (
 				$round_id,
-				$game_id
+				$game_id 
 		) );
 		$players_game = $parteien = array ();
 		while ( $row = $statement->fetch () ) {
@@ -910,12 +910,12 @@ switch ($step) {
 		// *** Punkteliste
 		// *****************************************************************************
 		$punkteliste = $sieger = $sortSieger = array ();
-
+		
 		foreach ( $players_round as $player_id => $player ) {
 			$punkteliste [0] [$player_id] = array (
 					'plusminus' => 0,
 					'summe' => 0,
-					'siege' => 0
+					'siege' => 0 
 			);
 		}
 		$statement = $pdo->prepare ( "SELECT game_data.*, games.gewinner FROM games, game_data WHERE games.round_id = ? AND games.game_number = ? AND games.id = game_data.game_id " );
@@ -929,7 +929,7 @@ switch ($step) {
 			}
 			$statement->execute ( array (
 					$round_id,
-					$i
+					$i 
 			) );
 			while ( $row = $statement->fetch () ) { // PDO::FETCH_ASSOC
 				$punkteSpiel = $row ['punkte'];
@@ -947,7 +947,7 @@ switch ($step) {
 			$statement2 = $pdo->prepare ( "SELECT player_data.* FROM player_data, games WHERE games.round_id = ? AND games.game_number = ? AND games.id = player_data.game_id AND player_data.game_typ != ''" );
 			$statement2->execute ( array (
 					$round_id,
-					$i
+					$i 
 			) );
 			if ($statement2->rowCount () > 0) {
 				$row = $statement2->fetch ();
@@ -966,7 +966,7 @@ switch ($step) {
 			$statement3 = $pdo->prepare ( "SELECT player_data.* FROM player_data, games WHERE games.round_id = ? AND games.game_number = ? AND games.id = player_data.game_id AND player_data.ansage != ''" );
 			$statement3->execute ( array (
 					$round_id,
-					$i
+					$i 
 			) );
 			if ($statement3->rowCount () > 0) {
 				while ( $row = $statement3->fetch () ) {
@@ -976,7 +976,7 @@ switch ($step) {
 			$statement4 = $pdo->prepare ( "SELECT player_data.*, game_data.partei FROM player_data, games, game_data WHERE games.round_id = ? AND games.game_number = ? AND games.id = player_data.game_id AND games.id = game_data.game_id AND player_data.absage != '' AND player_data.player_id = game_data.player_id " );
 			$statement4->execute ( array (
 					$round_id,
-					$i
+					$i 
 			) );
 			if ($statement4->rowCount () > 0) {
 				while ( $row = $statement4->fetch () ) {
@@ -987,7 +987,7 @@ switch ($step) {
 			$statement5 = $pdo->prepare ( "SELECT player_data.*, game_data.partei FROM player_data, games, game_data WHERE games.round_id = ? AND games.game_number = ? AND games.id = player_data.game_id AND games.id = game_data.game_id AND (player_data.fuchs_gefangen > 0 OR player_data.karlchen_gewonnen > 0 OR player_data.karlchen_gefangen > 0 OR player_data.doppelkopf > 0) AND player_data.player_id = game_data.player_id " );
 			$statement5->execute ( array (
 					$round_id,
-					$i
+					$i 
 			) );
 			if ($statement5->rowCount () > 0) {
 				while ( $row = $statement5->fetch () ) {
@@ -1015,21 +1015,21 @@ switch ($step) {
 					'name' => $players_round [$player_id],
 					'plusminus' => $punkteliste [$aktuellesSpiel] [$player_id] ['plusminus'],
 					'summe' => $punkteliste [$aktuellesSpiel] [$player_id] ['summe'],
-					'siege' => $punkteliste [$aktuellesSpiel] [$player_id] ['siege']
+					'siege' => $punkteliste [$aktuellesSpiel] [$player_id] ['siege'] 
 			);
 			$sortSieger [] = $punkteliste [$aktuellesSpiel] [$player_id] ['plusminus'];
 		}
 		array_multisort ( $sortSieger, SORT_DESC, $sieger );
 		$smarty->assign ( 'punkteliste', $punkteliste );
 		$smarty->assign ( 'sieger', $sieger );
-
+		
 		// *****************************************************************************
 		// *** Vorbehalt
 		// *****************************************************************************
 		$statement = $pdo->prepare ( "SELECT * FROM player_data WHERE round_id = ? AND game_id = ? AND game_typ != ''" );
 		$statement->execute ( array (
 				$round_id,
-				$game_id
+				$game_id 
 		) );
 		$vorbehaltText = '';
 		$gameType = 'normal';
@@ -1037,7 +1037,7 @@ switch ($step) {
 			$row = $statement->fetch ();
 			$statement = $pdo->prepare ( "SELECT game_types.isSolo FROM game_types, player_data WHERE game_types.id = player_data.game_typ AND player_data.game_id = ?" );
 			$statement->execute ( array (
-					$game_id
+					$game_id 
 			) );
 			$isSolo = $statement->fetch () ['isSolo'];
 			if ($isSolo) {
@@ -1055,7 +1055,7 @@ switch ($step) {
 		$statement = $pdo->prepare ( "SELECT * FROM player_data WHERE round_id = ? AND game_id = ? AND ansage != ''" );
 		$statement->execute ( array (
 				$round_id,
-				$game_id
+				$game_id 
 		) );
 		$ansagen = array ();
 		if ($statement->rowCount () > 0) {
@@ -1070,7 +1070,7 @@ switch ($step) {
 		$statement1 = $pdo->prepare ( "SELECT * FROM player_data WHERE round_id = ? AND game_id = ? AND absage != ''" );
 		$statement1->execute ( array (
 				$round_id,
-				$game_id
+				$game_id 
 		) );
 		$absagen = array ();
 		if ($statement1->rowCount () > 0) {
@@ -1081,7 +1081,7 @@ switch ($step) {
 				$statement2->execute ( array (
 						$round_id,
 						$game_id,
-						$row ['player_id']
+						$row ['player_id'] 
 				) );
 				$player = $statement2->fetch ();
 			}
@@ -1093,7 +1093,7 @@ switch ($step) {
 		$statement = $pdo->prepare ( "SELECT * FROM player_data WHERE round_id = ? AND game_id = ? AND (fuchs_gefangen != '' OR karlchen_gewonnen != '' OR karlchen_gefangen != '' OR doppelkopf != '')" );
 		$statement->execute ( array (
 				$round_id,
-				$game_id
+				$game_id 
 		) );
 		$sonderpunkte = array ();
 		if ($statement->rowCount () > 0) {
@@ -1120,7 +1120,7 @@ switch ($step) {
 		$statement = $pdo->prepare ( "SELECT * FROM game_data WHERE round_id = ? AND game_id = ? AND partei = 're'" );
 		$statement->execute ( array (
 				$round_id,
-				$game_id
+				$game_id 
 		) );
 		if ($statement->rowCount () > 0) {
 			while ( $row = $statement->fetch () ) {
@@ -1134,7 +1134,7 @@ switch ($step) {
 		$statement = $pdo->prepare ( "SELECT players.*, game_data.partei FROM game_data, players WHERE game_data.round_id = ? AND game_data.game_id = ? AND game_data.player_id = players.id" );
 		$result = $statement->execute ( array (
 				$round_id,
-				$game_id
+				$game_id 
 		) );
 		$players_game = array ();
 		while ( $row = $statement->fetch () ) {
