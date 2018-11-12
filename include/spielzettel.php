@@ -34,10 +34,14 @@ $result = $statement->execute ( array (
 ) );
 $row = $statement->fetch ();
 $aktuellesSpiel = $row ['games'];
+$rundeOrt = $row ['location'];
+$rundeDatum = strtotime ( $row ['date'] );
 if ($row ['is_running'])
 	$aktuellesSpiel --;
 $smarty->assign ( 'aktuellesSpiel', $aktuellesSpiel );
-$statement = $pdo->prepare ( "SELECT players.*, round_player.platz, round_player.spielt, round_player.gibt FROM round_player, players WHERE round_player.round_id = ? AND round_player.player_id = players.id " );
+$smarty->assign ( 'rundeOrt', $rundeOrt );
+$smarty->assign ( 'rundeDatum', $rundeDatum );
+$statement = $pdo->prepare ( "SELECT players.*, round_player.platz, round_player.spielt, round_player.gibt FROM round_player, players WHERE round_player.round_id = ? AND round_player.player_id = players.id ORDER BY platz" );
 $result = $statement->execute ( array (
 		$round_id
 ) );

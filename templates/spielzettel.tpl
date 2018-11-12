@@ -1,5 +1,5 @@
 <div class="container">
-	<h2>Spielzettel</h2>
+	<h2>Spielzettel<small class="float-right">Doppelkopfrunde am {$rundeDatum|date_format:"d.m.Y"} ({$rundeOrt})</small></h2>
 	<div class="tab-pane fade show active" id="summen" role="tabpanel" aria-labelledby="summen-tab">
 		<div class="table-responsive">
 			<table class="table table-hover">
@@ -10,7 +10,7 @@
 						<th class="col-1">Punkte</th>
 						<th>Sieger</th>
 						<th>Augen</th>
-						<th colspan="2">An-/Absagen, Sonderpunkte</th>
+						<th colspan="3">An-/Absagen, Sonderpunkte</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -23,6 +23,7 @@
 						<td>{$punkteliste.$i.augen}</td>
 						<td nowrap>{$punkteliste.$i.re}</td>
 						<td nowrap>{$punkteliste.$i.kontra}</td>
+						<td><button class="btn btn-primary btn-sm btn-block">Details</button>
 					</tr>
 					{/for}
 				</tbody>

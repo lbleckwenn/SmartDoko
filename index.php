@@ -50,6 +50,7 @@ $pages = array (
 		'spielzettel',
 		'spieldetails',
 		'stat_rangliste',
+		'stat_besteRunde',
 		'user'
 );
 if (! in_array ( $page, $pages )) {

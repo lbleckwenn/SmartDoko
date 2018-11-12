@@ -1,5 +1,5 @@
 <div class="container">
-	<h2>Gesamtrangliste</h2>
+	<h2>Beste Runden</h2>
 	{if $error}
 	<div class="alert alert-danger" role="alert">
 		<h4 class="alert-heading">Fehler!</h4>
@@ -8,7 +8,7 @@
 	{else}
 	<div class="row">
 		<div class="col-12">
-			<p class="lead">Rangliste über alle gespielten Runden.</p>
+			<p class="lead">Liste der besten Runden pro Spieler.</p>
 			<p>Die Sortierung erfolgt nach den durchschnittlichen Punkten (Summe) pro Spiel.</p>
 			<div class="table-responsive">
 				<table class="table table-bordered table-sm">
@@ -16,7 +16,7 @@
 						<tr class="text-center">
 							<th rowspan="2">Platz</th>
 							<th rowspan="2">Spielername</th>
-							<th rowspan="2">Runden</th>
+							<th rowspan="2">Datum</th>
 							<th rowspan="2">Spiele</th>
 							<th colspan="2">Spielpunkte</th>
 							<th rowspan="2">Siege</th>
@@ -35,7 +35,7 @@
 						<tr>
 							<th class="col-1 text-right pr-4">{$spieler@iteration}</th>
 							<th class="col-3">{$spieler.vorname}</th>
-							<td class="col-1 text-right pr-4">{$spieler.runden}</td>
+							<td class="col-1 text-center">{$spieler.datum|date_format:"d.m.Y"}</td>
 							<td class="col-1 text-right pr-4">{$spieler.spiele}</td>
 							<td class="col-1 text-right pr-4">{$spieler.punkteSumme}</td>
 							<td class="col-1 text-right pr-4">{$spieler.punktePlusMinus}</td>
