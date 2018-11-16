@@ -293,7 +293,7 @@ function getPossibleButtons() {
 	var buttons = [];
 	// if (alleSpieler[spieler].partei == null && (spielDaten.anzahl.re +
 	// spielDaten.anzahl.kontra) < 3) {
-	if (spielDaten.ansagen.re == false || spielDaten.ansagen.kontra == false || (spielDaten.anzahl.kontra == 1 && spielDaten.anzahl.re == 1)) {
+	if (spielDaten.ansagen.re == false || spielDaten.ansagen.kontra == false || (spielDaten.anzahl.kontra == 1 && spielDaten.anzahl.re == 1 && alleSpieler[spieler].partei == null)) {
 		if (anzeige.re && ((!spielDaten.ansagen.re && alleSpieler[spieler].partei != 'kontra') || (spielDaten.anzahl.re == 1 && spielDaten.anzahl.kontra == 1))) {
 			buttons.push('re');
 		}
