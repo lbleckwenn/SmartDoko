@@ -16,10 +16,9 @@ if ($anzahlSpieler < 4) {
 			1 
 	) );
 	$round_id = $pdo->lastInsertId ();
-	$statement = $pdo->prepare ( "INSERT INTO games (round_id, game_number, isRunning) VALUES (?, ?, ?)" );
+	$statement = $pdo->prepare ( "INSERT INTO games (round_id, game_number) VALUES (?, ?)" );
 	$result = $statement->execute ( array (
 			$round_id,
-			1,
 			1 
 	) );
 	if ($result) {
