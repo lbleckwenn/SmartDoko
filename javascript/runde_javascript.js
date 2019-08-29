@@ -19,7 +19,7 @@ var sonderpunkt = null;
 var spielName = null;
 var reSpieler1 = null;
 var reSpieler2 = null;
-$('#menu').html(createMenu('Auswahl:', players, [ 'zwischenstand', 'abrechnung', 'beenden' ]));
+$('#menu').html(createMenu('Auswahl:', players, [ 'zwischenstand', 'abrechnung', 'reset', 'beenden' ]));
 
 $(document).on("click", '#buttons > button.btn', function(event) {
 	var buttonId = this.id;
@@ -138,7 +138,7 @@ $(document).on("click", '#buttons > button.btn', function(event) {
 		absage = null;
 		sonderpunkt = null;
 		spielName = null;
-		$('#menu').html(createMenu('Auswahl:', players, [ 'zwischenstand', 'abrechnung', 'beenden' ]));
+		$('#menu').html(createMenu('Auswahl:', players, [ 'zwischenstand', 'abrechnung', 'reset', 'beenden' ]));
 		break;
 	case 'speichern':
 		$('#formSpielDaten').submit();
@@ -385,6 +385,10 @@ function allSonderpunkte() {
 }
 function allButtons() {
 	return {
+		reset : {
+			farbe : 'btn-warning',
+			text : 'Spiel zurücksetzen'
+		},
 		zwischenstand : {
 			farbe : 'btn-info',
 			text : 'Zwischenstand'
@@ -500,7 +504,7 @@ function allButtons() {
 	};
 }
 function debug() {
-	var retvar = '<dl class="row mt-3">';
+	var retvar = '<hr><h4 class="text-center">DEBUGAUSGABE</h4><dl class="row">';
 	retvar += '<dt class="col-7">auswahl</dt><dd class="col-5">' + auswahl + '</dd>';
 	retvar += '<dt class="col-7">spielTyp</dt><dd class="col-5">' + spielTyp + '</dd>';
 	retvar += '<dt class="col-7">spielName</dt><dd class="col-5">' + spielName + '</dd>';

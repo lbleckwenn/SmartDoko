@@ -16,55 +16,57 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-session_start ();
+session_start();
 require_once ('include/config.inc.php');
 require_once ('include/functions.inc.php');
 require_once ('include/dbFunctions.inc.php');
 require_once ('include/login.inc.php');
 require_once ('include/Smarty.class.php');
-$mitNachnamen = getConfig ( 'mitNachnamen' );
-$nurRundenMitBeteiligung = getConfig ( 'nurRundenMitBeteiligung' );
-$summenPunkteSystem = getConfig ( 'summenPunkteSystem' );
-$f = new formreload ();
+$mitNachnamen = getConfig('mitNachnamen');
+$nurRundenMitBeteiligung = getConfig('nurRundenMitBeteiligung');
+$summenPunkteSystem = getConfig('summenPunkteSystem');
+$f = new formreload();
 
 $success = $error = false;
 
-$smarty = new Smarty ();
+$smarty = new Smarty();
 $smarty->caching = false;
+$smarty->use_sub_dirs = true;
 $smarty->debugging = false;
-$page = GetParam ( 'page', 'G', 'splashscreen' );
-$pages = array (
-		'splashscreen',
-		'register',
-		'login',
-		'account',
-		'passwortvergessen',
-		'passwortzuruecksetzen',
-		'logout',
-		'statistics',
-		'settings',
-		'player',
-		'round',
-		'runde',
-		'history',
-		'spielzettel',
-		'spieldetails',
-		'stat_rangliste',
-		'stat_besteRunde',
-		'user'
+$page = GetParam('page', 'G', 'splashscreen');
+$pages = array(
+    'splashscreen',
+    'register',
+    'login',
+    'account',
+    'passwortvergessen',
+    'passwortzuruecksetzen',
+    'logout',
+    'statistics',
+    'settings',
+    'player',
+    'round',
+    'runde',
+    'history',
+    'spielzettel',
+    'spieldetails',
+    'stat_rangliste',
+    'stat_besteRunde',
+    'user',
+    'editgame'
 );
-if (! in_array ( $page, $pages )) {
-	$page = 'splashscreen';
+if (! in_array($page, $pages)) {
+    $page = 'splashscreen';
 }
-if (is_checked_in () && $page == 'splashscreen') {
-	$page = 'statistics';
+if (is_checked_in() && $page == 'splashscreen') {
+    $page = 'statistics';
 }
 if ($page != 'splashscreen') {
-	include ("./include/$page.php");
+    include ("./include/$page.php");
 }
-$smarty->assign ( 'login', is_checked_in () );
-$smarty->assign ( 'page', $page );
-$smarty->assign ( 'success', $success );
-$smarty->assign ( 'error', $error );
-$smarty->assign ( 'token', $f->get_formtoken () );
-$smarty->display ( 'index.tpl' );
+$smarty->assign('login', is_checked_in());
+$smarty->assign('page', $page);
+$smarty->assign('success', $success);
+$smarty->assign('error', $error);
+$smarty->assign('token', $f->get_formtoken());
+$smarty->display('index.tpl');

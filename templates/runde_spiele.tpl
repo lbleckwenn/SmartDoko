@@ -42,6 +42,6 @@ var spielDaten = {
 		</table>
 	</div>
 	<button type="button" class="btn btn-danger btn-block"
-		onclick="$('#menu').html(createMenu('Auswahl:', players, [ 'zwischenstand', 'abrechnung', 'beenden' ]))">Zurück</button>
+		onclick="$('#menu').html(createMenu('Auswahl:', players, [ 'zwischenstand', 'abrechnung', 'reset', 'beenden' ]))">Zurück</button>
 </div>
 <script src="./javascript/runde_javascript.js"></script>

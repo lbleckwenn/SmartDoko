@@ -20,5 +20,7 @@
 		{include file="round_step_3.tpl"}
 	{elseif $step==4}
 		{include file="round_step_4.tpl"}
+	{elseif $step==5}
+		{include file="round_step_5.tpl"}
 	{/if}
 </div>
