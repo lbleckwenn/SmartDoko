@@ -83,9 +83,9 @@ foreach ( $spieleSpielerParteiPunkte as $spieleSpielerParteiPunkte ) {
 $sortPunkte = array ();
 $sortFeld = ($summenPunkteSystem ? 'schnittSpielePunkteSumme' : 'schnittSpielePunktePlusMinus');
 foreach ( $alleSpieler as $spielerId => $spieler ) {
-	$alleSpieler [$spielerId] ['schnittSpielePunktePlusMinus'] = $alleSpieler [$spielerId] ['punktePlusMinus'] / $alleSpieler [$spielerId] ['spiele'];
-	$alleSpieler [$spielerId] ['schnittSpielePunkteSumme'] = $alleSpieler [$spielerId] ['punkteSumme'] / $alleSpieler [$spielerId] ['spiele'];
-	$alleSpieler [$spielerId] ['schnittSiegeSpiele'] = $alleSpieler [$spielerId] ['siege'] / $alleSpieler [$spielerId] ['spiele'] * 100;
+	$alleSpieler [$spielerId] ['schnittSpielePunktePlusMinus'] = $alleSpieler [$spielerId] ['punktePlusMinus'] / ($alleSpieler [$spielerId] ['spiele'] ?: 1);
+	$alleSpieler [$spielerId] ['schnittSpielePunkteSumme'] = $alleSpieler [$spielerId] ['punkteSumme'] / ($alleSpieler [$spielerId] ['spiele'] ?: 1);
+	$alleSpieler [$spielerId] ['schnittSiegeSpiele'] = $alleSpieler [$spielerId] ['siege'] / ($alleSpieler [$spielerId] ['spiele'] ?: 1) * 100;
 	$sortPunkte [] = $alleSpieler [$spielerId] [$sortFeld];
 }
 array_multisort ( $sortPunkte, SORT_DESC, $alleSpieler );

@@ -112,9 +112,9 @@ foreach ( $spieleSpielerParteiPunkte as $spieleSpielerParteiPunkte ) {
 $sortPunkte = array ();
 $sortFeld = ($summenPunkteSystem ? 'schnittSpielePunkteSumme' : 'schnittSpielePunktePlusMinus');
 foreach ( $besteRunde as $spielerRundeId => $rundenDaten ) {
-	$besteRunde [$spielerRundeId] ['schnittSpielePunktePlusMinus'] = $besteRunde [$spielerRundeId] ['punktePlusMinus'] / $besteRunde [$spielerRundeId] ['spiele'];
-	$besteRunde [$spielerRundeId] ['schnittSpielePunkteSumme'] = $besteRunde [$spielerRundeId] ['punkteSumme'] / $besteRunde [$spielerRundeId] ['spiele'];
-	$besteRunde [$spielerRundeId] ['schnittSiegeSpiele'] = $besteRunde [$spielerRundeId] ['siege'] / $besteRunde [$spielerRundeId] ['spiele'] * 100;
+	$besteRunde [$spielerRundeId] ['schnittSpielePunktePlusMinus'] = $besteRunde [$spielerRundeId] ['punktePlusMinus'] / ($besteRunde [$spielerRundeId] ['spiele'] ?: 1);
+	$besteRunde [$spielerRundeId] ['schnittSpielePunkteSumme'] = $besteRunde [$spielerRundeId] ['punkteSumme'] / ($besteRunde [$spielerRundeId] ['spiele'] ?: 1);
+	$besteRunde [$spielerRundeId] ['schnittSiegeSpiele'] = $besteRunde [$spielerRundeId] ['siege'] / ($besteRunde [$spielerRundeId] ['spiele'] ?: 1) * 100;
 	$sortPunkte [] = $besteRunde [$spielerRundeId] [$sortFeld];
 }
 array_multisort ( $sortPunkte, SORT_DESC, $besteRunde );
@@ -124,3 +124,4 @@ array_multisort ( $sortPunkte, SORT_DESC, $besteRunde );
  * Daten an Template übergeben
  */
 $smarty->assign ( 'rangliste', $besteRunde );
+
