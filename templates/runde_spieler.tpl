@@ -3,9 +3,17 @@
 	{for $s1 = 0 to $anzahlSpieler-1}
 	<div class="form-group row">
 		<label for="inputSpieler{$s1}" class="col-sm-2 col-form-label">Platz {$s1 +1}:</label>
-		<div class="col-sm-8">
+		<div class="col-sm-6">
 			<select class="form-control" id="inputSpieler{$s1}" name="spieler[{$s1}]" required> {html_options options=$players}
 			</select>
+		</div>
+		<div class="col-sm-1">
+			<input class="form-check-input" type="checkbox" id="autoSizingCheck">
+        	<label class="form-check-label" for="autoSizingCheck"> Geber</label>
+		</div>
+		<div class="col-sm-1">
+			<input class="form-check-input" type="checkbox" id="autoSizingCheck">
+        	<label class="form-check-label" for="autoSizingCheck"> spielt Runde 1</label>
 		</div>
 	</div>
 	{/for}

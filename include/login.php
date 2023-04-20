@@ -22,49 +22,49 @@
  * and was modified for SmartDoko by me.
  */
 $error = false;
-if (isset ( $_POST ['email'] ) && isset ( $_POST ['passwort'] )) {
-	if ($f->easycheck ()) {
-		$email = $_POST ['email'];
-		$passwort = $_POST ['passwort'];
-		
-		$statement = $pdo->prepare ( "SELECT * FROM users WHERE email = :email" );
-		$result = $statement->execute ( array (
-				'email' => $email 
-		) );
-		$user = $statement->fetch ();
-		
-		// Überprüfung des Passworts
-		if ($user !== false && password_verify ( $passwort, $user ['passwort'] )) {
-			$_SESSION ['userid'] = $user ['id'];
-			
-			// Möchte der Nutzer angemeldet beleiben?
-			if (isset ( $_POST ['angemeldet_bleiben'] )) {
-				$identifier = random_string ();
-				$securitytoken = random_string ();
-				
-				$insert = $pdo->prepare ( "INSERT INTO securitytokens (user_id, identifier, securitytoken) VALUES (:user_id, :identifier, :securitytoken)" );
-				$insert->execute ( array (
-						'user_id' => $user ['id'],
-						'identifier' => $identifier,
-						'securitytoken' => sha1 ( $securitytoken ) 
-				) );
-				setcookie ( "identifier", $identifier, time () + (3600 * 24 * 365) ); // Valid for 1 year
-				setcookie ( "securitytoken", $securitytoken, time () + (3600 * 24 * 365) ); // Valid for 1 year
-			}
-			
-			header ( "location: index.php?page=statistics" );
-			exit ();
-		} else {
-			$error = "E-Mail oder Passwort war ungültig<br><br>";
-		}
-	} else {
-		$error = 'Bitte nicht die "Reload"-Funktion des Browsers benutzen';
-	}
+if (isset($_POST['email']) && isset($_POST['passwort'])) {
+    if ($f->easycheck()) {
+        $email = $_POST['email'];
+        $passwort = $_POST['passwort'];
+
+        $statement = $pdo->prepare("SELECT * FROM users WHERE email = :email");
+        $result = $statement->execute(array(
+            'email' => $email
+        ));
+        $user = $statement->fetch();
+
+        // Überprüfung des Passworts
+        if ($user !== false && password_verify($passwort, $user['passwort'])) {
+            $_SESSION['userid'] = $user['id'];
+
+            // Möchte der Nutzer angemeldet beleiben?
+            if (isset($_POST['angemeldet_bleiben'])) {
+                $identifier = random_string();
+                $securitytoken = random_string();
+
+                $insert = $pdo->prepare("INSERT INTO securitytokens (user_id, identifier, securitytoken) VALUES (:user_id, :identifier, :securitytoken)");
+                $insert->execute(array(
+                    'user_id' => $user['id'],
+                    'identifier' => $identifier,
+                    'securitytoken' => sha1($securitytoken)
+                ));
+                setcookie("identifier", $identifier, time() + (3600 * 24 * 365)); // Valid for 1 year
+                setcookie("securitytoken", $securitytoken, time() + (3600 * 24 * 365)); // Valid for 1 year
+            }
+
+            header("location: index.php?page=statistics");
+            exit();
+        } else {
+            $error = "E-Mail oder Passwort war ungültig<br><br>";
+        }
+    } else {
+        $error = 'Bitte nicht die "Reload"-Funktion des Browsers benutzen';
+    }
 }
 
 $email_value = "";
-if (isset ( $_POST ['email'] )) {
-	$email_value = htmlentities ( $_POST ['email'] );
+if (isset($_POST['email'])) {
+    $email_value = htmlentities($_POST['email']);
 }
-$smarty->assign ( 'error', $error );
-$smarty->assign ( 'email_value', $email_value );
+$smarty->assign('error', $error);
+$smarty->assign('email_value', $email_value);

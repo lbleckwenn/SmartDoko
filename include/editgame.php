@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $result = $statement->execute($gameIdArray);
     $players_game = $statement->fetchall(PDO::FETCH_ASSOC | PDO::FETCH_UNIQUE);
     $smarty->assign('players', $players_game);
-    
+
     $statement = $pdo->prepare("SELECT * FROM games WHERE id = ?");
     $result = $statement->execute($gameIdArray);
     $game = $statement->fetchall(PDO::FETCH_ASSOC)[0];

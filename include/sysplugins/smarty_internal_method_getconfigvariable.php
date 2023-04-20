@@ -11,6 +11,7 @@
  */
 class Smarty_Internal_Method_GetConfigVariable
 {
+
     /**
      * Valid for all objects
      *
@@ -19,13 +20,14 @@ class Smarty_Internal_Method_GetConfigVariable
     public $objMap = 7;
 
     /**
-     * gets  a config variable value
+     * gets a config variable value
      *
      * @param \Smarty|\Smarty_Internal_Data|\Smarty_Internal_Template $data
-     * @param string                                                  $varName the name of the config variable
-     * @param bool                                                    $errorEnable
+     * @param string $varName
+     *            the name of the config variable
+     * @param bool $errorEnable
      *
-     * @return null|string  the value of the config variable
+     * @return null|string the value of the config variable
      */
     public function getConfigVariable(Smarty_Internal_Data $data, $varName = null, $errorEnable = true)
     {

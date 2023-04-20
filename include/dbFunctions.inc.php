@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of the "SmartDoko" package.
  * Copyright (C) 2018 Lars Bleckwenn <lars.bleckwenn@web.de>
@@ -16,27 +17,29 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
-function getUser() {
-	global $pdo;
-	$statement = $pdo->prepare ( "SELECT * FROM players WHERE user_id = ?" );
-	$result = $statement->execute ( array (
-			$_SESSION ['userid']
-	) );
-	if ($statement->rowCount () == 1) {
-		$player = $statement->fetch ();
-		return $player ['id'];
-	}
+function getUser()
+{
+    global $pdo;
+    $statement = $pdo->prepare("SELECT * FROM players WHERE user_id = ?");
+    $result = $statement->execute(array(
+        $_SESSION['userid']
+    ));
+    if ($statement->rowCount() == 1) {
+        $player = $statement->fetch();
+        return $player['id'];
+    }
 }
-function getUserPlayerID() {
-	global $pdo;
-	$statement = $pdo->prepare ( "SELECT * FROM players WHERE user_id = ?" );
-	$result = $statement->execute ( array (
-			$_SESSION ['userid'] 
-	) );
-	if ($statement->rowCount () == 1) {
-		$player = $statement->fetch ();
-		return $player ['id'];
-	}
+
+function getUserPlayerID()
+{
+    global $pdo;
+    $statement = $pdo->prepare("SELECT * FROM players WHERE user_id = ?");
+    $result = $statement->execute(array(
+        $_SESSION['userid']
+    ));
+    if ($statement->rowCount() == 1) {
+        $player = $statement->fetch();
+        return $player['id'];
+    }
 }
 

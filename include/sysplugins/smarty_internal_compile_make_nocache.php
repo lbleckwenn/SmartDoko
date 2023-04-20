@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Smarty Internal Plugin Compile Make_Nocache
  * Compiles the {make_nocache} tag
@@ -11,11 +12,12 @@
 /**
  * Smarty Internal Plugin Compile Make_Nocache Class
  *
- * @package    Smarty
+ * @package Smarty
  * @subpackage Compiler
  */
 class Smarty_Internal_Compile_Make_Nocache extends Smarty_Internal_CompileBase
 {
+
     /**
      * Attribute definition: Overwrites base class.
      *
@@ -29,23 +31,29 @@ class Smarty_Internal_Compile_Make_Nocache extends Smarty_Internal_CompileBase
      *
      * @var array
      */
-    public $required_attributes = array('var');
+    public $required_attributes = array(
+        'var'
+    );
 
     /**
      * Shorttag attribute order defined by its names
      *
      * @var array
      */
-    public $shorttag_order = array('var');
+    public $shorttag_order = array(
+        'var'
+    );
 
     /**
      * Compiles code for the {make_nocache} tag
      *
-     * @param  array                                $args     array with attributes from parser
-     * @param \Smarty_Internal_TemplateCompilerBase $compiler compiler object
-     *
+     * @param array $args
+     *            array with attributes from parser
+     * @param \Smarty_Internal_TemplateCompilerBase $compiler
+     *            compiler object
+     *            
      * @return string compiled code
-      */
+     */
     public function compile($args, Smarty_Internal_TemplateCompilerBase $compiler)
     {
         // check and get attributes

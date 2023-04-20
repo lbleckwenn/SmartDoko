@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Smarty Internal Plugin Templateparser Parsetree
  * These are classes to build parsetree in the template parser
@@ -10,7 +11,8 @@
  */
 
 /**
- * @package    Smarty
+ *
+ * @package Smarty
  * @subpackage Compiler
  * @ignore
  */
@@ -48,7 +50,4 @@ abstract class Smarty_Internal_ParseTree
         $this->data = null;
         $this->subtrees = null;
     }
-
 }
-
-

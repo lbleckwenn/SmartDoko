@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * This file is part of the "SmartDoko" package.
  * Copyright (C) 2018 Lars Bleckwenn <lars.bleckwenn@web.de>
@@ -18,14 +18,13 @@
  */
 
 /**
- * This  part of the program code is originally from php-einfach.de
+ * This part of the program code is originally from php-einfach.de
  * and was modified for SmartDoko by me.
  */
-
 session_destroy();
 unset($_SESSION['userid']);
 
-//Remove Cookies
-setcookie("identifier","",time()-(3600*24*365)); 
-setcookie("securitytoken","",time()-(3600*24*365)); 
+// Remove Cookies
+setcookie("identifier", "", time() - (3600 * 24 * 365));
+setcookie("securitytoken", "", time() - (3600 * 24 * 365)); 
 

@@ -9,6 +9,7 @@
  */
 class Smarty_Variable
 {
+
     /**
      * template variable
      *
@@ -26,8 +27,10 @@ class Smarty_Variable
     /**
      * create Smarty variable object
      *
-     * @param mixed   $value   the value to assign
-     * @param boolean $nocache if true any output of this variable will be not cached
+     * @param mixed $value
+     *            the value to assign
+     * @param boolean $nocache
+     *            if true any output of this variable will be not cached
      */
     public function __construct($value = null, $nocache = false)
     {
@@ -45,4 +48,3 @@ class Smarty_Variable
         return (string) $this->value;
     }
 }
-

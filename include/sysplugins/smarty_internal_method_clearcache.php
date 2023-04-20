@@ -11,6 +11,7 @@
  */
 class Smarty_Internal_Method_ClearCache
 {
+
     /**
      * Valid for Smarty object
      *
@@ -22,20 +23,24 @@ class Smarty_Internal_Method_ClearCache
      * Empty cache for a specific template
      *
      * @api  Smarty::clearCache()
-     * @link http://www.smarty.net/docs/en/api.clear.cache.tpl
-     *
-     * @param \Smarty  $smarty
-     * @param  string  $template_name template name
-     * @param  string  $cache_id      cache id
-     * @param  string  $compile_id    compile id
-     * @param  integer $exp_time      expiration time
-     * @param  string  $type          resource type
-     *
+     * @link https://www.smarty.net/docs/en/api.clear.cache.tpl
+     *      
+     * @param \Smarty $smarty
+     * @param string $template_name
+     *            template name
+     * @param string $cache_id
+     *            cache id
+     * @param string $compile_id
+     *            compile id
+     * @param integer $exp_time
+     *            expiration time
+     * @param string $type
+     *            resource type
+     *            
      * @return int number of cache files deleted
      * @throws \SmartyException
      */
-    public function clearCache(Smarty $smarty, $template_name, $cache_id = null, $compile_id = null, $exp_time = null,
-                               $type = null)
+    public function clearCache(Smarty $smarty, $template_name, $cache_id = null, $compile_id = null, $exp_time = null, $type = null)
     {
         $smarty->_clearTemplateCache();
         // load cache resource and call clear

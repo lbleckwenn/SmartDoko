@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Smarty Internal Plugin Resource Extends
  *
@@ -12,11 +13,12 @@
  * Smarty Internal Plugin Resource Extends
  * Implements the file system as resource for Smarty which {extend}s a chain of template files templates
  *
- * @package    Smarty
+ * @package Smarty
  * @subpackage TemplateResources
  */
 class Smarty_Internal_Resource_Extends extends Smarty_Resource
 {
+
     /**
      * mbstring.overload flag
      *
@@ -27,9 +29,11 @@ class Smarty_Internal_Resource_Extends extends Smarty_Resource
     /**
      * populate Source Object with meta data from Resource
      *
-     * @param Smarty_Template_Source   $source    source object
-     * @param Smarty_Internal_Template $_template template object
-     *
+     * @param Smarty_Template_Source $source
+     *            source object
+     * @param Smarty_Internal_Template $_template
+     *            template object
+     *            
      * @throws SmartyException
      */
     public function populate(Smarty_Template_Source $source, Smarty_Internal_Template $_template = null)
@@ -45,7 +49,7 @@ class Smarty_Internal_Resource_Extends extends Smarty_Resource
             if ($_s->type === 'php') {
                 throw new SmartyException("Resource type {$_s->type} cannot be used with the extends resource type");
             }
-            $sources[ $_s->uid ] = $_s;
+            $sources[$_s->uid] = $_s;
             $uid .= $_s->filepath;
             if ($_template) {
                 $exists = $exists && $_s->exists;
@@ -63,7 +67,8 @@ class Smarty_Internal_Resource_Extends extends Smarty_Resource
     /**
      * populate Source Object with timestamp and exists from Resource
      *
-     * @param Smarty_Template_Source $source source object
+     * @param Smarty_Template_Source $source
+     *            source object
      */
     public function populateTimestamp(Smarty_Template_Source $source)
     {
@@ -78,19 +83,18 @@ class Smarty_Internal_Resource_Extends extends Smarty_Resource
     /**
      * Load template's source from files into current template object
      *
-     * @param Smarty_Template_Source $source source object
-     *
+     * @param Smarty_Template_Source $source
+     *            source object
+     *            
      * @return string template source
      * @throws SmartyException if source cannot be loaded
      */
     public function getContent(Smarty_Template_Source $source)
     {
-        if (!$source->exists) {
+        if (! $source->exists) {
             throw new SmartyException("Unable to load template '{$source->type}:{$source->name}'");
         }
-
         $_components = array_reverse($source->components);
-
         $_content = '';
         /* @var \Smarty_Template_Source $_s */
         foreach ($_components as $_s) {
@@ -103,8 +107,9 @@ class Smarty_Internal_Resource_Extends extends Smarty_Resource
     /**
      * Determine basename for compiled filename
      *
-     * @param Smarty_Template_Source $source source object
-     *
+     * @param Smarty_Template_Source $source
+     *            source object
+     *            
      * @return string resource's basename
      */
     public function getBasename(Smarty_Template_Source $source)
@@ -113,12 +118,13 @@ class Smarty_Internal_Resource_Extends extends Smarty_Resource
     }
 
     /*
-      * Disable timestamp checks for extends resource.
-      * The individual source components will be checked.
-      *
-      * @return bool
-      */
+     * Disable timestamp checks for extends resource.
+     * The individual source components will be checked.
+     *
+     * @return bool
+     */
     /**
+     *
      * @return bool
      */
     public function checkTimestamps()

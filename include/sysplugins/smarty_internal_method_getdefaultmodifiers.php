@@ -11,6 +11,7 @@
  */
 class Smarty_Internal_Method_GetDefaultModifiers
 {
+
     /**
      * Valid for Smarty and template object
      *

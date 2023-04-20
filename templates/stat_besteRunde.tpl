@@ -34,15 +34,15 @@
 						{foreach $rangliste as $spieler}
 						<tr>
 							<th class="col-1 text-right pr-4">{$spieler@iteration}</th>
-							<th class="col-3">{$spieler.vorname}</th>
+							<th class="col-3 pl-2">{$spieler.vorname}</th>
 							<td class="col-1 text-center">{$spieler.datum|date_format:"d.m.Y"}</td>
-							<td class="col-1 text-right pr-4">{$spieler.spiele}</td>
-							<td class="col-1 text-right pr-4">{$spieler.punkteSumme}</td>
-							<td class="col-1 text-right pr-4">{$spieler.punktePlusMinus}</td>
-							<td class="col-1 text-right pr-4">{$spieler.siege}</td>
-							<th class="col-1 text-right pr-4">{$spieler.schnittSpielePunkteSumme|number_format:3:",":"."}</th>
-							<td class="col-1 text-right pr-4">{$spieler.schnittSpielePunktePlusMinus|number_format:3:",":"."}</td>
-							<td class="col-1 text-right pr-4">{$spieler.schnittSiegeSpiele|number_format:1:",":"."} %</td>
+							<td class="col-1 text-right pr-2">{$spieler.spiele}</td>
+							<td class="col-1 text-right pr-2">{$spieler.punkteSumme}</td>
+							<td class="col-1 text-right pr-2">{$spieler.punktePlusMinus}</td>
+							<td class="col-1 text-right pr-2">{$spieler.siege}</td>
+							<th class="col-1 text-right pr-2">{$spieler.schnittSpielePunkteSumme|number_format:3:",":"."}</th>
+							<td class="col-1 text-right pr-2">{$spieler.schnittSpielePunktePlusMinus|number_format:3:",":"."}</td>
+							<td class="col-1 text-right pr-2">{$spieler.schnittSiegeSpiele|number_format:1:",":"."} %</td>
 						</tr>
 						{/foreach}
 					</tbody>

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Smarty cache resource file clear method
  *
@@ -6,23 +7,29 @@
  * @subpackage PluginsInternal
  * @author     Uwe Tews
  */
+
 /**
  * Smarty Internal Runtime Cache Resource File Class
  *
- * @package    Smarty
+ * @package Smarty
  * @subpackage PluginsInternal
  */
 class Smarty_Internal_Runtime_CacheResourceFile
 {
+
     /**
      * Empty cache for a specific template
      *
-     * @param Smarty  $smarty
-     * @param string  $resource_name template name
-     * @param string  $cache_id      cache id
-     * @param string  $compile_id    compile id
-     * @param integer $exp_time      expiration time (number of seconds, not timestamp)
-     *
+     * @param Smarty $smarty
+     * @param string $resource_name
+     *            template name
+     * @param string $cache_id
+     *            cache id
+     * @param string $compile_id
+     *            compile id
+     * @param integer $exp_time
+     *            expiration time (number of seconds, not timestamp)
+     *            
      * @return integer number of cache files deleted
      */
     public function clear(Smarty $smarty, $resource_name, $cache_id, $compile_id, $exp_time)
@@ -32,7 +39,7 @@ class Smarty_Internal_Runtime_CacheResourceFile
         $_dir_sep = $smarty->use_sub_dirs ? '/' : '^';
         $_compile_id_offset = $smarty->use_sub_dirs ? 3 : 0;
         $_dir = $smarty->getCacheDir();
-        if ($_dir === '/') { //We should never want to delete this!
+        if ($_dir === '/') { // We should never want to delete this!
             return 0;
         }
         $_dir_length = strlen($_dir);
@@ -41,7 +48,7 @@ class Smarty_Internal_Runtime_CacheResourceFile
             $_cache_id_parts_count = count($_cache_id_parts);
             if ($smarty->use_sub_dirs) {
                 foreach ($_cache_id_parts as $id_part) {
-                    $_dir .= $id_part . DIRECTORY_SEPARATOR;
+                    $_dir .= $id_part . '/';
                 }
             }
         }
@@ -67,42 +74,39 @@ class Smarty_Internal_Runtime_CacheResourceFile
                 if (substr(basename($_file->getPathname()), 0, 1) === '.') {
                     continue;
                 }
-                $_filepath = (string)$_file;
+                $_filepath = (string) $_file;
                 // directory ?
                 if ($_file->isDir()) {
-                    if (!$_cache->isDot()) {
+                    if (! $_cache->isDot()) {
                         // delete folder if empty
                         @rmdir($_file->getPathname());
                     }
                 } else {
                     // delete only php files
-                    if (substr($_filepath, -4) !== '.php') {
+                    if (substr($_filepath, - 4) !== '.php') {
                         continue;
                     }
                     $_parts = explode($_dir_sep, str_replace('\\', '/', substr($_filepath, $_dir_length)));
                     $_parts_count = count($_parts);
                     // check name
                     if (isset($resource_name)) {
-                        if ($_parts[ $_parts_count - 1 ] !== $_resourcename_parts) {
+                        if ($_parts[$_parts_count - 1] !== $_resourcename_parts) {
                             continue;
                         }
                     }
                     // check compile id
-                    if (isset($_compile_id) && (!isset($_parts[ $_parts_count - 2 - $_compile_id_offset ]) ||
-                                                $_parts[ $_parts_count - 2 - $_compile_id_offset ] !== $_compile_id)
-                    ) {
+                    if (isset($_compile_id) && (! isset($_parts[$_parts_count - 2 - $_compile_id_offset]) || $_parts[$_parts_count - 2 - $_compile_id_offset] !== $_compile_id)) {
                         continue;
                     }
                     // check cache id
                     if (isset($_cache_id)) {
                         // count of cache id parts
-                        $_parts_count = (isset($_compile_id)) ? $_parts_count - 2 - $_compile_id_offset :
-                            $_parts_count - 1 - $_compile_id_offset;
+                        $_parts_count = (isset($_compile_id)) ? $_parts_count - 2 - $_compile_id_offset : $_parts_count - 1 - $_compile_id_offset;
                         if ($_parts_count < $_cache_id_parts_count) {
                             continue;
                         }
-                        for ($i = 0; $i < $_cache_id_parts_count; $i++) {
-                            if ($_parts[ $i ] !== $_cache_id_parts[ $i ]) {
+                        for ($i = 0; $i < $_cache_id_parts_count; $i ++) {
+                            if ($_parts[$i] !== $_cache_id_parts[$i]) {
                                 continue 2;
                             }
                         }
@@ -112,7 +116,7 @@ class Smarty_Internal_Runtime_CacheResourceFile
                         if (isset($exp_time)) {
                             if ($exp_time < 0) {
                                 preg_match('#\'cache_lifetime\' =>\s*(\d*)#', file_get_contents($_filepath), $match);
-                                if ($_time < (filemtime($_filepath) + $match[ 1 ])) {
+                                if ($_time < (filemtime($_filepath) + $match[1])) {
                                     continue;
                                 }
                             } else {
@@ -122,11 +126,9 @@ class Smarty_Internal_Runtime_CacheResourceFile
                             }
                         }
                         $_count += @unlink($_filepath) ? 1 : 0;
-                        if (function_exists('opcache_invalidate')
-                            && (!function_exists('ini_get') || strlen(ini_get("opcache.restrict_api")) < 1)
-                        ) {
+                        if (function_exists('opcache_invalidate') && (! function_exists('ini_get') || strlen(ini_get("opcache.restrict_api")) < 1)) {
                             opcache_invalidate($_filepath, true);
-                        } else if (function_exists('apc_delete_file')) {
+                        } elseif (function_exists('apc_delete_file')) {
                             apc_delete_file($_filepath);
                         }
                     }

@@ -22,44 +22,44 @@ include ('./include/gewinner.php');
  * (-2) + 1 + (-4) = -5
  */
 $reAugen = 57;
-$ansagen = array (
-		're' => true,
-		'kontra' => true
+$ansagen = array(
+    're' => true,
+    'kontra' => true
 );
-$absagen = array (
-		're' => 0,
-		'kontra' => 0
+$absagen = array(
+    're' => 0,
+    'kontra' => 0
 );
-$sonderpunkte = array (
-		're' => array (),
-		'kontra' => array ()
+$sonderpunkte = array(
+    're' => array(),
+    'kontra' => array()
 );
-$gewinner = ermitteleGewinner ( $reAugen, $ansagen, $absagen );
-$punkte = zaehlePunkte ( $reAugen, $ansagen, $absagen, $sonderpunkte, $gewinner, $spielTyp = 'normal' );
+$gewinner = ermitteleGewinner($reAugen, $ansagen, $absagen);
+$punkte = zaehlePunkte($reAugen, $ansagen, $absagen, $sonderpunkte, $gewinner, $spielTyp = 'normal');
 echo ("Gewinner: $gewinner | Punkte Re: {$punkte['re']} | Punkte Kontra: {$punkte['kontra']}<br>\n");
-print_r ( $punkte ['log'] );
+print_r($punkte['log']);
 /*
  * Re + keine 30
  * Kontra + keine 60
  * Kontra erreicht keine 30 Punkte
  */
 $reAugen = 240 - 29;
-$ansagen = array (
-		're' => true,
-		'kontra' => true
+$ansagen = array(
+    're' => true,
+    'kontra' => true
 );
-$absagen = array (
-		're' => 30,
-		'kontra' => 60
+$absagen = array(
+    're' => 30,
+    'kontra' => 60
 );
-$sonderpunkte = array (
-		're' => array (),
-		'kontra' => array ()
+$sonderpunkte = array(
+    're' => array(),
+    'kontra' => array()
 );
-$gewinner = ermitteleGewinner ( $reAugen, $ansagen, $absagen );
-$punkte = zaehlePunkte ( $reAugen, $ansagen, $absagen, $sonderpunkte, $gewinner, $spielTyp = 'normal' );
+$gewinner = ermitteleGewinner($reAugen, $ansagen, $absagen);
+$punkte = zaehlePunkte($reAugen, $ansagen, $absagen, $sonderpunkte, $gewinner, $spielTyp = 'normal');
 echo ("Gewinner: $gewinner | Punkte Re: {$punkte['re']} | Punkte Kontra: {$punkte['kontra']}<br>\n");
-print_r ( $punkte ['log'] );
+print_r($punkte['log']);
 
 /*
  * Wenn z.B. "Re, keine 90" und "Kontra, schwarz" gesagt wurde
@@ -81,22 +81,22 @@ print_r ( $punkte ['log'] );
  * Die Punkte (2:2) werden verrechnet, so dass jeder Spieler 0 Punkte erhält.
  */
 $reAugen = 75;
-$ansagen = array (
-		're' => true,
-		'kontra' => true
+$ansagen = array(
+    're' => true,
+    'kontra' => true
 );
-$absagen = array (
-		're' => 90,
-		'kontra' => 0
+$absagen = array(
+    're' => 90,
+    'kontra' => 0
 );
-$sonderpunkte = array (
-		're' => array (),
-		'kontra' => array ()
+$sonderpunkte = array(
+    're' => array(),
+    'kontra' => array()
 );
-$gewinner = ermitteleGewinner ( $reAugen, $ansagen, $absagen );
-$punkte = zaehlePunkte ( $reAugen, $ansagen, $absagen, $sonderpunkte, $gewinner, $spielTyp = 'normal' );
+$gewinner = ermitteleGewinner($reAugen, $ansagen, $absagen);
+$punkte = zaehlePunkte($reAugen, $ansagen, $absagen, $sonderpunkte, $gewinner, $spielTyp = 'normal');
 echo ("Gewinner: $gewinner | Punkte Re: {$punkte['re']} | Punkte Kontra: {$punkte['kontra']}<br>\n");
-print_r ( $punkte ['log'] );
+print_r($punkte['log']);
 
 /*
  * Die Re-Partei sagt "Re" und "Keine 90". Allerdings schafft es die Kontra-Partei auf 110 Augen. Damit hat die Kontra-Partei
@@ -105,22 +105,22 @@ print_r ( $punkte ['log'] );
  * auch den "Gegen die Kreuz-Damen gewonnen"-Punkt. Insgesamt sind es 5 Punkte:
  */
 $reAugen = 240 - 110;
-$ansagen = array (
-		're' => true,
-		'kontra' => false
+$ansagen = array(
+    're' => true,
+    'kontra' => false
 );
-$absagen = array (
-		're' => 90,
-		'kontra' => null
+$absagen = array(
+    're' => 90,
+    'kontra' => null
 );
-$sonderpunkte = array (
-		're' => array (),
-		'kontra' => array ()
+$sonderpunkte = array(
+    're' => array(),
+    'kontra' => array()
 );
-$gewinner = ermitteleGewinner ( $reAugen, $ansagen, $absagen );
-$punkte = zaehlePunkte ( $reAugen, $ansagen, $absagen, $sonderpunkte, $gewinner, $spielTyp = 'normal' );
+$gewinner = ermitteleGewinner($reAugen, $ansagen, $absagen);
+$punkte = zaehlePunkte($reAugen, $ansagen, $absagen, $sonderpunkte, $gewinner, $spielTyp = 'normal');
 echo ("Gewinner: $gewinner | Punkte Re: {$punkte['re']} | Punkte Kontra: {$punkte['kontra']}<br>\n");
-print_r ( $punkte ['log'] );
+print_r($punkte['log']);
 
 /*
  * Die Re-Partei sagt "Re", "Keine 90" und "Keine 60". Die Kontra-Partei glaubt jedoch, 60 Augen erreichen zu können, und sagt
@@ -128,22 +128,22 @@ print_r ( $punkte ['log'] );
  * hat. Sie bekommt 8 Punkte:
  */
 $reAugen = 240 - 70;
-$ansagen = array (
-		're' => true,
-		'kontra' => true
+$ansagen = array(
+    're' => true,
+    'kontra' => true
 );
-$absagen = array (
-		're' => 60,
-		'kontra' => null
+$absagen = array(
+    're' => 60,
+    'kontra' => null
 );
-$sonderpunkte = array (
-		're' => array (),
-		'kontra' => array ()
+$sonderpunkte = array(
+    're' => array(),
+    'kontra' => array()
 );
-$gewinner = ermitteleGewinner ( $reAugen, $ansagen, $absagen );
-$punkte = zaehlePunkte ( $reAugen, $ansagen, $absagen, $sonderpunkte, $gewinner, $spielTyp = 'normal' );
+$gewinner = ermitteleGewinner($reAugen, $ansagen, $absagen);
+$punkte = zaehlePunkte($reAugen, $ansagen, $absagen, $sonderpunkte, $gewinner, $spielTyp = 'normal');
 echo ("Gewinner: $gewinner | Punkte Re: {$punkte['re']} | Punkte Kontra: {$punkte['kontra']}<br>\n");
-print_r ( $punkte ['log'] );
+print_r($punkte['log']);
 
 /*
  * Wie im vorherigen Beispiel sagt die Re-Partei "Re", "Keine 90" und "Keine 60" sowie die Kontra-Partei ebenso "Kontra", "Keine 90"
@@ -152,40 +152,40 @@ print_r ( $punkte ['log'] );
  * Stufe "Verlierer unter 90 gespielt" erreicht. Insgesamt bekommt die Re-Partei 3 Punkte:
  */
 $reAugen = 170;
-$ansagen = array (
-		're' => true,
-		'kontra' => true
+$ansagen = array(
+    're' => true,
+    'kontra' => true
 );
-$absagen = array (
-		're' => 60,
-		'kontra' => 60
+$absagen = array(
+    're' => 60,
+    'kontra' => 60
 );
-$sonderpunkte = array (
-		're' => array (),
-		'kontra' => array ()
+$sonderpunkte = array(
+    're' => array(),
+    'kontra' => array()
 );
-$gewinner = ermitteleGewinner ( $reAugen, $ansagen, $absagen );
-$punkte = zaehlePunkte ( $reAugen, $ansagen, $absagen, $sonderpunkte, $gewinner, $spielTyp = 'normal' );
+$gewinner = ermitteleGewinner($reAugen, $ansagen, $absagen);
+$punkte = zaehlePunkte($reAugen, $ansagen, $absagen, $sonderpunkte, $gewinner, $spielTyp = 'normal');
 echo ("Gewinner: $gewinner | Punkte Re: {$punkte['re']} | Punkte Kontra: {$punkte['kontra']}<br>\n");
-print_r ( $punkte ['log'] );
+print_r($punkte['log']);
 
 /*
  * Eigenes Szenario: wird schwarz richtig berechnet?
  */
 $reAugen = 240;
-$ansagen = array (
-		're' => true,
-		'kontra' => false
+$ansagen = array(
+    're' => true,
+    'kontra' => false
 );
-$absagen = array (
-		're' => 0,
-		'kontra' => null
+$absagen = array(
+    're' => 0,
+    'kontra' => null
 );
-$sonderpunkte = array (
-		're' => array (),
-		'kontra' => array ()
+$sonderpunkte = array(
+    're' => array(),
+    'kontra' => array()
 );
-$gewinner = ermitteleGewinner ( $reAugen, $ansagen, $absagen );
-$punkte = zaehlePunkte ( $reAugen, $ansagen, $absagen, $sonderpunkte, $gewinner, $spielTyp = 'normal' );
+$gewinner = ermitteleGewinner($reAugen, $ansagen, $absagen);
+$punkte = zaehlePunkte($reAugen, $ansagen, $absagen, $sonderpunkte, $gewinner, $spielTyp = 'normal');
 echo ("Gewinner: $gewinner | Punkte Re: {$punkte['re']} | Punkte Kontra: {$punkte['kontra']}<br>\n");
-print_r ( $punkte ['log'] );
+print_r($punkte['log']);

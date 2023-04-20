@@ -18,61 +18,60 @@
  */
 
 /**
- * This  part of the program code is originally from php-einfach.de
+ * This part of the program code is originally from php-einfach.de
  * and was modified for SmartDoko by me.
  */
-
 $error = $success = $msg = false;
-if (! isset ( $_GET ['userid'] ) || ! isset ( $_GET ['code'] )) {
-	$error = "Leider wurde beim Aufruf dieser Website kein Code zum Zurücksetzen deines Passworts übermittelt";
+if (! isset($_GET['userid']) || ! isset($_GET['code'])) {
+    $error = "Leider wurde beim Aufruf dieser Website kein Code zum Zurücksetzen deines Passworts übermittelt";
 }
-$userid = $_GET ['userid'];
-$code = $_GET ['code'];
+$userid = $_GET['userid'];
+$code = $_GET['code'];
 
 // Abfrage des Nutzers
-$statement = $pdo->prepare ( "SELECT * FROM users WHERE id = :userid" );
-$result = $statement->execute ( array (
-		'userid' => $userid 
-) );
-$user = $statement->fetch ();
+$statement = $pdo->prepare("SELECT * FROM users WHERE id = :userid");
+$result = $statement->execute(array(
+    'userid' => $userid
+));
+$user = $statement->fetch();
 
 // Überprüfe dass ein Nutzer gefunden wurde und dieser auch ein Passwortcode hat
-if ($user === null || $user ['passwortcode'] === null) {
-	$error = "Der Benutzer wurde nicht gefunden oder hat kein neues Passwort angefordert.";
+if ($user === null || $user['passwortcode'] === null) {
+    $error = "Der Benutzer wurde nicht gefunden oder hat kein neues Passwort angefordert.";
 }
 
-if ($user ['passwortcode_time'] === null || strtotime ( $user ['passwortcode_time'] ) < (time () - 24 * 3600)) {
-	$error = "Dein Code ist leider abgelaufen. Bitte benutze die Passwort vergessen Funktion erneut.";
+if ($user['passwortcode_time'] === null || strtotime($user['passwortcode_time']) < (time() - 24 * 3600)) {
+    $error = "Dein Code ist leider abgelaufen. Bitte benutze die Passwort vergessen Funktion erneut.";
 }
 
 // Überprüfe den Passwortcode
-if (sha1 ( $code ) != $user ['passwortcode']) {
-	$error = "Der übergebene Code war ungültig. Stell sicher, dass du den genauen Link in der URL aufgerufen hast. Solltest du mehrmals die Passwort-vergessen Funktion genutzt haben, so ruf den Link in der neuesten E-Mail auf.";
+if (sha1($code) != $user['passwortcode']) {
+    $error = "Der übergebene Code war ungültig. Stell sicher, dass du den genauen Link in der URL aufgerufen hast. Solltest du mehrmals die Passwort-vergessen Funktion genutzt haben, so ruf den Link in der neuesten E-Mail auf.";
 }
 
 // Der Code war korrekt, der Nutzer darf ein neues Passwort eingeben
 
-if (isset ( $_GET ['send'] )) {
-	$passwort = $_POST ['passwort'];
-	$passwort2 = $_POST ['passwort2'];
-	
-	if ($passwort != $passwort2) {
-		$msg = "Bitte identische Passwörter eingeben";
-	} else { // Speichere neues Passwort und lösche den Code
-		$passworthash = password_hash ( $passwort, PASSWORD_DEFAULT );
-		$statement = $pdo->prepare ( "UPDATE users SET passwort = :passworthash, passwortcode = NULL, passwortcode_time = NULL WHERE id = :userid" );
-		$result = $statement->execute ( array (
-				'passworthash' => $passworthash,
-				'userid' => $userid 
-		) );
-		
-		if ($result) {
-			$success = true;
-		}
-	}
+if (isset($_GET['send'])) {
+    $passwort = $_POST['passwort'];
+    $passwort2 = $_POST['passwort2'];
+
+    if ($passwort != $passwort2) {
+        $msg = "Bitte identische Passwörter eingeben";
+    } else { // Speichere neues Passwort und lösche den Code
+        $passworthash = password_hash($passwort, PASSWORD_DEFAULT);
+        $statement = $pdo->prepare("UPDATE users SET passwort = :passworthash, passwortcode = NULL, passwortcode_time = NULL WHERE id = :userid");
+        $result = $statement->execute(array(
+            'passworthash' => $passworthash,
+            'userid' => $userid
+        ));
+
+        if ($result) {
+            $success = true;
+        }
+    }
 }
-$smarty->assign ( 'success', $success );
-$smarty->assign ( 'error', $error );
-$smarty->assign ( 'msg', $msg );
-$smarty->assign ( 'userid', htmlentities ( $userid ) );
-$smarty->assign ( 'code', htmlentities ( $code ) );
+$smarty->assign('success', $success);
+$smarty->assign('error', $error);
+$smarty->assign('msg', $msg);
+$smarty->assign('userid', htmlentities($userid));
+$smarty->assign('code', htmlentities($code));

@@ -53,7 +53,13 @@ $pages = array(
     'stat_rangliste',
     'stat_besteRunde',
     'user',
-    'editgame'
+    'editgame',
+    'stat_sonderpunkte',
+    'stat_ansagen',
+    'regeln',
+    'stat_teilnehmer',
+    'stat_absagen',
+    'stat_besteParteien'
 );
 if (! in_array($page, $pages)) {
     $page = 'splashscreen';

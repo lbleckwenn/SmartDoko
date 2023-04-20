@@ -27,7 +27,7 @@ if ($statement->rowCount() > 0 && $spielTyp != 3) {
                 ));
             }
         } elseif ($spielTyp != 1) {
-            
+
             $statement = $pdo->prepare("INSERT INTO player_data (round_id, game_id, player_id, game_typ) VALUES (?, ?, ?, ?)");
             $statement->execute(array(
                 $round_id,

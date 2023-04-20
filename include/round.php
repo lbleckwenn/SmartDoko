@@ -135,8 +135,13 @@ if ($statement->rowCount() == 0) {
             if ($f->easycheck()) {
                 if (GetParam('submit') == 'save') {
                     $spieler = GetParam('spieler');
+                    $geber = GetParam('geber');
+                    $aussetzer = GetParam('aussetzer', 'P', array());
                     if (checkIfTwoElementsEqual($spieler)) {
                         $error = "Die Mitspielerauswahl ist fehlerhaft.";
+                    }
+                    if (sizeof($aussetzer) != $anzahlSpieler - 4) {
+                        $error = "Anzahl Aussetzer ist fehlerhaft.";
                     }
                     if (! $error) {
                         $statement1 = $pdo->prepare("INSERT INTO round_player (round_id, player_id, platz, spielt, gibt) VALUES (?, ?, ?, ?, ?)");
@@ -146,11 +151,11 @@ if ($statement->rowCount() == 0) {
                                 $round_id,
                                 $spieler[$i],
                                 $i + 1,
-                                (($anzahlSpieler - $i) > 4 ? 0 : 1), // Bei mehr als 4 Spielern spielen nur die letzten 4 im ersten Spiel
-                                ($i == 0 ? 1 : 0) // Spieler auf Platz 1 ist der erste Geber
+                                ((isset($aussetzer[$i])) == $spieler[$i] ? 0 : 1),
+                                (($geber == $i) ? 1 : 0)
                             );
                             $statement1->execute($mitspieler);
-                            if ($anzahlSpieler - $i < 5) {
+                            if (! isset($aussetzer[$i])) {
                                 $mitspieler = array(
                                     $round_id,
                                     $game_id,
@@ -242,7 +247,7 @@ if ($statement->rowCount() == 0) {
                                     $vorbehalt
                                 ));
                             }
-                            //Automatische Re-Ansage bei Vorbehalten
+                            // Automatische Re-Ansage bei Vorbehalten
                             $statement = $pdo->prepare("INSERT INTO player_data (round_id, game_id, player_id, ansage) VALUES (?, ?, ?, ?)");
                             $statement->execute(array(
                                 $round_id,

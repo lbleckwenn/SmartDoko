@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Smarty Internal Plugin Templateparser Parse Tree
  * These are classes to build parse trees in the template parser
@@ -12,16 +13,18 @@
 /**
  * Code fragment inside a tag .
  *
- * @package    Smarty
+ * @package Smarty
  * @subpackage Compiler
  * @ignore
  */
 class Smarty_Internal_ParseTree_Code extends Smarty_Internal_ParseTree
 {
+
     /**
      * Create parse tree buffer for code fragment
      *
-     * @param string $data content
+     * @param string $data
+     *            content
      */
     public function __construct($data)
     {

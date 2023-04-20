@@ -11,6 +11,7 @@
  */
 class Smarty_Internal_Method_LoadFilter
 {
+
     /**
      * Valid for Smarty and template object
      *
@@ -23,19 +24,26 @@ class Smarty_Internal_Method_LoadFilter
      *
      * @var array
      */
-    private $filterTypes = array('pre' => true, 'post' => true, 'output' => true, 'variable' => true);
+    private $filterTypes = array(
+        'pre' => true,
+        'post' => true,
+        'output' => true,
+        'variable' => true
+    );
 
     /**
      * load a filter of specified type and name
      *
      * @api  Smarty::loadFilter()
      *
-     * @link http://www.smarty.net/docs/en/api.load.filter.tpl
-     *
+     * @link https://www.smarty.net/docs/en/api.load.filter.tpl
+     *      
      * @param \Smarty_Internal_TemplateBase|\Smarty_Internal_Template|\Smarty $obj
-     * @param  string                                                         $type filter type
-     * @param  string                                                         $name filter name
-     *
+     * @param string $type
+     *            filter type
+     * @param string $name
+     *            filter name
+     *            
      * @return bool
      * @throws SmartyException if filter could not be loaded
      */
@@ -46,15 +54,18 @@ class Smarty_Internal_Method_LoadFilter
         $_plugin = "smarty_{$type}filter_{$name}";
         $_filter_name = $_plugin;
         if (is_callable($_plugin)) {
-            $smarty->registered_filters[ $type ][ $_filter_name ] = $_plugin;
+            $smarty->registered_filters[$type][$_filter_name] = $_plugin;
             return true;
         }
         if ($smarty->loadPlugin($_plugin)) {
             if (class_exists($_plugin, false)) {
-                $_plugin = array($_plugin, 'execute');
+                $_plugin = array(
+                    $_plugin,
+                    'execute'
+                );
             }
             if (is_callable($_plugin)) {
-                $smarty->registered_filters[ $type ][ $_filter_name ] = $_plugin;
+                $smarty->registered_filters[$type][$_filter_name] = $_plugin;
                 return true;
             }
         }
@@ -70,7 +81,7 @@ class Smarty_Internal_Method_LoadFilter
      */
     public function _checkFilterType($type)
     {
-        if (!isset($this->filterTypes[ $type ])) {
+        if (! isset($this->filterTypes[$type])) {
             throw new SmartyException("Illegal filter type '{$type}'");
         }
     }

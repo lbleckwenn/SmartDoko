@@ -16,81 +16,81 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-$user = check_user ();
+$user = check_user();
 if (! $user) {
-	$smarty->assign ( 'error', 'Bitte zuerst <a href="login.php">einloggen</a>' );
-	$page = 'splashscreen';
-	return;
+    $smarty->assign('error', 'Bitte zuerst <a href="login.php">einloggen</a>');
+    $page = 'splashscreen';
+    return;
 }
 
-$statement = $pdo->prepare ( "SELECT * FROM players " );
-$result = $statement->execute ();
-$players = array ();
-while ( $row = $statement->fetch () ) {
-	$players [$row ['id']] = $row ['vorname'] . (($mitNachnamen) ? ' ' . $row ['nachname'] : '');
+$statement = $pdo->prepare("SELECT * FROM players ");
+$result = $statement->execute();
+$players = array();
+while ($row = $statement->fetch()) {
+    $players[$row['id']] = $row['vorname'] . (($mitNachnamen) ? ' ' . $row['nachname'] : '');
 }
-$smarty->assign ( 'players', $players );
+$smarty->assign('players', $players);
 
 if ($nurRundenMitBeteiligung) {
-	$statement = $pdo->prepare ( "SELECT rounds.* FROM rounds, round_player WHERE rounds.id = round_player.round_id AND round_player.player_id = :playerId GROUP BY id ORDER BY date DESC, id ASC " );
-	$statement->execute ( array (
-			'playerId'=>$user ['playerId']
-	) );
+    $statement = $pdo->prepare("SELECT rounds.* FROM rounds, round_player WHERE rounds.id = round_player.round_id AND round_player.player_id = :playerId GROUP BY id ORDER BY date DESC, id ASC ");
+    $statement->execute(array(
+        'playerId' => $user['playerId']
+    ));
 } else {
-	$statement = $pdo->prepare ( "SELECT rounds.* FROM rounds, round_player, players, user_friend WHERE rounds.id = round_player.round_id AND (round_player.player_id = :playerId OR (round_player.player_id = players.id AND players.user_id = user_friend.userId1 AND user_friend.userId2 = :userId)) GROUP BY id ORDER BY date DESC, id ASC " );
-	$statement->execute ( array (
-			'playerId'=>$user ['playerId'],
-			'userId'=>$user ['id']
-	) );
+    $statement = $pdo->prepare("SELECT rounds.* FROM rounds, round_player, players, user_friend WHERE rounds.id = round_player.round_id AND (round_player.player_id = :playerId OR (round_player.player_id = players.id AND players.user_id = user_friend.userId1 AND user_friend.userId2 = :userId)) GROUP BY id ORDER BY date DESC, id ASC ");
+    $statement->execute(array(
+        'playerId' => $user['playerId'],
+        'userId' => $user['id']
+    ));
 }
-$runden = array ();
-while ( $row = $statement->fetch () ) {
-	$runden [$row ['id']] = array (
-			'date' => strtotime ( $row ['date'] ),
-			'games' => $row ['games'] - $row ['is_running'],
-			'location' => $row ['location'],
-			'is_running' => $row ['is_running'],
-			'player' => array ()
-	);
+$runden = array();
+while ($row = $statement->fetch()) {
+    $runden[$row['id']] = array(
+        'date' => strtotime($row['date']),
+        'games' => $row['games'] - $row['is_running'],
+        'location' => $row['location'],
+        'is_running' => $row['is_running'],
+        'player' => array()
+    );
 }
 
-$statement1 = $pdo->prepare ( "SELECT * FROM round_player WHERE round_id = ?" );
-$statement21 = $pdo->prepare ( "SELECT sum(punkte) FROM `game_data` WHERE round_id = ? AND player_id = ? AND punkte > 0" );
-$statement22 = $pdo->prepare ( "SELECT sum(punkte) FROM `game_data` WHERE round_id = ? AND player_id = ?" );
-$statement3 = $pdo->prepare ( "SELECT count(*) from games, game_data WHERE games.round_id = ? and game_data.player_id = ? and game_data.partei = games.gewinner and games.id = game_data.game_id" );
-foreach ( $runden as $runde_id => $runde ) {
-	$statement1->execute ( array (
-			$runde_id
-	) );
-	$players = $statement1->fetchAll ( PDO::FETCH_ASSOC );
-	$sort = array ();
-	foreach ( $players as $player ) {
-		$statement21->execute ( array (
-				$runde_id,
-				$player ['player_id']
-		) );
-		$row = $statement21->fetch ();
-		$punkte_se = $row ['sum(punkte)'];
-		$statement22->execute ( array (
-				$runde_id,
-				$player ['player_id']
-		) );
-		$row = $statement22->fetch ();
-		$punkte_pm = $row ['sum(punkte)'];
-		$sort [] = $punkte_se;
-		$statement3->execute ( array (
-				$runde_id,
-				$player ['player_id']
-		) );
-		$row = $statement3->fetch ();
-		$siege = $row ['count(*)'];
-		$runden [$runde_id] ['player'] [] = array (
-				'player_id' => $player ['player_id'],
-				'punkte_se' => $punkte_se,
-				'punkte_pm' => $punkte_pm,
-				'anz_siege' => $siege
-		);
-	}
-	array_multisort ( $sort, SORT_DESC, $runden [$runde_id] ['player'] );
+$statement1 = $pdo->prepare("SELECT * FROM round_player WHERE round_id = ?");
+$statement21 = $pdo->prepare("SELECT sum(punkte) FROM `game_data` WHERE round_id = ? AND player_id = ? AND punkte > 0");
+$statement22 = $pdo->prepare("SELECT sum(punkte) FROM `game_data` WHERE round_id = ? AND player_id = ?");
+$statement3 = $pdo->prepare("SELECT count(*) from games, game_data WHERE games.round_id = ? and game_data.player_id = ? and game_data.partei = games.gewinner and games.id = game_data.game_id");
+foreach ($runden as $runde_id => $runde) {
+    $statement1->execute(array(
+        $runde_id
+    ));
+    $players = $statement1->fetchAll(PDO::FETCH_ASSOC);
+    $sort = array();
+    foreach ($players as $player) {
+        $statement21->execute(array(
+            $runde_id,
+            $player['player_id']
+        ));
+        $row = $statement21->fetch();
+        $punkte_se = $row['sum(punkte)'];
+        $statement22->execute(array(
+            $runde_id,
+            $player['player_id']
+        ));
+        $row = $statement22->fetch();
+        $punkte_pm = $row['sum(punkte)'];
+        $sort[] = $punkte_se;
+        $statement3->execute(array(
+            $runde_id,
+            $player['player_id']
+        ));
+        $row = $statement3->fetch();
+        $siege = $row['count(*)'];
+        $runden[$runde_id]['player'][] = array(
+            'player_id' => $player['player_id'],
+            'punkte_se' => $punkte_se,
+            'punkte_pm' => $punkte_pm,
+            'anz_siege' => $siege
+        );
+    }
+    array_multisort($sort, SORT_DESC, $runden[$runde_id]['player']);
 }
-$smarty->assign ( 'runden', $runden );
+$smarty->assign('runden', $runden);

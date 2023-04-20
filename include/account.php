@@ -18,85 +18,84 @@
  */
 
 /**
- * This  part of the program code is originally from php-einfach.de
+ * This part of the program code is originally from php-einfach.de
  * and was modified for SmartDoko by me.
  */
-
 $success = $error = false;
 
 // Überprüfe, dass der User eingeloggt ist
 // Der Aufruf von check_user() muss in alle internen Seiten eingebaut sein
-$user = check_user ();
+$user = check_user();
 if (! $user) {
-	$smarty->assign ( 'error', 'Bitte zuerst <a href="login.php">einloggen</a>' );
-	exit ();
+    $smarty->assign('error', 'Bitte zuerst <a href="login.php">einloggen</a>');
+    exit();
 }
 
-if (isset ( $_GET ['save'] )) {
-	$save = $_GET ['save'];
+if (isset($_GET['save'])) {
+    $save = $_GET['save'];
 
-	if ($save == 'personal_data') {
-		$vorname = trim ( $_POST ['vorname'] );
-		$nachname = trim ( $_POST ['nachname'] );
+    if ($save == 'personal_data') {
+        $vorname = trim($_POST['vorname']);
+        $nachname = trim($_POST['nachname']);
 
-		if ($vorname == "" || $nachname == "") {
-			$error = "Bitte Vor- und Nachname ausfüllen.";
-		} else {
-			$statement = $pdo->prepare ( "UPDATE users SET vorname = :vorname, nachname = :nachname, updated_at=NOW() WHERE id = :userid" );
-			$result = $statement->execute ( array (
-					'vorname' => $vorname,
-					'nachname' => $nachname,
-					'userid' => $user ['id']
-			) );
+        if ($vorname == "" || $nachname == "") {
+            $error = "Bitte Vor- und Nachname ausfüllen.";
+        } else {
+            $statement = $pdo->prepare("UPDATE users SET vorname = :vorname, nachname = :nachname, updated_at=NOW() WHERE id = :userid");
+            $result = $statement->execute(array(
+                'vorname' => $vorname,
+                'nachname' => $nachname,
+                'userid' => $user['id']
+            ));
 
-			$success = "Daten erfolgreich gespeichert.";
-		}
-	} else if ($save == 'email') {
-		$passwort = $_POST ['passwort'];
-		$email = trim ( $_POST ['email'] );
-		$email2 = trim ( $_POST ['email2'] );
+            $success = "Daten erfolgreich gespeichert.";
+        }
+    } else if ($save == 'email') {
+        $passwort = $_POST['passwort'];
+        $email = trim($_POST['email']);
+        $email2 = trim($_POST['email2']);
 
-		if ($email != $email2) {
-			$error = "Die eingegebenen E-Mail-Adressen stimmten nicht überein.";
-		} else if (! filter_var ( $email, FILTER_VALIDATE_EMAIL )) {
-			$error = "Bitte eine gültige E-Mail-Adresse eingeben.";
-		} else if (! password_verify ( $passwort, $user ['passwort'] )) {
-			$error = "Bitte korrektes Passwort eingeben.";
-		} else {
-			$statement = $pdo->prepare ( "UPDATE users SET email = :email WHERE id = :userid" );
-			$result = $statement->execute ( array (
-					'email' => $email,
-					'userid' => $user ['id']
-			) );
+        if ($email != $email2) {
+            $error = "Die eingegebenen E-Mail-Adressen stimmten nicht überein.";
+        } else if (! filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $error = "Bitte eine gültige E-Mail-Adresse eingeben.";
+        } else if (! password_verify($passwort, $user['passwort'])) {
+            $error = "Bitte korrektes Passwort eingeben.";
+        } else {
+            $statement = $pdo->prepare("UPDATE users SET email = :email WHERE id = :userid");
+            $result = $statement->execute(array(
+                'email' => $email,
+                'userid' => $user['id']
+            ));
 
-			$success = "E-Mail-Adresse erfolgreich gespeichert.";
-		}
-	} else if ($save == 'passwort') {
-		$passwortAlt = $_POST ['passwortAlt'];
-		$passwortNeu = trim ( $_POST ['passwortNeu'] );
-		$passwortNeu2 = trim ( $_POST ['passwortNeu2'] );
+            $success = "E-Mail-Adresse erfolgreich gespeichert.";
+        }
+    } else if ($save == 'passwort') {
+        $passwortAlt = $_POST['passwortAlt'];
+        $passwortNeu = trim($_POST['passwortNeu']);
+        $passwortNeu2 = trim($_POST['passwortNeu2']);
 
-		if ($passwortNeu != $passwortNeu2) {
-			$error = "Die eingegebenen Passwörter stimmten nicht überein.";
-		} else if ($passwortNeu == "") {
-			$error = "Das Passwort darf nicht leer sein.";
-		} else if (! password_verify ( $passwortAlt, $user ['passwort'] )) {
-			$error = "Bitte korrektes Passwort eingeben.";
-		} else {
-			$passwort_hash = password_hash ( $passwortNeu, PASSWORD_DEFAULT );
+        if ($passwortNeu != $passwortNeu2) {
+            $error = "Die eingegebenen Passwörter stimmten nicht überein.";
+        } else if ($passwortNeu == "") {
+            $error = "Das Passwort darf nicht leer sein.";
+        } else if (! password_verify($passwortAlt, $user['passwort'])) {
+            $error = "Bitte korrektes Passwort eingeben.";
+        } else {
+            $passwort_hash = password_hash($passwortNeu, PASSWORD_DEFAULT);
 
-			$statement = $pdo->prepare ( "UPDATE users SET passwort = :passwort WHERE id = :userid" );
-			$result = $statement->execute ( array (
-					'passwort' => $passwort_hash,
-					'userid' => $user ['id']
-			) );
+            $statement = $pdo->prepare("UPDATE users SET passwort = :passwort WHERE id = :userid");
+            $result = $statement->execute(array(
+                'passwort' => $passwort_hash,
+                'userid' => $user['id']
+            ));
 
-			$success = "Passwort erfolgreich gespeichert.";
-		}
-	}
+            $success = "Passwort erfolgreich gespeichert.";
+        }
+    }
 }
 
-$smarty->assign ( 'user', check_user () );
-$smarty->assign ( 'success', $success );
-$smarty->assign ( 'error', $error );
+$smarty->assign('user', check_user());
+$smarty->assign('success', $success);
+$smarty->assign('error', $error);
 
