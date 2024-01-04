@@ -50,7 +50,7 @@ foreach ($players_round as $player_id => $player) {
     $players_round[$player_id]['anzeige'] = $player['vorname'] . (($mitNachnamen) ? ' ' . $player['nachname'] : '');
 }
 $smarty->assign('players_round', $players_round);
-$punkteliste = $sieger = $sortSieger = array();
+$punkteliste = $sieger = $sortSieger = $siegerpaar = array();
 foreach ($players_round as $player_id => $player) {
     $punkteliste[0][$player_id] = array(
         'plusminus' => 0,
@@ -70,6 +70,7 @@ for ($i = 1; $i <= $aktuellesSpiel; $i ++) {
         $round_id,
         $i
     ));
+    $siegerspiel = array();
     while ($row = $statement->fetch()) { // PDO::FETCH_ASSOC
         $punkteSpiel = $row['punkte'];
         $punkteliste[$i]['sieger'] = $row['gewinner'];
@@ -82,9 +83,23 @@ for ($i = 1; $i <= $aktuellesSpiel; $i ++) {
         $punkteliste[$i][$row['player_id']]['spielte'] = true;
         if ($row['gewinner'] == $row['partei'] && $row['gewinner'] != '') {
             $punkteliste[$i][$row['player_id']]['sieger'] = true;
+            $siegerspiel[] = $row['player_id'];
         }
         $punkteliste[$i]['spiel'] = $row['spiel_punkte'];
         $punkteliste[$i]['gameId'] = $row['game_id'];
+    }
+    if (sizeof($siegerspiel) == 1) {
+        $siegerpaar[$siegerspiel[0]][$siegerspiel[0]] ++;
+    } elseif (sizeof($siegerspiel) == 2) {
+        $siegerpaar[$siegerspiel[0]][$siegerspiel[1]] ++;
+        $siegerpaar[$siegerspiel[1]][$siegerspiel[0]] ++;
+    } else {
+        $siegerpaar[$siegerspiel[0]][$siegerspiel[1]] += 0.5;
+        $siegerpaar[$siegerspiel[0]][$siegerspiel[2]] += 0.5;
+        $siegerpaar[$siegerspiel[1]][$siegerspiel[0]] += 0.5;
+        $siegerpaar[$siegerspiel[1]][$siegerspiel[2]] += 0.5;
+        $siegerpaar[$siegerspiel[2]][$siegerspiel[0]] += 0.5;
+        $siegerpaar[$siegerspiel[2]][$siegerspiel[1]] += 0.5;
     }
     $statement2 = $pdo->prepare("SELECT player_data.* FROM player_data, games WHERE games.round_id = ? AND games.game_number = ? AND games.id = player_data.game_id AND player_data.game_typ != ''");
     $statement2->execute(array(
@@ -152,5 +167,5 @@ for ($i = 1; $i <= $aktuellesSpiel; $i ++) {
     $punkteliste[$i]['re'] = ltrim($punkteliste[$i]['re'], ", ");
     $punkteliste[$i]['kontra'] = ltrim($punkteliste[$i]['kontra'], ', ');
 }
-
 $smarty->assign('punkteliste', $punkteliste);
+$smarty->assign('siegerpaar', $siegerpaar);

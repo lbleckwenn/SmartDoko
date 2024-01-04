@@ -31,6 +31,27 @@
 		</div>
 	</div>
 </div>
+<div class="container">
+	<h2>Gewonnene Spiele</h2>
+	<div class="table-responsive">
+		<table class="table table-hover">
+			<tr>
+				<th class="col-1"></th>
+				{foreach $players_round as $player_id => $player}
+				<th class="col-1">{$player.anzeige|truncate:7:""}</th>
+				{/foreach}
+			</tr>
+			{foreach $players_round as $player_id_row => $player}
+			<tr>
+				<th class="col-1">{$player.anzeige|truncate:7:""}</th>
+				{foreach $players_round as $player_id_col => $player}
+				<td class="col-1">{if isset($siegerpaar.$player_id_row.$player_id_col)}{$siegerpaar.$player_id_row.$player_id_col}{else}0{/if}</td>
+				{/foreach}
+			</tr>
+			{/foreach}
+		</table>
+	</div>
+</div>
 <!-- Modal -->
 <div class="modal fade" id="spielDetails" tabindex="-1" role="dialog" aria-labelledby="Spieldetails" aria-hidden="true">
 	<div class="modal-dialog modal-dialog-centered" role="document">
