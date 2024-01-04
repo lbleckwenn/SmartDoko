@@ -16,7 +16,7 @@
 <div class="jumbotron">
 	<div class="container">
 		<h1 class="display-4">SmartDoko</h1>
-		<p class="lead">Herzlich Willkommen zu SmartDoko. SmartDoko ist eine Webseite zur Auswertung von Doppelkopfrunden mit dem Smartphone, Tablet oder am PC.</p>
+		<p class="lead">Herzlich willkommen zu SmartDoko. SmartDoko ist eine Webseite zur Auswertung von Doppelkopfrunden mit dem Smartphone, Tablet oder am PC.</p>
 		<p class="lead">
 			SmartDoko ist unter der GPLv3 lizenziert, kann nach belieben auf eigenen Webseiten zur Verfügung gestellt und verändern werden. Nur der kommerzielle Verkauf des Programms ist nicht gestattet.
 			SmartDoko kann auf
@@ -50,7 +50,7 @@
 			<p>SmartDoko basiert auf den Turnierspielregeln des Deutschen Doppelkopf Verband. Beim Normalspiel erhalten die Spieler der Siegerpartei Spielpunkte mit positivem, die Spieler der Verliererpartei
 				mit negativem Vorzeichen (PLUS-MINUS-Wertung). Daneben können die Punkte der Gewinnerparteien auch summiert angezeigt werden. Eine Vervielfachung durch Ansagen oder Bockrunden erfolgt nicht.</p>
 			<p>
-				<a class="float-right" href="http://www.doko-verband.de/" target="_blank">zum Doko-Verband</a>
+				<a class="float-right" href="index.php?page=regeln" target="_blank">zu den Regeln</a>
 			</p>
 		</div>
 		<div class="col-md-4">
