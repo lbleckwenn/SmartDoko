@@ -15,10 +15,14 @@
 					<thead>
 						<tr class="text-center">
 							<th>Spielername</th>
-							<th>Anzahl <br>Teilnahmen</th>
-							<th>letzte <br>Teilnahme</th>
-							<th>Anzahl als <br>Ausrichter</th>
-							<th>zuletzt <br>Ausrichter</th>
+							<th>Anzahl <br>Teilnahmen
+							</th>
+							<th>letzte <br>Teilnahme
+							</th>
+							<th>Anzahl als <br>Ausrichter
+							</th>
+							<th>zuletzt <br>Ausrichter
+							</th>
 							<th>Ausrichter / Teilnahme</th>
 						</tr>
 					</thead>
@@ -36,11 +40,9 @@
 					</tbody>
 				</table>
 			</div>
-			<p>
-				Die erste Doppelkopfrunde haben wir am {$statistik.ersteRunde|date_format:"d.m.Y"} erfasst.<br>Bis zur vergangenen Runde am
-				{$statistik.letzteRunde|date_format:"d.m.Y"} bei {$statistik.letzterAusrichter} haben wir in {$statistik.aufzeichnung} insgesamt
-				{$statistik.runden} Runden Doppelkopf gespielt.<br>Im Schnitt spielen wir alle {$statistik.wochen} Wochen Doppelkopf.
-			</p>
+			<p>Vom {$statistik.ersteRunde|date_format:"d.m.Y"} bis zum {$statistik.letzteRunde|date_format:"d.m.Y"} bei
+				{$statistik.letzterAusrichter} haben wir in {$statistik.aufzeichnung} ungefähr alle {$statistik.wochen} Wochen
+				insgesamt {$statistik.runden} Runden Doppelkopf gespielt.</p>
 		</div>
 	</div>
 	{/if}
