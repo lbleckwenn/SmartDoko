@@ -95,22 +95,25 @@
 					</ol>
 				</li>
 				<li class="font-weight-bold">Spielverlauf
-					<p class="font-weight-normal">Nach dem Mischen besteht Abhebepflicht. Es werden viermal drei Karten an jeden
-						Spieler verteilt. Anschließend erfolgt die Vorbehaltsabfrage. Zunächst stellt der links vom Geber Sitzende fest,
-						ob er einen Vorbehalt hat (dann sagt er "Vorbehalt") oder nicht (dann sagt er "gesund"). Es folgt der links
-						Sitzende usw., so dass der Geber als Letzter meldet. Melden alle Spieler "gesund", spielt der links vom Geber
-						Sitzende zum Normalspiel auf.</p>
+					<p class="font-weight-normal">Mit dem Geben der Karten zum ersten Spiel beginnt der Mitspieler auf Position 1.
+						Danach gibt der Spieler auf Position 2 usw. Nach einem Solo werden die Karten vom selben Geber noch einmal
+						ausgeteilt. Nach dem Mischen besteht Abhebepflicht. Es werden viermal drei Karten an jeden Spieler verteilt.</p>
+					<p class="font-weight-normal">Anschließend erfolgt die Vorbehaltsabfrage. Zunächst stellt der links vom Geber
+						Sitzende fest, ob er einen Vorbehalt hat (dann sagt er "Vorbehalt") oder nicht (dann sagt er "gesund"). Es folgt
+						der links Sitzende usw., so dass der Geber als Letzter meldet. Melden alle Spieler "gesund", spielt der links vom
+						Geber Sitzende zum Normalspiel auf.</p>
 					<p class="font-weight-normal">Melden mehrere Spieler "Vorbehalt", gilt die Reihenfolge: Solo, Armut, Hochzeit vor
 						Schmeißen. Bei mehreren Soli erhält der am weitesten vorne sitzende Spieler das Spielrecht. Das Aufspiel bleibt
 						dabei grundsätzlich unberührt. Beim ersten Solo des Spielers erhält dieser das Recht zum Aufspiel.</p>
+					<p class="font-weight-normal">Eine gespielte Karte darf nicht zurückgenommen werden. Lediglich bei gefordertem
+						Weiterspiel nach einem Regelverstoß ist eine regelgerechte Korrektur erlaubt.</p>
 					<p class="font-weight-normal">
 						Werden in einem Stich zwei gleiche Karten gelegt, ist die vom weiter vorn sitzenden Spieler gelegte Karte die
 						ranghöhere. Eine Ausnahme bildet die <span class="text-danger">&hearts;</span>&nbsp;10: Hier ist die zweitgelegte
 						Karte die ranghöhere. Im letzten Stich hingegen ist die vom weiter vorn sitzenden Spieler gelegte <span
 							class="text-danger">&hearts;</span>&nbsp;10 die ranghöhere.
 					</p>
-					<p class="font-weight-normal">Nach dem ersten Solo eines Spielers werden die Karten vom selben Geber noch einmal
-						ausgeteilt.</p>
+
 				</li>
 				<li class="font-weight-bold">An- und Absage
 					<p>
