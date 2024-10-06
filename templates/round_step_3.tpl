@@ -108,7 +108,7 @@
 										<td class="text-right">{if !$i@first}{$punkteliste.$i.spiel}{/if}</td>
 										<td>{$punkteliste.$i.re}</td>
 										<td>{$punkteliste.$i.kontra}</td>
-										<td><a href="index.php?page=editgame&gameId={$punkteliste.$i.id}" class="btn btn-warning btn-sm py-1 btn-block">Korr. {$i}</a></td>
+										<td><!-- <a href="index.php?page=editgame&gameId={$punkteliste.$i.id}" class="btn btn-warning btn-sm py-1 btn-block">Korr. {$i}</a> --></td>
 									</tr>
 									{/for}
 								</tbody>
