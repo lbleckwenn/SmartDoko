@@ -97,7 +97,7 @@ foreach ($spieleSpielerParteiPunkte as $spieleSpielerParteiPunkte) {
 $extraPoints = array();
 $statement = $pdo->prepare("SELECT pd.round_id, pd.game_id, pd.player_id, gd.partei, pd.absage, g.gewinner FROM player_data pd LEFT JOIN games g ON g.id = pd.game_id LEFT JOIN game_data gd ON gd.player_id = pd.player_id AND gd.game_id = pd.game_id WHERE pd.absage IS NOT NULL");
 $result = $statement->execute(array(
-    $_SESSION['userid']
+    //$_SESSION['userid']
 ));
 if ($statement->rowCount() > 0) {
     while ($row = $statement->fetch()) {
