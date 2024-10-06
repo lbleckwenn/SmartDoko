@@ -14,9 +14,9 @@
 							<i class="fas fa-dice"></i> Doppelkopf
 						</a>
 						<div class="dropdown-menu" aria-labelledby="navbarDropdown">
-							<a class="dropdown-item" href="index.php?page=runde">
+							<!-- <a class="dropdown-item" href="index.php?page=runde">
 								<i class="fas fa-dice"></i> Smartphone
-							</a>
+							</a> -->
 							<a class="dropdown-item" href="index.php?page=round">
 								<i class="fas fa-dice"></i> PC / Tablet
 							</a>
@@ -48,7 +48,7 @@
 								<i class="fas fa-list-ol"></i> Teilnehmer
 							</a>
 						</div></li>
-					<li class="nav-item {if $page=="history"}active{/if}"><a class="nav-link" href="index.php?page=regeln">
+					<li class="nav-item {if $page=="regeln"}active{/if}"><a class="nav-link" href="index.php?page=regeln">
 							<i class="fas fa-gavel"></i> Regeln
 						</a></li>
 					<!-- <li class="nav-item {if $page=="user"}active{/if}"><a class="nav-link" href="index.php?page=user"><i class="fas fa-users"></i> Benutzer</a></li> -->
