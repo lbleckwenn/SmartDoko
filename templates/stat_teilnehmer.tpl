@@ -40,9 +40,9 @@
 					</tbody>
 				</table>
 			</div>
-			<p>Vom {$statistik.ersteRunde|date_format:"d.m.Y"} bis zum {$statistik.letzteRunde|date_format:"d.m.Y"} bei
+			<!-- <p>Vom {$statistik.ersteRunde|date_format:"d.m.Y"} bis zum {$statistik.letzteRunde|date_format:"d.m.Y"} bei
 				{$statistik.letzterAusrichter} haben wir in {$statistik.aufzeichnung} ungefähr alle {$statistik.wochen} Wochen
-				insgesamt {$statistik.runden} Runden Doppelkopf gespielt.</p>
+				insgesamt {$statistik.runden} Runden Doppelkopf gespielt.</p> -->
 		</div>
 	</div>
 	{/if}
