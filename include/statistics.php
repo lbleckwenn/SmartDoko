@@ -260,7 +260,7 @@ $result = $statement->execute(array(
     $_SESSION['userid']
 ));
 if ($statement->rowCount() > 0) {
-    error_reporting(E_ALL & ~ E_NOTICE);
+	error_reporting(E_ALL & ~ E_NOTICE & ~ E_WARNING);
     while ($row = $statement->fetch()) {
         if ($row['fuchs_gefangen']) {
             $extraPoints[$row['player_id']]['fuchs_gefangen'] ++;
