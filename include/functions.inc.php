@@ -65,13 +65,13 @@ class MyPDO extends PDO
         parent::__construct($dsn, $user, $password, $driver_options);
     }
 
-    public function exec($statement)
+    public function exec(string $statement): int|false
     {
         $statement = $this->_tablePrefixSuffix($statement);
         return parent::exec($statement);
     }
 
-    public function prepare($statement, $driver_options = array())
+    public function prepare(string $statement, array $driver_options = array()): PDOStatement|false
     {
         $statement = $this->_tablePrefixSuffix($statement);
         return parent::prepare($statement, $driver_options);
