@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Smarty Internal Plugin Templateparser Parse Tree
  * These are classes to build parse tree  in the template parser
@@ -13,18 +12,16 @@
 /**
  * Raw chars as part of a double quoted string.
  *
- * @package Smarty
+ * @package    Smarty
  * @subpackage Compiler
  * @ignore
  */
 class Smarty_Internal_ParseTree_DqContent extends Smarty_Internal_ParseTree
 {
-
     /**
      * Create parse tree buffer with string content
      *
-     * @param string $data
-     *            string section
+     * @param string $data string section
      */
     public function __construct($data)
     {

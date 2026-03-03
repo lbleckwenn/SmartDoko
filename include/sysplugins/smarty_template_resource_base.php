@@ -9,7 +9,6 @@
  */
 abstract class Smarty_Template_Resource_Base
 {
-
     /**
      * Compiled Filepath
      *
@@ -92,8 +91,7 @@ abstract class Smarty_Template_Resource_Base
     /**
      * Process resource
      *
-     * @param Smarty_Internal_Template $_template
-     *            template object
+     * @param Smarty_Internal_Template $_template template object
      */
     abstract public function process(Smarty_Internal_Template $_template);
 
@@ -101,9 +99,8 @@ abstract class Smarty_Template_Resource_Base
      * get rendered template content by calling compiled or cached template code
      *
      * @param \Smarty_Internal_Template $_template
-     * @param string $unifunc
-     *            function with template code
-     *            
+     * @param string                    $unifunc function with template code
+     *
      * @throws \Exception
      */
     public function getRenderedTemplateCode(Smarty_Internal_Template $_template, $unifunc = null)
@@ -112,10 +109,10 @@ abstract class Smarty_Template_Resource_Base
         $_template->isRenderingCache = $this->isCache;
         $level = ob_get_level();
         try {
-            if (! isset($unifunc)) {
+            if (!isset($unifunc)) {
                 $unifunc = $this->unifunc;
             }
-            if (empty($unifunc) || ! function_exists($unifunc)) {
+            if (empty($unifunc) || !function_exists($unifunc)) {
                 throw new SmartyException("Invalid compiled template for '{$_template->template_resource}'");
             }
             if ($_template->startRenderCallbacks) {
@@ -147,7 +144,7 @@ abstract class Smarty_Template_Resource_Base
      */
     public function getTimeStamp()
     {
-        if ($this->exists && ! $this->timestamp) {
+        if ($this->exists && !$this->timestamp) {
             $this->timestamp = filemtime($this->filepath);
         }
         return $this->timestamp;

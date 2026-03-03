@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Smarty Internal Plugin Templateparser Parse Tree
  * These are classes to build parse tree in the template parser
@@ -13,13 +12,12 @@
 /**
  * Template element
  *
- * @package Smarty
+ * @package    Smarty
  * @subpackage Compiler
  * @ignore
  */
 class Smarty_Internal_ParseTree_Template extends Smarty_Internal_ParseTree
 {
-
     /**
      * Array of template elements
      *
@@ -31,17 +29,18 @@ class Smarty_Internal_ParseTree_Template extends Smarty_Internal_ParseTree
      * Create root of parse tree for template elements
      */
     public function __construct()
-    {}
+    {
+    }
 
     /**
      * Append buffer to subtree
      *
      * @param \Smarty_Internal_Templateparser $parser
-     * @param Smarty_Internal_ParseTree $subtree
+     * @param Smarty_Internal_ParseTree       $subtree
      */
     public function append_subtree(Smarty_Internal_Templateparser $parser, Smarty_Internal_ParseTree $subtree)
     {
-        if (! empty($subtree->subtrees)) {
+        if (!empty($subtree->subtrees)) {
             $this->subtrees = array_merge($this->subtrees, $subtree->subtrees);
         } else {
             if ($subtree->data !== '') {
@@ -54,12 +53,12 @@ class Smarty_Internal_ParseTree_Template extends Smarty_Internal_ParseTree
      * Append array to subtree
      *
      * @param \Smarty_Internal_Templateparser $parser
-     * @param \Smarty_Internal_ParseTree[] $array
+     * @param \Smarty_Internal_ParseTree[]    $array
      */
     public function append_array(Smarty_Internal_Templateparser $parser, $array = array())
     {
-        if (! empty($array)) {
-            $this->subtrees = array_merge($this->subtrees, (array) $array);
+        if (!empty($array)) {
+            $this->subtrees = array_merge($this->subtrees, (array)$array);
         }
     }
 
@@ -67,12 +66,12 @@ class Smarty_Internal_ParseTree_Template extends Smarty_Internal_ParseTree
      * Prepend array to subtree
      *
      * @param \Smarty_Internal_Templateparser $parser
-     * @param \Smarty_Internal_ParseTree[] $array
+     * @param \Smarty_Internal_ParseTree[]    $array
      */
     public function prepend_array(Smarty_Internal_Templateparser $parser, $array = array())
     {
-        if (! empty($array)) {
-            $this->subtrees = array_merge((array) $array, $this->subtrees);
+        if (!empty($array)) {
+            $this->subtrees = array_merge((array)$array, $this->subtrees);
         }
     }
 
@@ -94,13 +93,21 @@ class Smarty_Internal_ParseTree_Template extends Smarty_Internal_ParseTree
                     foreach ($chunk['subtrees'] as $subtree) {
                         $text .= $subtree->to_smarty_php($parser);
                     }
-                    $code .= preg_replace('/((<%)|(%>)|(<\?php)|(<\?)|(\?>)|(<\/?script))/', "<?php echo '\$1'; ?>\n", $parser->compiler->processText($text));
+                    $code .= preg_replace(
+                        '/((<%)|(%>)|(<\?php)|(<\?)|(\?>)|(<\/?script))/',
+                        "<?php echo '\$1'; ?>\n",
+                        $parser->compiler->processText($text)
+                    );
                     break;
                 case 'text':
                     foreach ($chunk['subtrees'] as $subtree) {
                         $text .= $subtree->to_smarty_php($parser);
                     }
-                    $code .= preg_replace('/((<%)|(%>)|(<\?php)|(<\?)|(\?>)|(<\/?script))/', "<?php echo '\$1'; ?>\n", $text);
+                    $code .= preg_replace(
+                        '/((<%)|(%>)|(<\?php)|(<\?)|(\?>)|(<\/?script))/',
+                        "<?php echo '\$1'; ?>\n",
+                        $text
+                    );
                     break;
                 case 'tag':
                     foreach ($chunk['subtrees'] as $subtree) {
@@ -113,47 +120,42 @@ class Smarty_Internal_ParseTree_Template extends Smarty_Internal_ParseTree
                         $text = $subtree->to_smarty_php($parser);
                     }
                     $code .= $text;
+
             }
         }
         return $code;
     }
 
-    private function getChunkedSubtrees()
-    {
+    private function getChunkedSubtrees() {
         $chunks = array();
         $currentMode = null;
         $currentChunk = array();
-        for ($key = 0, $cnt = count($this->subtrees); $key < $cnt; $key ++) {
+        for ($key = 0, $cnt = count($this->subtrees); $key < $cnt; $key++) {
 
-            if ($this->subtrees[$key]->data === '' && in_array($currentMode, array(
-                'textstripped',
-                'text',
-                'tag'
-            ))) {
+            if ($this->subtrees[ $key ]->data === '' && in_array($currentMode, array('textstripped', 'text', 'tag'))) {
                 continue;
             }
 
-            if ($this->subtrees[$key] instanceof Smarty_Internal_ParseTree_Text && $this->subtrees[$key]->isToBeStripped()) {
+            if ($this->subtrees[ $key ] instanceof Smarty_Internal_ParseTree_Text
+                && $this->subtrees[ $key ]->isToBeStripped()) {
                 $newMode = 'textstripped';
-            } elseif ($this->subtrees[$key] instanceof Smarty_Internal_ParseTree_Text) {
+            } elseif ($this->subtrees[ $key ] instanceof Smarty_Internal_ParseTree_Text) {
                 $newMode = 'text';
-            } elseif ($this->subtrees[$key] instanceof Smarty_Internal_ParseTree_Tag) {
+            } elseif ($this->subtrees[ $key ] instanceof Smarty_Internal_ParseTree_Tag) {
                 $newMode = 'tag';
             } else {
                 $newMode = 'other';
             }
 
             if ($newMode == $currentMode) {
-                $currentChunk[] = $this->subtrees[$key];
+                $currentChunk[] = $this->subtrees[ $key ];
             } else {
                 $chunks[] = array(
                     'mode' => $currentMode,
                     'subtrees' => $currentChunk
                 );
                 $currentMode = $newMode;
-                $currentChunk = array(
-                    $this->subtrees[$key]
-                );
+                $currentChunk = array($this->subtrees[ $key ]);
             }
         }
         if ($currentMode && $currentChunk) {

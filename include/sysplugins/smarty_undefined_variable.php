@@ -9,7 +9,6 @@
  */
 class Smarty_Undefined_Variable extends Smarty_Variable
 {
-
     /**
      * Returns null for not existing properties
      *

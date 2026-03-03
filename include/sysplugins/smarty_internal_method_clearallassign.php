@@ -11,7 +11,6 @@
  */
 class Smarty_Internal_Method_ClearAllAssign
 {
-
     /**
      * Valid for all objects
      *
@@ -24,7 +23,7 @@ class Smarty_Internal_Method_ClearAllAssign
      *
      * @api  Smarty::clearAllAssign()
      * @link https://www.smarty.net/docs/en/api.clear.all.assign.tpl
-     *      
+     *
      * @param \Smarty_Internal_Data|\Smarty_Internal_Template|\Smarty $data
      *
      * @return \Smarty_Internal_Data|\Smarty_Internal_Template|\Smarty

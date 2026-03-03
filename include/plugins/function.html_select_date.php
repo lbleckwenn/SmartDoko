@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Smarty plugin
  *
@@ -8,37 +7,36 @@
  */
 /**
  * Smarty {html_select_date} plugin
- * Type: function
- * Name: html_select_date
- * Purpose: Prints the dropdowns for date selection.
+ * Type:     function
+ * Name:     html_select_date
+ * Purpose:  Prints the dropdowns for date selection.
  * ChangeLog:
  *
- * - 1.0 initial release
- * - 1.1 added support for +/- N syntax for begin
- * and end year values. (Monte)
- * - 1.2 added support for yyyy-mm-dd syntax for
- * time value. (Jan Rosier)
- * - 1.3 added support for choosing format for
- * month values (Gary Loescher)
- * - 1.3.1 added support for choosing format for
- * day values (Marcus Bointon)
- * - 1.3.2 support negative timestamps, force year
- * dropdown to include given date unless explicitly set (Monte)
- * - 1.3.4 fix behaviour of 0000-00-00 00:00:00 dates to match that
- * of 0000-00-00 dates (cybot, boots)
- * - 2.0 complete rewrite for performance,
- * added attributes month_names, *_id
+ *            - 1.0 initial release
+ *            - 1.1 added support for +/- N syntax for begin
+ *              and end year values. (Monte)
+ *            - 1.2 added support for yyyy-mm-dd syntax for
+ *              time value. (Jan Rosier)
+ *            - 1.3 added support for choosing format for
+ *              month values (Gary Loescher)
+ *            - 1.3.1 added support for choosing format for
+ *              day values (Marcus Bointon)
+ *            - 1.3.2 support negative timestamps, force year
+ *              dropdown to include given date unless explicitly set (Monte)
+ *            - 1.3.4 fix behaviour of 0000-00-00 00:00:00 dates to match that
+ *              of 0000-00-00 dates (cybot, boots)
+ *            - 2.0 complete rewrite for performance,
+ *              added attributes month_names, *_id
  *
- * @link https://www.smarty.net/manual/en/language.function.html.select.date.php {html_select_date}
- *       (Smarty online manual)
+ * @link    https://www.smarty.net/manual/en/language.function.html.select.date.php {html_select_date}
+ *           (Smarty online manual)
  * @version 2.0
- * @author Andrei Zmievski
- * @author Monte Ohrt <monte at ohrt dot com>
- * @author Rodney Rehm
- *        
- * @param array $params
- *            parameters
- *            
+ * @author  Andrei Zmievski
+ * @author  Monte Ohrt <monte at ohrt dot com>
+ * @author  Rodney Rehm
+ *
+ * @param array                     $params parameters
+ *
  * @param \Smarty_Internal_Template $template
  *
  * @return string
@@ -46,20 +44,22 @@
  */
 function smarty_function_html_select_date($params, Smarty_Internal_Template $template)
 {
-    $template->_checkPlugins(array(
+    $template->_checkPlugins(
         array(
-            'function' => 'smarty_function_escape_special_chars',
-            'file' => SMARTY_PLUGINS_DIR . 'shared.escape_special_chars.php'
+            array(
+                'function' => 'smarty_function_escape_special_chars',
+                'file'     => SMARTY_PLUGINS_DIR . 'shared.escape_special_chars.php'
+            )
         )
-    ));
+    );
     // generate timestamps used for month names only
     static $_month_timestamps = null;
     static $_current_year = null;
     if ($_month_timestamps === null) {
         $_current_year = date('Y');
         $_month_timestamps = array();
-        for ($i = 1; $i <= 12; $i ++) {
-            $_month_timestamps[$i] = mktime(0, 0, 0, $i, 1, 2000);
+        for ($i = 1; $i <= 12; $i++) {
+            $_month_timestamps[ $i ] = mktime(0, 0, 0, $i, 1, 2000);
         }
     }
     /* Default values. */
@@ -70,7 +70,7 @@ function smarty_function_html_select_date($params, Smarty_Internal_Template $tem
     $display_months = true;
     $display_years = true;
     $month_format = '%B';
-    /* Write months as numbers by default GL */
+    /* Write months as numbers by default  GL */
     $month_value_format = '%m';
     $day_format = '%02d';
     /* Write day values using this format MB */
@@ -78,32 +78,24 @@ function smarty_function_html_select_date($params, Smarty_Internal_Template $tem
     $year_as_text = false;
     /* Display years in reverse order? Ie. 2000,1999,.... */
     $reverse_years = false;
-    /*
-     * Should the select boxes be part of an array when returned from PHP?
-     * e.g. setting it to "birthday", would create "birthday[Day]",
-     * "birthday[Month]" & "birthday[Year]". Can be combined with prefix
-     */
+    /* Should the select boxes be part of an array when returned from PHP?
+       e.g. setting it to "birthday", would create "birthday[Day]",
+       "birthday[Month]" & "birthday[Year]". Can be combined with prefix */
     $field_array = null;
-    /*
-     * <select size>'s of the different <select> tags.
-     * If not set, uses default dropdown.
-     */
+    /* <select size>'s of the different <select> tags.
+       If not set, uses default dropdown. */
     $day_size = null;
     $month_size = null;
     $year_size = null;
-    /*
-     * Unparsed attributes common to *ALL* the <select>/<input> tags.
-     * An example might be in the template: all_extra ='class ="foo"'.
-     */
+    /* Unparsed attributes common to *ALL* the <select>/<input> tags.
+       An example might be in the template: all_extra ='class ="foo"'. */
     $all_extra = null;
     /* Separate attributes for the tags. */
     $day_extra = null;
     $month_extra = null;
     $year_extra = null;
-    /*
-     * Order in which to display the fields.
-     * "D" -> day, "M" -> month, "Y" -> year.
-     */
+    /* Order in which to display the fields.
+       "D" -> day, "M" -> month, "Y" -> year. */
     $field_order = 'MDY';
     /* String printed between the different fields. */
     $field_separator = "\n";
@@ -157,17 +149,17 @@ function smarty_function_html_select_date($params, Smarty_Internal_Template $tem
             case 'month_id':
             case 'day_id':
             case 'year_id':
-                $$_key = (string) $_value;
+                $$_key = (string)$_value;
                 break;
             case 'display_days':
             case 'display_months':
             case 'display_years':
             case 'year_as_text':
             case 'reverse_years':
-                $$_key = (bool) $_value;
+                $$_key = (bool)$_value;
                 break;
             default:
-                if (! is_array($_value)) {
+                if (!is_array($_value)) {
                     $extra_attrs .= ' ' . $_key . '="' . smarty_function_escape_special_chars($_value) . '"';
                 } else {
                     trigger_error("html_select_date: extra attribute '{$_key}' cannot be an array", E_USER_NOTICE);
@@ -182,62 +174,52 @@ function smarty_function_html_select_date($params, Smarty_Internal_Template $tem
         if (isset($time[$prefix . 'Year'])) {
             // $_REQUEST[$field_array] given
             foreach ([
-                'Y' => 'Year',
-                'm' => 'Month',
-                'd' => 'Day'
-            ] as $_elementKey => $_elementName) {
+                         'Y' => 'Year',
+                         'm' => 'Month',
+                         'd' => 'Day'
+                     ] as $_elementKey => $_elementName) {
                 $_variableName = '_' . strtolower($_elementName);
-                $$_variableName = isset($time[$prefix . $_elementName]) ? $time[$prefix . $_elementName] : date($_elementKey);
+                $$_variableName =
+                    isset($time[$prefix . $_elementName]) ? $time[$prefix . $_elementName] :
+                        date($_elementKey);
             }
         } elseif (isset($time[$field_array][$prefix . 'Year'])) {
             // $_REQUEST given
             foreach ([
-                'Y' => 'Year',
-                'm' => 'Month',
-                'd' => 'Day'
-            ] as $_elementKey => $_elementName) {
+                         'Y' => 'Year',
+                         'm' => 'Month',
+                         'd' => 'Day'
+                     ] as $_elementKey => $_elementName) {
                 $_variableName = '_' . strtolower($_elementName);
-                $$_variableName = isset($time[$field_array][$prefix . $_elementName]) ? $time[$field_array][$prefix . $_elementName] : date($_elementKey);
+                $$_variableName = isset($time[$field_array][$prefix . $_elementName]) ?
+                    $time[$field_array][$prefix . $_elementName] : date($_elementKey);
             }
         } else {
             // no date found, use NOW
-            [
-                $_year,
-                $_month,
-                $_day
-            ] = explode('-', date('Y-m-d'));
+            [$_year, $_month, $_day] = explode('-', date('Y-m-d'));
         }
     } elseif (isset($time) && preg_match("/(\d*)-(\d*)-(\d*)/", $time, $matches)) {
         $_year = $_month = $_day = null;
-        if ($matches[1] > '')
-            $_year = (int) $matches[1];
-        if ($matches[2] > '')
-            $_month = (int) $matches[2];
-        if ($matches[3] > '')
-            $_day = (int) $matches[3];
+        if ($matches[1] > '') $_year = (int) $matches[1];
+        if ($matches[2] > '') $_month = (int) $matches[2];
+        if ($matches[3] > '') $_day = (int) $matches[3];
     } elseif ($time === null) {
         if (array_key_exists('time', $params)) {
             $_year = $_month = $_day = null;
         } else {
-            [
-                $_year,
-                $_month,
-                $_day
-            ] = explode('-', date('Y-m-d'));
+            [$_year, $_month, $_day] = explode('-', date('Y-m-d'));
         }
     } else {
-        $template->_checkPlugins(array(
+        $template->_checkPlugins(
             array(
-                'function' => 'smarty_make_timestamp',
-                'file' => SMARTY_PLUGINS_DIR . 'shared.make_timestamp.php'
+                array(
+                    'function' => 'smarty_make_timestamp',
+                    'file'     => SMARTY_PLUGINS_DIR . 'shared.make_timestamp.php'
+                )
             )
-        ));
+        );
         $time = smarty_make_timestamp($time);
-        [
-            $_year,
-            $_month,
-            $_day
-        ] = explode('-', date('Y-m-d', $time));
+        [$_year, $_month, $_day] = explode('-', date('Y-m-d', $time));
     }
 
     // make syntax "+N" or "-N" work with $start_year and $end_year
@@ -249,17 +231,17 @@ function smarty_function_html_select_date($params, Smarty_Internal_Template $tem
         $key .= '_year';
         $t = $$key;
         if ($t === null) {
-            $$key = (int) $_current_year;
-        } elseif ($t[0] === '+') {
-            $$key = (int) ($_current_year + (int) trim(substr($t, 1)));
-        } elseif ($t[0] === '-') {
-            $$key = (int) ($_current_year - (int) trim(substr($t, 1)));
+            $$key = (int)$_current_year;
+        } elseif ($t[ 0 ] === '+') {
+            $$key = (int)($_current_year + (int)trim(substr($t, 1)));
+        } elseif ($t[ 0 ] === '-') {
+            $$key = (int)($_current_year - (int)trim(substr($t, 1)));
         } else {
-            $$key = (int) $$key;
+            $$key = (int)$$key;
         }
     }
     // flip for ascending or descending
-    if (($start_year > $end_year && ! $reverse_years) || ($start_year < $end_year && $reverse_years)) {
+    if (($start_year > $end_year && !$reverse_years) || ($start_year < $end_year && $reverse_years)) {
         $t = $end_year;
         $end_year = $start_year;
         $start_year = $t;
@@ -275,22 +257,31 @@ function smarty_function_html_select_date($params, Smarty_Internal_Template $tem
             $_extra .= ' ' . $year_extra;
         }
         if ($year_as_text) {
-            $_html_years = '<input type="text" name="' . $_name . '" value="' . $_year . '" size="4" maxlength="4"' . $_extra . $extra_attrs . ' />';
+            $_html_years =
+                '<input type="text" name="' . $_name . '" value="' . $_year . '" size="4" maxlength="4"' . $_extra .
+                $extra_attrs . ' />';
         } else {
             $_html_years = '<select name="' . $_name . '"';
             if ($year_id !== null || $all_id !== null) {
-                $_html_years .= ' id="' . smarty_function_escape_special_chars($year_id !== null ? ($year_id ? $year_id : $_name) : ($all_id ? ($all_id . $_name) : $_name)) . '"';
+                $_html_years .= ' id="' . smarty_function_escape_special_chars(
+                        $year_id !== null ?
+                            ($year_id ? $year_id : $_name) :
+                            ($all_id ? ($all_id . $_name) :
+                                $_name)
+                    ) . '"';
             }
             if ($year_size) {
                 $_html_years .= ' size="' . $year_size . '"';
             }
             $_html_years .= $_extra . $extra_attrs . '>' . $option_separator;
             if (isset($year_empty) || isset($all_empty)) {
-                $_html_years .= '<option value="">' . (isset($year_empty) ? $year_empty : $all_empty) . '</option>' . $option_separator;
+                $_html_years .= '<option value="">' . (isset($year_empty) ? $year_empty : $all_empty) . '</option>' .
+                                $option_separator;
             }
-            $op = $start_year > $end_year ? - 1 : 1;
+            $op = $start_year > $end_year ? -1 : 1;
             for ($i = $start_year; $op > 0 ? $i <= $end_year : $i >= $end_year; $i += $op) {
-                $_html_years .= '<option value="' . $i . '"' . ($_year == $i ? ' selected="selected"' : '') . '>' . $i . '</option>' . $option_separator;
+                $_html_years .= '<option value="' . $i . '"' . ($_year == $i ? ' selected="selected"' : '') . '>' . $i .
+                                '</option>' . $option_separator;
             }
             $_html_years .= '</select>';
         }
@@ -307,20 +298,28 @@ function smarty_function_html_select_date($params, Smarty_Internal_Template $tem
         }
         $_html_months = '<select name="' . $_name . '"';
         if ($month_id !== null || $all_id !== null) {
-            $_html_months .= ' id="' . smarty_function_escape_special_chars($month_id !== null ? ($month_id ? $month_id : $_name) : ($all_id ? ($all_id . $_name) : $_name)) . '"';
+            $_html_months .= ' id="' . smarty_function_escape_special_chars(
+                    $month_id !== null ?
+                        ($month_id ? $month_id : $_name) :
+                        ($all_id ? ($all_id . $_name) :
+                            $_name)
+                ) . '"';
         }
         if ($month_size) {
             $_html_months .= ' size="' . $month_size . '"';
         }
         $_html_months .= $_extra . $extra_attrs . '>' . $option_separator;
         if (isset($month_empty) || isset($all_empty)) {
-            $_html_months .= '<option value="">' . (isset($month_empty) ? $month_empty : $all_empty) . '</option>' . $option_separator;
+            $_html_months .= '<option value="">' . (isset($month_empty) ? $month_empty : $all_empty) . '</option>' .
+                             $option_separator;
         }
-        for ($i = 1; $i <= 12; $i ++) {
+        for ($i = 1; $i <= 12; $i++) {
             $_val = sprintf('%02d', $i);
-            $_text = isset($month_names) ? smarty_function_escape_special_chars($month_names[$i]) : ($month_format === '%m' ? $_val : strftime($month_format, $_month_timestamps[$i]));
-            $_value = $month_value_format === '%m' ? $_val : strftime($month_value_format, $_month_timestamps[$i]);
-            $_html_months .= '<option value="' . $_value . '"' . ($_val == $_month ? ' selected="selected"' : '') . '>' . $_text . '</option>' . $option_separator;
+            $_text = isset($month_names) ? smarty_function_escape_special_chars($month_names[ $i ]) :
+                ($month_format === '%m' ? $_val : @strftime($month_format, $_month_timestamps[ $i ]));
+            $_value = $month_value_format === '%m' ? $_val : @strftime($month_value_format, $_month_timestamps[ $i ]);
+            $_html_months .= '<option value="' . $_value . '"' . ($_val == $_month ? ' selected="selected"' : '') .
+                             '>' . $_text . '</option>' . $option_separator;
         }
         $_html_months .= '</select>';
     }
@@ -336,27 +335,33 @@ function smarty_function_html_select_date($params, Smarty_Internal_Template $tem
         }
         $_html_days = '<select name="' . $_name . '"';
         if ($day_id !== null || $all_id !== null) {
-            $_html_days .= ' id="' . smarty_function_escape_special_chars($day_id !== null ? ($day_id ? $day_id : $_name) : ($all_id ? ($all_id . $_name) : $_name)) . '"';
+            $_html_days .= ' id="' .
+                           smarty_function_escape_special_chars(
+                               $day_id !== null ? ($day_id ? $day_id : $_name) :
+                                   ($all_id ? ($all_id . $_name) : $_name)
+                           ) . '"';
         }
         if ($day_size) {
             $_html_days .= ' size="' . $day_size . '"';
         }
         $_html_days .= $_extra . $extra_attrs . '>' . $option_separator;
         if (isset($day_empty) || isset($all_empty)) {
-            $_html_days .= '<option value="">' . (isset($day_empty) ? $day_empty : $all_empty) . '</option>' . $option_separator;
+            $_html_days .= '<option value="">' . (isset($day_empty) ? $day_empty : $all_empty) . '</option>' .
+                           $option_separator;
         }
-        for ($i = 1; $i <= 31; $i ++) {
+        for ($i = 1; $i <= 31; $i++) {
             $_val = sprintf('%02d', $i);
             $_text = $day_format === '%02d' ? $_val : sprintf($day_format, $i);
             $_value = $day_value_format === '%02d' ? $_val : sprintf($day_value_format, $i);
-            $_html_days .= '<option value="' . $_value . '"' . ($_val == $_day ? ' selected="selected"' : '') . '>' . $_text . '</option>' . $option_separator;
+            $_html_days .= '<option value="' . $_value . '"' . ($_val == $_day ? ' selected="selected"' : '') . '>' .
+                           $_text . '</option>' . $option_separator;
         }
         $_html_days .= '</select>';
     }
     // order the fields for output
     $_html = '';
-    for ($i = 0; $i <= 2; $i ++) {
-        switch ($field_order[$i]) {
+    for ($i = 0; $i <= 2; $i++) {
+        switch ($field_order[ $i ]) {
             case 'Y':
             case 'y':
                 if (isset($_html_years)) {

@@ -11,7 +11,6 @@
  */
 class Smarty_Internal_Method_UnregisterPlugin
 {
-
     /**
      * Valid for Smarty and template object
      *
@@ -24,20 +23,18 @@ class Smarty_Internal_Method_UnregisterPlugin
      *
      * @api  Smarty::unregisterPlugin()
      * @link https://www.smarty.net/docs/en/api.unregister.plugin.tpl
-     *      
+     *
      * @param \Smarty_Internal_TemplateBase|\Smarty_Internal_Template|\Smarty $obj
-     * @param string $type
-     *            plugin type
-     * @param string $name
-     *            name of template tag
-     *            
+     * @param string                                                          $type plugin type
+     * @param string                                                          $name name of template tag
+     *
      * @return \Smarty|\Smarty_Internal_Template
      */
     public function unregisterPlugin(Smarty_Internal_TemplateBase $obj, $type, $name)
     {
         $smarty = $obj->_getSmartyObj();
-        if (isset($smarty->registered_plugins[$type][$name])) {
-            unset($smarty->registered_plugins[$type][$name]);
+        if (isset($smarty->registered_plugins[ $type ][ $name ])) {
+            unset($smarty->registered_plugins[ $type ][ $name ]);
         }
         return $obj;
     }

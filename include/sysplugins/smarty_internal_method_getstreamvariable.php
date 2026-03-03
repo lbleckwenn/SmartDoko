@@ -11,7 +11,6 @@
  */
 class Smarty_Internal_Method_GetStreamVariable
 {
-
     /**
      * Valid for all objects
      *
@@ -20,14 +19,13 @@ class Smarty_Internal_Method_GetStreamVariable
     public $objMap = 7;
 
     /**
-     * gets a stream variable
+     * gets  a stream variable
      *
      * @api Smarty::getStreamVariable()
      *
      * @param \Smarty_Internal_Data|\Smarty_Internal_Template|\Smarty $data
-     * @param string $variable
-     *            the stream of the variable
-     *            
+     * @param string                                                  $variable the stream of the variable
+     *
      * @return mixed
      * @throws \SmartyException
      */
@@ -36,7 +34,7 @@ class Smarty_Internal_Method_GetStreamVariable
         $_result = '';
         $fp = fopen($variable, 'r+');
         if ($fp) {
-            while (! feof($fp) && ($current_line = fgets($fp)) !== false) {
+            while (!feof($fp) && ($current_line = fgets($fp)) !== false) {
                 $_result .= $current_line;
             }
             fclose($fp);

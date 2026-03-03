@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Smarty plugin
  *
@@ -9,12 +8,12 @@
 
 /**
  * Smarty number_format modifier plugin
- * Type: modifier
- * Name: number_format
- * Purpose: Format a number with grouped thousands
+ * Type:     modifier
+ * Name:     number_format
+ * Purpose:  Format a number with grouped thousands
  *
- * @param float|null $num
- * @param int $decimals
+ * @param float|null  $num
+ * @param int         $decimals
  * @param string|null $decimal_separator
  * @param string|null $thousands_separator
  *

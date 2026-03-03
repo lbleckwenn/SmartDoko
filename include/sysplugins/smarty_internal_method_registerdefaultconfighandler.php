@@ -11,7 +11,6 @@
  */
 class Smarty_Internal_Method_RegisterDefaultConfigHandler
 {
-
     /**
      * Valid for Smarty and template object
      *
@@ -25,11 +24,10 @@ class Smarty_Internal_Method_RegisterDefaultConfigHandler
      * @api Smarty::registerDefaultConfigHandler()
      *
      * @param \Smarty_Internal_TemplateBase|\Smarty_Internal_Template|\Smarty $obj
-     * @param callable $callback
-     *            class/method name
-     *            
+     * @param callable                                                        $callback class/method name
+     *
      * @return \Smarty|\Smarty_Internal_Template
-     * @throws SmartyException if $callback is not callable
+     * @throws SmartyException              if $callback is not callable
      */
     public function registerDefaultConfigHandler(Smarty_Internal_TemplateBase $obj, $callback)
     {

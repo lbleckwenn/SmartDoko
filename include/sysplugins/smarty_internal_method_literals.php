@@ -11,7 +11,6 @@
  */
 class Smarty_Internal_Method_Literals
 {
-
     /**
      * Valid for Smarty and template object
      *
@@ -31,7 +30,7 @@ class Smarty_Internal_Method_Literals
     public function getLiterals(Smarty_Internal_TemplateBase $obj)
     {
         $smarty = $obj->_getSmartyObj();
-        return (array) $smarty->literals;
+        return (array)$smarty->literals;
     }
 
     /**
@@ -40,17 +39,16 @@ class Smarty_Internal_Method_Literals
      * @api Smarty::addLiterals()
      *
      * @param \Smarty_Internal_TemplateBase|\Smarty_Internal_Template|\Smarty $obj
-     * @param array|string $literals
-     *            literal or list of literals
-     *            to addto add
-     *            
+     * @param array|string                                                    $literals literal or list of literals
+     *                                                                                  to addto add
+     *
      * @return \Smarty|\Smarty_Internal_Template
      * @throws \SmartyException
      */
     public function addLiterals(Smarty_Internal_TemplateBase $obj, $literals = null)
     {
         if (isset($literals)) {
-            $this->set($obj->_getSmartyObj(), (array) $literals);
+            $this->set($obj->_getSmartyObj(), (array)$literals);
         }
         return $obj;
     }
@@ -61,10 +59,9 @@ class Smarty_Internal_Method_Literals
      * @api Smarty::setLiterals()
      *
      * @param \Smarty_Internal_TemplateBase|\Smarty_Internal_Template|\Smarty $obj
-     * @param array|string $literals
-     *            literal or list of literals
-     *            to setto set
-     *            
+     * @param array|string                                                    $literals literal or list of literals
+     *                                                                                  to setto set
+     *
      * @return \Smarty|\Smarty_Internal_Template
      * @throws \SmartyException
      */
@@ -72,8 +69,8 @@ class Smarty_Internal_Method_Literals
     {
         $smarty = $obj->_getSmartyObj();
         $smarty->literals = array();
-        if (! empty($literals)) {
-            $this->set($smarty, (array) $literals);
+        if (!empty($literals)) {
+            $this->set($smarty, (array)$literals);
         }
         return $obj;
     }
@@ -83,20 +80,21 @@ class Smarty_Internal_Method_Literals
      * Smarty::$literals array gets filled with identical key values
      *
      * @param \Smarty $smarty
-     * @param array $literals
+     * @param array   $literals
      *
      * @throws \SmartyException
      */
     private function set(Smarty $smarty, $literals)
     {
         $literals = array_combine($literals, $literals);
-        $error = isset($literals[$smarty->left_delimiter]) ? array(
-            $smarty->left_delimiter
-        ) : array();
-        $error = isset($literals[$smarty->right_delimiter]) ? $error[] = $smarty->right_delimiter : $error;
-        if (! empty($error)) {
-            throw new SmartyException('User defined literal(s) "' . $error . '" may not be identical with left or right delimiter');
+        $error = isset($literals[ $smarty->left_delimiter ]) ? array($smarty->left_delimiter) : array();
+        $error = isset($literals[ $smarty->right_delimiter ]) ? $error[] = $smarty->right_delimiter : $error;
+        if (!empty($error)) {
+            throw new SmartyException(
+                'User defined literal(s) "' . $error .
+                '" may not be identical with left or right delimiter'
+            );
         }
-        $smarty->literals = array_merge((array) $smarty->literals, (array) $literals);
+        $smarty->literals = array_merge((array)$smarty->literals, (array)$literals);
     }
 }

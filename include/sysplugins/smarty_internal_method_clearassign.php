@@ -11,7 +11,6 @@
  */
 class Smarty_Internal_Method_ClearAssign
 {
-
     /**
      * Valid for all objects
      *
@@ -24,21 +23,20 @@ class Smarty_Internal_Method_ClearAssign
      *
      * @api  Smarty::clearAssign()
      * @link https://www.smarty.net/docs/en/api.clear.assign.tpl
-     *      
+     *
      * @param \Smarty_Internal_Data|\Smarty_Internal_Template|\Smarty $data
-     * @param string|array $tpl_var
-     *            the template variable(s) to clear
-     *            
+     * @param string|array                                            $tpl_var the template variable(s) to clear
+     *
      * @return \Smarty_Internal_Data|\Smarty_Internal_Template|\Smarty
      */
     public function clearAssign(Smarty_Internal_Data $data, $tpl_var)
     {
         if (is_array($tpl_var)) {
             foreach ($tpl_var as $curr_var) {
-                unset($data->tpl_vars[$curr_var]);
+                unset($data->tpl_vars[ $curr_var ]);
             }
         } else {
-            unset($data->tpl_vars[$tpl_var]);
+            unset($data->tpl_vars[ $tpl_var ]);
         }
         return $data;
     }

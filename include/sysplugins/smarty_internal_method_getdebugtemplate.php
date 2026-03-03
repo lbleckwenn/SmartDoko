@@ -11,7 +11,6 @@
  */
 class Smarty_Internal_Method_GetDebugTemplate
 {
-
     /**
      * Valid for Smarty and template object
      *

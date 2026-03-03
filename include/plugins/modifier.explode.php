@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Smarty plugin
  *
@@ -9,12 +8,12 @@
 
 /**
  * Smarty explode modifier plugin
- * Type: modifier
- * Name: explode
- * Purpose: split a string by a string
+ * Type:     modifier
+ * Name:     explode
+ * Purpose:  split a string by a string
  *
- * @param string $separator
- * @param string $string
+ * @param string   $separator
+ * @param string   $string
  * @param int|null $limit
  *
  * @return array
