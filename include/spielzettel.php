@@ -89,17 +89,17 @@ for($i = 1; $i <= $aktuellesSpiel; $i ++) {
 		$punkteliste [$i] ['gameId'] = $row ['game_id'];
 	}
 	if (sizeof ( $siegerspiel ) == 1) {
-		$siegerpaar [$siegerspiel [0]] [$siegerspiel [0]] ++;
+		$siegerpaar [$siegerspiel [0]] [$siegerspiel [0]] = ($siegerpaar [$siegerspiel [0]] [$siegerspiel [0]] ?? 0) + 1;
 	} elseif (sizeof ( $siegerspiel ) == 2) {
 		$siegerpaar [$siegerspiel [0]] [$siegerspiel [1]] = ($siegerpaar [$siegerspiel [0]] [$siegerspiel [1]] ?? 0) + 1;
 		$siegerpaar [$siegerspiel [1]] [$siegerspiel [0]] = ($siegerpaar [$siegerspiel [1]] [$siegerspiel [0]] ?? 0) + 1;
 	} else {
-		$siegerpaar [$siegerspiel [0]] [$siegerspiel [1]] += 0.5;
-		$siegerpaar [$siegerspiel [0]] [$siegerspiel [2]] += 0.5;
-		$siegerpaar [$siegerspiel [1]] [$siegerspiel [0]] += 0.5;
-		$siegerpaar [$siegerspiel [1]] [$siegerspiel [2]] += 0.5;
-		$siegerpaar [$siegerspiel [2]] [$siegerspiel [0]] += 0.5;
-		$siegerpaar [$siegerspiel [2]] [$siegerspiel [1]] += 0.5;
+		$siegerpaar [$siegerspiel [0]] [$siegerspiel [1]] = ($siegerpaar [$siegerspiel [0]] [$siegerspiel [1]] ?? 0) + 0.5;
+		$siegerpaar [$siegerspiel [0]] [$siegerspiel [2]] = ($siegerpaar [$siegerspiel [0]] [$siegerspiel [2]] ?? 0) + 0.5;
+		$siegerpaar [$siegerspiel [1]] [$siegerspiel [0]] = ($siegerpaar [$siegerspiel [1]] [$siegerspiel [0]] ?? 0) + 0.5;
+		$siegerpaar [$siegerspiel [1]] [$siegerspiel [2]] = ($siegerpaar [$siegerspiel [1]] [$siegerspiel [2]] ?? 0) + 0.5;
+		$siegerpaar [$siegerspiel [2]] [$siegerspiel [0]] = ($siegerpaar [$siegerspiel [2]] [$siegerspiel [0]] ?? 0) + 0.5;
+		$siegerpaar [$siegerspiel [2]] [$siegerspiel [1]] = ($siegerpaar [$siegerspiel [2]] [$siegerspiel [1]] ?? 0) + 0.5;
 	}
 	$statement2 = $pdo->prepare ( "SELECT player_data.* FROM player_data, games WHERE games.round_id = ? AND games.game_number = ? AND games.id = player_data.game_id AND player_data.game_typ != ''" );
 	$statement2->execute ( array (
