@@ -4,8 +4,12 @@
     <div class="col-md-6 text-center">
         <h2>Fast geschafft!</h2>
         <p class="mt-3">
-            Wir haben dir eine E-Mail geschickt. Bitte bestätige deine 
+            Wir haben dir eine E-Mail geschickt. Bitte bestätige deine
             E-Mail-Adresse um dein Konto zu aktivieren.
+        </p>
+        <p class="mt-3 text-muted">
+            Keine E-Mail erhalten?
+            <a href="/resend-verify">Neuen Bestätigungslink anfordern</a>
         </p>
         <a href="/" class="btn btn-outline-primary mt-3">Zur Startseite</a>
     </div>

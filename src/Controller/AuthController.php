@@ -152,4 +152,42 @@ class AuthController
         header('Location: /');
         exit;
     }
+    public function showResendVerify(): void
+    {
+        require __DIR__ . '/../../templates/auth/resend_verify.php';
+    }
+
+    public function handleResendVerify(): void
+    {
+        $email = trim($_POST['email'] ?? '');
+
+        if ($email === '') {
+            $error = 'Bitte E-Mail-Adresse eingeben.';
+            require __DIR__ . '/../../templates/auth/resend_verify.php';
+            return;
+        }
+
+        $stmt = $this->pdo->prepare("SELECT * FROM users WHERE email = ?");
+        $stmt->execute([$email]);
+        $user = $stmt->fetch();
+
+        // Bewusst keine Unterscheidung ob E-Mail existiert oder nicht
+        // – verhindert dass man herausfinden kann welche E-Mails registriert sind
+        if ($user === false || $user['aktiv'] == 1) {
+            $info = 'Falls diese E-Mail-Adresse bei uns registriert und noch nicht bestätigt ist, erhältst du in Kürze eine neue E-Mail.';
+            require __DIR__ . '/../../templates/auth/resend_verify.php';
+            return;
+        }
+
+        // Neuen Token generieren
+        $token = bin2hex(random_bytes(32));
+        $stmt = $this->pdo->prepare("UPDATE users SET verify_token = ?, verify_token_erstellt = NOW() WHERE id = ?");
+        $stmt->execute([$token, $user['id']]);
+
+        // Mail senden
+        $this->mailer->sendVerifizierung($email, $user['vorname'], $token);
+
+        $info = 'Falls diese E-Mail-Adresse bei uns registriert und noch nicht bestätigt ist, erhältst du in Kürze eine neue E-Mail.';
+        require __DIR__ . '/../../templates/auth/resend_verify.php';
+    }
 }
