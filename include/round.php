@@ -554,20 +554,18 @@ if ($statement->rowCount () == 0) {
 					$error = "Es gibt nur 240 Augen im Spiel!";
 				}
 				// Spieltyp ermitteln
-				// $statement = $pdo->prepare ( "SELECT * FROM player_data WHERE round_id = ? AND game_id = ? AND vorbehalt = 'solo'" );
-				// $statement = $pdo->prepare("SELECT game_types.* FROM game_types, player_data WHERE game_types.id = player_data.game_typ AND player_data.game_id = ?");
 				$statement = $pdo->prepare ( "SELECT game_types.* FROM game_types, player_data WHERE game_types.id = COALESCE(player_data.game_typ, 1) AND player_data.game_id = ?" );
 				$statement->execute ( array (
 						$game_id
 				) );
 				// Solo wenn in DB gespeichert oder bei Abrechnung angegeben.
 				$gameData = $statement->fetch ();
-				if ($gameData ['isSolo'] || $reSpieler2 == 'solo') { // $statement->rowCount () > 0
+				if (($statement->rowCount () > 0 && $gameData ['isSolo']) || $reSpieler2 == 'solo') { //
 					$isSolo = true;
 				} else {
 					$isSolo = false;
 				}
-				$gameType = ($gameData ['id'] == null) ? 1 : $gameData ['id'];
+				$gameType = ($statement->rowCount () == 0 || $gameData ['id'] == null) ? 1 : $gameData ['id'];
 				// Beide Spieler der Re-Partei bei Normalspiel vorhanden?
 				if ($isSolo == false && ($reSpieler1 == '' || $reSpieler2 == '')) {
 					$error = 'Beide Spieler der "Re"-Partei müssen angegeben werden.';
