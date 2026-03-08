@@ -60,5 +60,9 @@ $router->get('/register-bestaetigung', function () {
 $router->get('/verify', fn() => $auth->handleVerify());
 $router->get('/resend-verify', fn() => $auth->showResendVerify());
 $router->post('/resend-verify', fn() => $auth->handleResendVerify());
+$router->get('/password-reset', fn() => $auth->showPasswordReset());
+$router->post('/password-reset', fn() => $auth->handlePasswordReset());
+$router->get('/new-password', fn() => $auth->showNewPassword());
+$router->post('/new-password', fn() => $auth->handleNewPassword());
 
 $router->dispatch();

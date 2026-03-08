@@ -190,4 +190,113 @@ class AuthController
         $info = 'Falls diese E-Mail-Adresse bei uns registriert und noch nicht bestätigt ist, erhältst du in Kürze eine neue E-Mail.';
         require __DIR__ . '/../../templates/auth/resend_verify.php';
     }
+    public function showPasswordReset(): void
+    {
+        require __DIR__ . '/../../templates/auth/password_reset.php';
+    }
+
+    public function handlePasswordReset(): void
+    {
+        $email = trim($_POST['email'] ?? '');
+
+        if ($email === '') {
+            $error = 'Bitte E-Mail-Adresse eingeben.';
+            require __DIR__ . '/../../templates/auth/password_reset.php';
+            return;
+        }
+
+        $stmt = $this->pdo->prepare("SELECT * FROM users WHERE email = ?");
+        $stmt->execute([$email]);
+        $user = $stmt->fetch();
+
+        // Bewusst keine Unterscheidung ob E-Mail existiert oder nicht
+        if ($user !== false && $user['aktiv'] == 1) {
+            $token = bin2hex(random_bytes(32));
+            $stmt = $this->pdo->prepare("UPDATE users SET reset_token = ?, reset_token_erstellt = NOW() WHERE id = ?");
+            $stmt->execute([$token, $user['id']]);
+            $this->mailer->sendPasswordReset($email, $user['vorname'], $token);
+        }
+
+        $info = 'Falls diese E-Mail-Adresse bei uns registriert ist, erhältst du in Kürze eine E-Mail mit einem Link zum Zurücksetzen des Passworts.';
+        require __DIR__ . '/../../templates/auth/password_reset.php';
+    }
+
+    public function showNewPassword(): void
+    {
+        $token = $_GET['token'] ?? '';
+
+        if ($token === '') {
+            header('Location: /login');
+            exit;
+        }
+
+        $stmt = $this->pdo->prepare("SELECT * FROM users WHERE reset_token = ?");
+        $stmt->execute([$token]);
+        $user = $stmt->fetch();
+
+        if ($user === false) {
+            $error = 'Ungültiger oder abgelaufener Link.';
+            require __DIR__ . '/../../templates/auth/login.php';
+            return;
+        }
+
+        // Token älter als 24 Stunden?
+        $erstellt = new \DateTime($user['reset_token_erstellt']);
+        $jetzt = new \DateTime();
+        if ($jetzt->diff($erstellt)->h >= 24) {
+            $error = 'Der Link ist abgelaufen. Bitte fordere einen neuen an.';
+            require __DIR__ . '/../../templates/auth/password_reset.php';
+            return;
+        }
+
+        require __DIR__ . '/../../templates/auth/new_password.php';
+    }
+
+    public function handleNewPassword(): void
+    {
+        $token     = $_POST['token'] ?? '';
+        $passwort  = $_POST['passwort'] ?? '';
+        $passwort2 = $_POST['passwort2'] ?? '';
+
+        if ($token === '') {
+            header('Location: /login');
+            exit;
+        }
+
+        if ($passwort === '' || $passwort2 === '') {
+            $error = 'Bitte beide Felder ausfüllen.';
+            require __DIR__ . '/../../templates/auth/new_password.php';
+            return;
+        }
+
+        if ($passwort !== $passwort2) {
+            $error = 'Die Passwörter stimmen nicht überein.';
+            require __DIR__ . '/../../templates/auth/new_password.php';
+            return;
+        }
+
+        if (strlen($passwort) < 8) {
+            $error = 'Das Passwort muss mindestens 8 Zeichen lang sein.';
+            require __DIR__ . '/../../templates/auth/new_password.php';
+            return;
+        }
+
+        $stmt = $this->pdo->prepare("SELECT * FROM users WHERE reset_token = ?");
+        $stmt->execute([$token]);
+        $user = $stmt->fetch();
+
+        if ($user === false) {
+            $error = 'Ungültiger oder abgelaufener Link.';
+            require __DIR__ . '/../../templates/auth/login.php';
+            return;
+        }
+
+        // Passwort aktualisieren und Token löschen
+        $hash = password_hash($passwort, PASSWORD_BCRYPT);
+        $stmt = $this->pdo->prepare("UPDATE users SET passwort = ?, reset_token = NULL, reset_token_erstellt = NULL WHERE id = ?");
+        $stmt->execute([$hash, $user['id']]);
+
+        $info = 'Dein Passwort wurde erfolgreich geändert.';
+        require __DIR__ . '/../../templates/auth/login.php';
+    }
 }

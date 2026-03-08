@@ -17,6 +17,7 @@
                     <input type="password" name="passwort" id="passwort" class="form-control" required>
                 </div>
                 <button type="submit" class="btn btn-primary">Einloggen</button>
+                <a href="/password-reset" class="btn btn-link">Passwort vergessen?</a>
             </form>
         </div>
     </div>
