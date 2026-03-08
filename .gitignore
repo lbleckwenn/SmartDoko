@@ -1,0 +1,6 @@
+node_modules/
+logs/
+config/config.php
+package.json
+package-lock.json
+.prettierrc
