@@ -35,6 +35,8 @@
 	{/if}
 	<h2>Spiel berichtigen</h2>
 	<form action="?page=editgame" method="post">
+		{$token}
+		<input type="hidden" name="gameId" value="{$game.id}">
 		<div class="row">
 			<div class="col">
 				<script src="./javascript/editgame_javascript.js"></script>
@@ -82,6 +84,7 @@
 						class="float-right">Kontra <span id="eyesKontra">{240-$game.re_augen}</span>
 					</label> <input type="range" id="eyesRange" value="{120-$game.re_augen}" min="-120" max="120"
 						class="form-control-range" oninput="updateEyes(eyesRange.value)">
+					<input type="hidden" id="reAugenInput" name="re_augen" value="{$game.re_augen}">
 				</div>
 				<script>
             		function updateEyes(eyes) {
@@ -89,6 +92,7 @@
                 		eyesKontra = parseInt(eyes) + 120
                 		$('#eyesRe').html(eyesRe)
                 		$('#eyesKontra').html(eyesKontra)
+                		$('#reAugenInput').val(eyesRe)
             		}
         		</script>
 			</div>
